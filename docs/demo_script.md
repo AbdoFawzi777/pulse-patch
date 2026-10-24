@@ -56,7 +56,7 @@
   > 
   > The model extracts five statistical features: mean heart rate, sample standard deviation, start rate, end rate, and the 60-second recovery drop.
   > 
-  > Here, our session is classified as 'Typical pattern' with plain-language, non-alarming context. In post-activity sessions, the app evaluates parasympathetic autonomic recovery drop, which our clinical validation study showed averages 21.6 BPM."
+  > Here, our session is classified as 'Typical pattern' with plain-language, non-alarming context. In post-activity sessions, the app evaluates rate recovery drop, which our pipeline simulation study showed averages 21.6 BPM."
 - **Action:**
   - View the **Session Pattern Analysis** screen (pixel-matched to the canvas image).
   - Open **Model Information** screen to demonstrate scientific honesty: show model version 1.0.0, architecture MLP 5->16->8->2, and explicit label indicating training data cohort.
@@ -67,7 +67,7 @@
 - **Speaker:**
   > "Finally, let's explore our data management features:
   > In **History**, sessions are browsable with trend curves.
-  > In **Reports**, we can generate an offline, publication-grade PDF clinical summary document ready to share.
+  > In **Reports**, we can generate an offline, publication-grade PDF pulse summary report ready to share.
   > And across the entire system, we support full **Arabic RTL** localization and instant theme switching."
 - **Action:**
   - Switch to Settings -> toggle language to **العربية**. Show the interface flipping cleanly into right-to-left layout.

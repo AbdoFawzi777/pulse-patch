@@ -207,10 +207,12 @@ class _SessionDetailsScreenState extends ConsumerState<SessionDetailsScreen> {
                                 strokeWidth: 2.2,
                               ),
                               const SizedBox(height: 8.0),
-                              const Center(
+                              Center(
                                 child: Text(
-                                  'Optical pulse trace · recorded samples',
-                                  style: TextStyle(
+                                  isSampleData
+                                      ? 'Optical pulse trace · Simulator'
+                                      : 'Heart rate trend (BPM) · Real device (12-byte GATT stream)',
+                                  style: const TextStyle(
                                     fontFamily: 'Outfit',
                                     fontSize: 12.0,
                                     color: AppColors.textMuted,
@@ -298,7 +300,7 @@ class _SessionDetailsScreenState extends ConsumerState<SessionDetailsScreen> {
                                     : 'Typical pattern')
                               : 'Typical pattern',
                           explanation:
-                              'Compared against baseline recordings. Experimental pattern label, not a health or clinical rating.',
+                              'Compared against baseline recordings. Experimental pattern label, not a health or diagnostic rating.',
                           badgeText: 'On-device TFLite',
                         ),
                         const SizedBox(height: 16.0),

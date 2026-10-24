@@ -286,16 +286,24 @@ void main() {
         // Top bar & Hero
         expect(find.text('AI Model Information'), findsOneWidget);
         expect(find.text('PulsePatch AI Insights'), findsOneWidget);
-        expect(find.text('On-device TensorFlow Lite Engine'), findsOneWidget);
+        expect(
+          find.text('On-device Dart Background Isolate Engine'),
+          findsOneWidget,
+        );
         expect(find.text('100% Offline & Private'), findsOneWidget);
 
         // Technical panel toggle
         expect(find.text('Technical Evaluator Panel'), findsOneWidget);
+        await tester.drag(
+          find.byType(SingleChildScrollView),
+          const Offset(0, -600),
+        );
+        await tester.pumpAndSettle();
         await tester.tap(find.text('Technical Evaluator Panel'));
         await tester.pumpAndSettle();
 
         // Verify expanded technical details
-        expect(find.text('MLP (5 -> 16 -> 8 -> 2)'), findsOneWidget);
+        expect(find.text('MLP (5 -> 16 -> 8 -> 1)'), findsOneWidget);
         expect(find.text('[1, 5] (Float32)'), findsOneWidget);
       },
     );

@@ -11,9 +11,9 @@
 
 ## 1. Model Overview & Purpose
 
-PulsePatch AI Insights is a compact, on-device machine learning model engineered for the **PulsePatch Lite** biomonitoring platform. It analyzes five session-level statistical features derived from optical photoplethysmogram (PPG) recordings to characterize cardiovascular rate and autonomic recovery dynamics into one of two educational pattern labels:
-- **`Typical pattern` (Label 0):** The recording exhibits physiological autonomic behavior consistent with established resting baseline or expected post-activity cardiac recovery profiles.
-- **`Different pattern` (Label 1):** The recording deviates statistically from expected normative resting stability or displays a blunted / delayed post-exercise heart rate recovery trajectory.
+PulsePatch AI Insights is a compact, on-device machine learning model engineered for the **PulsePatch Lite** educational biomonitoring platform. It analyzes five session-level statistical features derived from optical pulse rate recordings to characterize heart rate and rate recovery dynamics into one of two educational pattern labels:
+- **`Typical pattern` (Label 0):** The recording exhibits rate recovery behavior consistent with modeled resting stability or expected post-activity rate deceleration.
+- **`Different pattern` (Label 1):** The recording deviates statistically from expected resting stability or displays a delayed post-activity rate recovery trajectory.
 
 > [!IMPORTANT]
 > **Strict Non-Diagnostic Compliance**  
@@ -70,18 +70,23 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
 
 ## 5. Quantitative Evaluation Metrics
 
-Cross-validation performance across holdout volunteer subjects:
+> [!NOTE]
+> **Synthetic Pipeline Test, Not Real Validation**  
+> All metrics below are derived from cross-validation over the 160 modeled synthetic volunteer sessions. They serve to verify the ML pipeline and mathematical stability, not diagnostic accuracy on human subjects.
 
-| Metric | Logistic Regression Baseline | Random Forest Baseline | Tiny MLP (Primary Model) |
-|---|---|---|---|
-| **Accuracy** | 93.75% ($\pm 3.1\%$) | 100.00% ($\pm 0.0\%$) | **99.38%** ($\pm 0.9\%$) |
-| **Precision** | 85.00% | 100.00% | **100.00%** |
-| **Recall** | 78.29% | 100.00% | **97.14%** |
-| **F1 Score** | 79.72% | 100.00% | **98.46%** |
-| **ROC-AUC** | 0.9781 | 1.0000 | **1.0000** |
-| **Brier Calibration Score** | 0.0468 | 0.0094 | **0.0051** |
+Cross-validation performance across holdout synthetic volunteer subjects (*synthetic pipeline test, not real validation*):
 
-### Confusion Matrix (Aggregated 160 Holdout Sessions)
+| Metric | Logistic Regression Baseline | Random Forest Baseline | Tiny MLP (Primary Model) | Evaluation Classification |
+|---|---|---|---|---|
+| **Accuracy** | 93.75% ($\pm 3.1\%$) | 100.00% ($\pm 0.0\%$) | **99.38%** ($\pm 0.9\%$) | Synthetic pipeline test, not real validation |
+| **Precision** | 85.00% | 100.00% | **100.00%** | Synthetic pipeline test, not real validation |
+| **Recall** | 78.29% | 100.00% | **97.14%** | Synthetic pipeline test, not real validation |
+| **F1 Score** | 79.72% | 100.00% | **98.46%** | Synthetic pipeline test, not real validation |
+| **ROC-AUC** | 0.9781 | 1.0000 | **1.0000** | Synthetic pipeline test, not real validation |
+| **Brier Calibration Score** | 0.0468 | 0.0094 | **0.0051** | Synthetic pipeline test, not real validation |
+
+### Confusion Matrix (Aggregated 160 Modeled Synthetic Holdout Sessions)
+*(Synthetic pipeline test, not real validation)*
 ```
                     Predicted Typical    Predicted Different
 Actual Typical            133                    0

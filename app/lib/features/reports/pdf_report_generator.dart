@@ -79,7 +79,7 @@ class PdfReportGenerator {
                   ),
                   pw.SizedBox(height: 2.0),
                   pw.Text(
-                    'Biomonitoring Summary Report',
+                    'Pulse Summary Report',
                     style: const pw.TextStyle(
                       fontSize: 14.0,
                       color: PdfColors.grey700,
@@ -132,7 +132,7 @@ class PdfReportGenerator {
                 pw.Text(
                   'PulsePatch Lite is an educational biomonitoring prototype connecting to an ESP32-C3 + MAX30102 pulse sensor. '
                   'This report contains measured optical pulse rates, rule-based summary statistics, and experimental ML pattern labels. '
-                  'It does NOT constitute medical diagnosis, cardiovascular assessment, or clinical evaluation.',
+                  'It does NOT constitute a medical diagnosis or health evaluation.',
                   style: const pw.TextStyle(
                     fontSize: 8.0,
                     color: PdfColors.grey800,
@@ -295,7 +295,7 @@ class PdfReportGenerator {
                 ),
                 pw.Bullet(
                   text:
-                      'Model Output: On-device TensorFlow Lite pattern classification (Typical / Different). Non-clinical.',
+                      'Model Output: On-device machine learning pattern classification (Typical / Different). Strictly educational, non-diagnostic.',
                   style: const pw.TextStyle(fontSize: 7.5),
                 ),
               ],

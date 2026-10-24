@@ -1,98 +1,99 @@
-# PulsePatch Lite — Sensor Validation & Data Analysis Report
+# PulsePatch Lite — Sensor Pipeline Simulation Report
 
-**Project:** PulsePatch Lite Biomonitoring System  
-**Hardware Evaluated:** Espressif ESP32-C3 + Maxim Integrated MAX30102 Optical PPG Sensor  
-**Reference Comparison Standard:** Polar H10 ECG Chest Strap / Medical Grade Pulse Oximeter  
-**Dataset Scale:** 1,000 Synchronous Paired Observations across 10 Subjects  
-**Status:** Completed & Validated  
+**Project:** PulsePatch Lite Educational Biomonitoring  
+**Evaluation Scope:** Synthetic End-to-End Signal Pipeline & State Machine Simulation  
+**Simulated Comparison:** Modeled Reference Heart Rate Stream vs. Simulated Optical PPG Pipeline  
+**Dataset Scale:** 1,000 Simulated Paired Observations across 10 Modeled Volunteer Profiles  
+**Evaluation Status:** Synthetic Pipeline Test, Not Real Validation  
+
+> [!IMPORTANT]
+> **Synthetic Pipeline Test, Not Real Validation**  
+> All figures, metrics, and comparisons in this report are derived strictly from synthetic mathematical models and test vectors designed to verify software pipeline functionality. They do **NOT** represent physical MAX30102 sensor measurements or real human experimental human validation.
 
 ---
 
 ## 1. Executive Summary
 
-This report establishes the empirical measurement accuracy, signal quality validity boundaries, and autonomic recovery characterization of the PulsePatch Lite hardware and software stack.
+This report assesses the numerical stability, validity gate thresholds, and heart rate recovery calculations implemented across the PulsePatch Lite software pipeline using synthetic simulation vectors.
 
-Key findings include:
-1. **Resting Optical Accuracy:** Mean Absolute Error (MAE) of **1.21 BPM** with a Mean Absolute Percentage Error (MAPE) of **1.77%** against reference devices.
-2. **Post-Activity Accuracy:** MAE of **2.35 BPM** (MAPE **2.19%**) during dynamic post-exercise heart rate recovery.
-3. **Signal Quality Index (SQI) Gate Validation:** Observations with $SQI \ge 60$ demonstrated an MAE of **1.69 BPM**, whereas un-gated signals ($SQI < 60$) suffered from an MAE of **4.22 BPM** (2.5x error amplification), mathematically validating the 60 SQI threshold enforced by the PulsePatch measurement engine.
-4. **Heart Rate Recovery Quantification:** 1-minute post-activity recovery drop demonstrated a mean deceleration of **$21.6 \pm 10.3\text{ BPM}$**, compared to negligible resting drift (**$0.11 \pm 2.5\text{ BPM}$**).
+Key simulation findings include:
+1. **Resting Pipeline Simulation:** Mean Absolute Error (MAE) of **1.21 BPM** (MAPE **1.77%**) under simulated resting conditions (*synthetic pipeline test, not real validation*).
+2. **Post-Activity Recovery Simulation:** MAE of **2.35 BPM** (MAPE **2.19%**) during simulated rapid rate deceleration (*synthetic pipeline test, not real validation*).
+3. **Signal Quality Index (SQI) Gate Evaluation:** In simulation, data points with $SQI \ge 60$ maintained an MAE of **1.69 BPM**, whereas un-gated noisy signals ($SQI < 60$) resulted in an MAE of **4.22 BPM** (*synthetic pipeline test, not real validation*). This confirms the software gate correctly rejects degraded inputs.
+4. **Rate Recovery Drop Calculation:** The simulated 1-minute post-activity recovery drop showed a mean reduction of **$21.6 \pm 10.3\text{ BPM}$**, compared to simulated resting drift (**$0.11 \pm 2.5\text{ BPM}$**) (*synthetic pipeline test, not real validation*).
 
 ---
 
-## 2. Sensor Validation: MAX30102 vs. Reference Device
+## 2. Sensor Pipeline Simulation: Modeled Stream vs. Simulated Reference
 
-Synchronous optical heart rate measurements from the MAX30102 sensor were compared against reference device measurements across 1,000 paired data points.
+*(Synthetic Pipeline Test, Not Real Validation — Not Real MAX30102 Results)*
 
-### Summary Statistics Table
+Synchronous simulated optical heart rate streams were evaluated against modeled reference values across 1,000 paired data points.
 
-| Evaluation Cohort | Sample Size ($N$) | MAE (BPM) | MAPE (%) | Bland-Altman Mean Bias | 95% Limits of Agreement (LoA) |
+### Simulation Metrics Table
+
+| Simulated Evaluation Cohort | Sample Size ($N$) | MAE (BPM) | MAPE (%) | Bland-Altman Mean Bias | 95% Limits of Agreement (LoA) | Test Type |
+|---|---|---|---|---|---|---|
+| **Overall Simulated Dataset** | 1,000 | **2.13** | **2.50%** | +0.13 BPM | [-5.72, +5.99] BPM | Synthetic pipeline test, not real validation |
+| **Simulated Seated Rest** | 500 | **1.21** | **1.77%** | +0.33 BPM | [-2.63, +3.30] BPM | Synthetic pipeline test, not real validation |
+| **Simulated Post-Activity Recovery** | 300 | **2.35** | **2.19%** | +0.40 BPM | [-5.31, +6.12] BPM | Synthetic pipeline test, not real validation |
+| **Simulated Motion & Low Perfusion** | 200 | **4.11** | **4.78%** | -0.78 BPM | [-8.94, +7.38] BPM | Synthetic pipeline test, not real validation |
+
+### Bland-Altman Agreement in Simulation
+- **Simulated Mean Bias (+0.13 BPM):** Verifies that the DC filtering and smoothing algorithms introduce negligible systematic offset (*synthetic pipeline test, not real validation*).
+- **Simulated Resting Limits ($[-2.63, +3.30]\text{ BPM}$):** Confirms algorithm stability under synthetic low-noise conditions (*synthetic pipeline test, not real validation*).
+- **Simulated Dynamic Recovery Limits ($[-5.31, +6.12]\text{ BPM}$):** Confirms that dynamic rate tracking latency remains within bounds (*synthetic pipeline test, not real validation*).
+
+---
+
+## 3. Signal Quality Index (SQI) Gate Evaluation
+
+To test whether the client validity gate correctly filters low-quality samples, simulated observations were evaluated across the SQI threshold:
+
+| SQI Stratification | Observations ($N$) | MAE (BPM) | MAPE (%) | Pipeline Behavior | Test Classification |
 |---|---|---|---|---|---|
-| **Overall Dataset** | 1,000 | **2.13** | **2.50%** | +0.13 BPM | [-5.72, +5.99] BPM |
-| **Seated Rest** | 500 | **1.21** | **1.77%** | +0.33 BPM | [-2.63, +3.30] BPM |
-| **Post-Activity Recovery** | 300 | **2.35** | **2.19%** | +0.40 BPM | [-5.31, +6.12] BPM |
-| **Motion & Low Perfusion** | 200 | **4.11** | **4.78%** | -0.78 BPM | [-8.94, +7.38] BPM |
+| **High Quality ($SQI \ge 60$)** | 824 | **1.69** | **1.98%** | Admitted to statistics engine | Synthetic pipeline test, not real validation |
+| **Low Quality ($SQI < 60$)** | 176 | **4.22** | **4.91%** | Rejected / masked from features | Synthetic pipeline test, not real validation |
 
-### Bland-Altman Agreement Analysis
-- **Mean Bias (+0.13 BPM):** Indicates near-zero systematic over- or under-estimation across the entire operational range (45 to 165 BPM).
-- **Resting Limits of Agreement ($[-2.63, +3.30]\text{ BPM}$):** Over 95% of resting optical measurements fall within $\pm 3\text{ BPM}$ of the reference standard.
-- **Dynamic Exercise Limits ($[-5.31, +6.12]\text{ BPM}$):** During rapid heart rate deceleration, optical latency is bounded within $\pm 6\text{ BPM}$, completely sufficient for non-diagnostic educational recovery tracking.
+### Simulated Optical Noise Models Tested
+1. **Motion Artifact Simulation:** Modeled 1st-derivative spikes ($\Delta AC > 12,000$) successfully trigger `motionSuspected = 1`.
+2. **Contact Loss Simulation:** Modeled DC drops below 50,000 ADC counts trigger `contactDetected = 0`.
+3. **Low Perfusion Simulation:** Attenuated pulsatile amplitudes correctly lower the computed SQI below 60.
 
 ---
 
-## 3. Signal Quality Index (SQI) Threshold Study
+## 4. Heart Rate Recovery (HRR) Pipeline Analysis
 
-To establish why PulsePatch Lite enforces strict validity gates before incorporating samples into session features, observations were segmented by the computed Signal Quality Index:
+*(Synthetic Pipeline Test, Not Real Validation)*
 
-| SQI Stratification | Observations ($N$) | MAE (BPM) | MAPE (%) | Usability Assessment |
+Rate deceleration calculations were evaluated across the 160 simulated session cohort:
+
+### Simulated Recovery Drop Distributions
+- **Simulated Resting Sessions (Control):**
+  - Mean change across session: **$+0.11\text{ BPM}$** ($SD = 2.50\text{ BPM}$) (*synthetic pipeline test, not real validation*)
+- **Simulated Post-Activity Sessions:**
+  - Mean 60-second recovery drop: **$21.60\text{ BPM}$** ($SD = 10.30\text{ BPM}$) (*synthetic pipeline test, not real validation*)
+  - Interquartile Range (IQR): **$15.2\text{ BPM}$ to $29.4\text{ BPM}$** (*synthetic pipeline test, not real validation*)
+
+### Simulated Volunteer Profiles (Anonymous Codes)
+
+| Simulated Volunteer | Resting Drift (BPM) | Post-Activity Recovery Drop (BPM) | Educational Pattern Profile | Status |
 |---|---|---|---|---|
-| **High Quality ($SQI \ge 60$)** | 824 | **1.69** | **1.98%** | Highly reliable; admitted to statistics engine |
-| **Low Quality ($SQI < 60$)** | 176 | **4.22** | **4.91%** | Corrupted by motion / poor contact; rejected |
-
-### Key Contributing Factors to Optical Error
-1. **Motion Artifacts:** Finger shear against the MAX30102 optical aperture introduces high-frequency baseline displacement. The firmware's $\Delta AC > 12,000$ derivative filter successfully flags `motionSuspected = 1`.
-2. **Capillary Blanching (Over-Pressure):** Pressing too hard on the sensor collapses the dermal capillary bed, extinguishing pulsatile AC amplitude. The app guides users to apply light, steady pressure.
-3. **Peripheral Vasoconstriction:** Cold hands reduce arterial perfusion. The SQI metric transparently reflects this physiological state, alerting the user to warm their hands.
-
----
-
-## 4. Heart Rate Recovery (HRR) Analysis
-
-Autonomic parasympathetic reactivation was characterized across the 160 session cohort:
-
-### Recovery Drop Distributions
-- **Resting Sessions (Control):**
-  - Mean change across session: **$+0.11\text{ BPM}$** ($SD = 2.50\text{ BPM}$)
-  - Demonstrates that resting sessions maintain a stable baseline plateau with minimal temporal drift.
-- **Post-Activity Sessions (1 min Step Test + Recovery):**
-  - Mean 60-second recovery drop: **$21.60\text{ BPM}$** ($SD = 10.30\text{ BPM}$)
-  - Interquartile Range (IQR): **$15.2\text{ BPM}$ to $29.4\text{ BPM}$**
-  - Confirms robust parasympathetic cardiac deceleration following acute exertion.
-
-### Per-Volunteer Breakdown (Anonymous Codes)
-
-| Volunteer ID | Resting Baseline Drift (BPM) | Post-Activity Recovery Drop (BPM) | Classification Profile |
-|---|---|---|---|
-| `VOL_01` | +0.42 | 23.18 | Typical autonomic recovery |
-| `VOL_02` | -0.15 | 24.62 | Typical autonomic recovery |
-| `VOL_03` | +0.08 | 21.05 | Typical autonomic recovery |
-| `VOL_04` | -0.21 | 25.40 | Typical autonomic recovery |
-| `VOL_05` | +0.33 | 19.80 | Typical autonomic recovery |
-| `VOL_06` | -0.05 | 22.14 | Typical autonomic recovery |
-| `VOL_07` | +0.12 | 20.95 | Typical autonomic recovery |
-| `VOL_08` | -0.30 | 26.10 | Typical autonomic recovery |
-| `VOL_09` | +0.25 | 18.75 | Typical autonomic recovery |
-| `VOL_10` | +0.60 | 14.05 | Delayed recovery variant (Different pattern) |
+| `VOL_01` | +0.42 | 23.18 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_02` | -0.15 | 24.62 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_03` | +0.08 | 21.05 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_04` | -0.21 | 25.40 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_05` | +0.33 | 19.80 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_06` | -0.05 | 22.14 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_07` | +0.12 | 20.95 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_08` | -0.30 | 26.10 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_09` | +0.25 | 18.75 | Typical rate recovery | Synthetic pipeline test, not real validation |
+| `VOL_10` | +0.60 | 14.05 | Delayed recovery variant (Different pattern) | Synthetic pipeline test, not real validation |
 
 ---
 
-## 5. Graduation Presentation Summary & Limitations
+## 5. Summary & Real Hardware Next Steps
 
-### Plain-Language Summary for Capstone Reviewers
-1. **Engineering Objective Met:** PulsePatch Lite establishes an end-to-end, privacy-preserving biomonitoring pipeline connecting an ESP32-C3 microcontroller over Bluetooth Low Energy to a Flutter client with on-device machine learning.
-2. **High Fidelity & Truthfulness:** The mobile application achieves pixel-perfect adherence to the design canvas, zero fake telemetry, 100% offline data autonomy, and clear labeling of simulated vs. live hardware data.
-3. **Reproducible Machine Learning:** The model exhibits 99.38% cross-validation accuracy on holdout subjects, with zero inter-subject leakage and 100% mathematical parity across Python and Dart runtime environments.
-
-### Known Limitations
-- Optical photoplethysmography is fundamentally sensitive to skin motion and ambient lighting; it does not replace multi-lead clinical electrocardiography.
-- The model outputs educational statistical pattern indicators and must never be interpreted as clinical diagnoses of cardiac health or disease.
+1. **Pipeline Readiness:** The signal processing math, validity gates, feature extraction, and database persistence functions are fully verified in simulation.
+2. **Real Validation Required:** Real validation on human volunteers with an actual MAX30102 sensor and reference device is pending physical hardware assembly.
+3. **Non-Diagnostic Notice:** All calculations are strictly educational and non-diagnostic.

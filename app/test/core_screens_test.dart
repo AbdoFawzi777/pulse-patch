@@ -118,7 +118,10 @@ void main() {
         );
 
         expect(find.text('Measuring'), findsOneWidget);
-        expect(find.text('Optical pulse trace · No contact'), findsOneWidget);
+        expect(
+          find.text('Optical pulse trace · Simulator · No contact'),
+          findsOneWidget,
+        );
         expect(find.text('Stop and save'), findsOneWidget);
 
         await tester.tap(find.text('Stop and save'));

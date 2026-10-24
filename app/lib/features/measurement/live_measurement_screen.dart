@@ -8,6 +8,7 @@ import '../../shared/widgets/circular_timer.dart';
 import '../../shared/widgets/heart_rate_hero_number.dart';
 import '../../shared/widgets/pill_button.dart';
 import '../../shared/widgets/pulse_trace_chart.dart';
+import '../../shared/widgets/trend_chart.dart';
 import '../device/heart_rate_source.dart';
 
 class LiveMeasurementScreen extends StatefulWidget {
@@ -96,6 +97,58 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
     return 'Signal: Weak';
   }
 
+  Widget _buildRealDeviceBpmTrend() {
+    final validSamples = widget.recorder.samples
+        .where((s) => s.isValid && s.bpm != null)
+        .map((s) => s.bpm!.toDouble())
+        .toList();
+
+    if (validSamples.length < 2) {
+      return Container(
+        height: 110.0,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        decoration: BoxDecoration(
+          color: AppColors.cardBgNavy.withValues(alpha: 0.5),
+          borderRadius: BorderRadius.circular(16.0),
+          border: Border.all(
+            color: AppColors.accentCyan.withValues(alpha: 0.2),
+            width: 1.0,
+          ),
+        ),
+        child: const Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.bluetooth_searching_rounded,
+              color: AppColors.accentCyan,
+              size: 28.0,
+            ),
+            SizedBox(height: 8.0),
+            Text(
+              'Awaiting 12-byte BLE packets from ESP32-C3...',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 13.0,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return TrendChart(
+      values: validSamples.length > 50
+          ? validSamples.sublist(validSamples.length - 50)
+          : validSamples,
+      height: 110.0,
+      minY: 40.0,
+      maxY: 160.0,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final isPaused = _snapshot.state == SessionRecorderState.paused;
@@ -176,18 +229,22 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
                     size: HeroNumberSize.large,
                   ),
                   const Spacer(flex: 1),
-                  // Optical Pulse Trace Waveform
+                  // Waveform or BPM Trend based on source
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                    child: PulseTraceChart(
-                      points: _waveformPoints,
-                      height: 110.0,
-                      strokeWidth: 2.5,
-                    ),
+                    child: widget.source.isSimulator
+                        ? PulseTraceChart(
+                            points: _waveformPoints,
+                            height: 110.0,
+                            strokeWidth: 2.5,
+                          )
+                        : _buildRealDeviceBpmTrend(),
                   ),
                   const SizedBox(height: 12.0),
                   Text(
-                    'Optical pulse trace · $_signalLabel',
+                    widget.source.isSimulator
+                        ? 'Optical pulse trace · Simulator · $_signalLabel'
+                        : 'Heart rate trend (BPM) · Real device · $_signalLabel',
                     style: const TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 13.0,

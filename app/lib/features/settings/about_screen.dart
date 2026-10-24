@@ -297,20 +297,22 @@ class AboutScreen extends StatelessWidget {
                                 size: 22.0,
                               ),
                               SizedBox(width: 8.0),
-                              Text(
-                                'Non-Diagnostic Scope',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                              Expanded(
+                                child: Text(
+                                  'Non-Diagnostic Scope',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations. Never use this software for clinical monitoring, treatment decisions, or emergency cardiac detection.',
+                            'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations. Never use this software for diagnostic monitoring, treatment decisions, or emergency cardiac detection.',
                             style: TextStyle(
                               fontFamily: 'Outfit',
                               fontSize: 13.0,

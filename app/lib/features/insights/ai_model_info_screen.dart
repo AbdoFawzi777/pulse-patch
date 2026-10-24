@@ -108,7 +108,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                                     ),
                                     SizedBox(height: 2.0),
                                     Text(
-                                      'On-device TensorFlow Lite Engine',
+                                      'On-device Dart Background Isolate Engine',
                                       style: TextStyle(
                                         fontFamily: 'Outfit',
                                         fontSize: 13.0,
@@ -145,7 +145,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                                 ),
                               ),
                               Text(
-                                'Local Isolate',
+                                '233 Parameters (<0.15ms)',
                                 style: TextStyle(
                                   fontFamily: 'Outfit',
                                   fontSize: 13.0,
@@ -201,6 +201,110 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                                 ),
                               ],
                             ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 16.0),
+
+                    // Validation Status & Synthetic Metrics Card
+                    Container(
+                      padding: const EdgeInsets.all(18.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.cardBgNavy,
+                        borderRadius: BorderRadius.circular(20.0),
+                        border: Border.all(
+                          color: AppColors.accentCyan.withValues(alpha: 0.25),
+                          width: 1.0,
+                        ),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 8.0,
+                                  vertical: 3.0,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accentCyan.withValues(
+                                    alpha: 0.15,
+                                  ),
+                                  borderRadius: BorderRadius.circular(6.0),
+                                ),
+                                child: const Text(
+                                  'SYNTHETIC PIPELINE TEST',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 11.0,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.accentCyan,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 8.0),
+                              const Expanded(
+                                child: Text(
+                                  'Not real validation',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 12.0,
+                                    color: Color(0xFF94A3B8),
+                                    fontStyle: FontStyle.italic,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12.0),
+                          const Text(
+                            'Pipeline Simulation Metrics',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 6.0),
+                          const Text(
+                            'Evaluated across 160 modeled synthetic volunteer sessions to verify numerical pipeline stability. Not measured on physical human subjects.',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 13.0,
+                              color: AppColors.textSecondary,
+                              height: 1.35,
+                            ),
+                          ),
+                          const SizedBox(height: 12.0),
+                          _buildMetricRow(
+                            'Cross-Validation Accuracy',
+                            '99.38% (±0.9%)',
+                            'Synthetic test',
+                          ),
+                          _buildMetricRow(
+                            'ROC-AUC Score',
+                            '1.0000',
+                            'Synthetic test',
+                          ),
+                          _buildMetricRow(
+                            'Synthetic Cohort Size',
+                            '160 sessions (10 profiles)',
+                            'Synthetic test',
+                          ),
+                          _buildMetricRow(
+                            'Resting MAE',
+                            '1.21 BPM (MAPE 1.77%)',
+                            'Synthetic test',
+                          ),
+                          _buildMetricRow(
+                            'Mean Recovery Drop',
+                            '21.6 ± 10.3 BPM',
+                            'Synthetic test',
                           ),
                         ],
                       ),
@@ -285,20 +389,22 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                                 size: 22.0,
                               ),
                               SizedBox(width: 8.0),
-                              Text(
-                                'Non-Diagnostic Scope',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
+                              Expanded(
+                                child: Text(
+                                  'Non-Diagnostic Educational Scope',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
                                 ),
                               ),
                             ],
                           ),
                           SizedBox(height: 8.0),
                           Text(
-                            'PulsePatch Lite is an educational prototype. The labels "Typical pattern" and "Different pattern" denote statistical clusters derived from volunteer protocol data. They do not constitute an evaluation of cardiovascular health, normalcy, or abnormality.',
+                            'PulsePatch Lite is an educational prototype. The labels "Typical pattern" and "Different pattern" denote statistical clusters derived from synthetic training protocols. They do not constitute an evaluation of cardiovascular health, normalcy, or pathology.',
                             style: TextStyle(
                               fontFamily: 'Outfit',
                               fontSize: 13.0,
@@ -331,7 +437,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                           ),
                         ),
                         subtitle: const Text(
-                          'Architecture, weights & standardization vectors',
+                          'Architecture, execution mode & parameters',
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontSize: 12.0,
@@ -351,11 +457,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                         children: [
                           _buildTechRow(
                             'Network Architecture',
-                            'MLP (5 -> 16 -> 8 -> 2)',
-                          ),
-                          _buildTechRow(
-                            'Inference Engine',
-                            'TensorFlow Lite C++ / Dart Isolate',
+                            'MLP (5 -> 16 -> 8 -> 1)',
                           ),
                           _buildTechRow(
                             'Input Tensor Shape',
@@ -363,23 +465,35 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                           ),
                           _buildTechRow(
                             'Output Tensor Shape',
-                            '[1, 2] (Logits / Softmax)',
+                            '[1, 1] (Sigmoid Logits)',
+                          ),
+                          _buildTechRow(
+                            'On-Device Execution',
+                            'Dart Isolate (Isolate.run)',
+                          ),
+                          _buildTechRow(
+                            'Model Parameter Count',
+                            '233 weights & biases',
+                          ),
+                          _buildTechRow(
+                            'Inference Latency',
+                            '< 0.15 ms on device',
+                          ),
+                          _buildTechRow(
+                            'TFLite Asset File',
+                            'model.tflite (in app bundle)',
                           ),
                           _buildTechRow(
                             'Scaler Mean Vector',
-                            '[72.5, 4.2, 75.0, 71.0, -4.0]',
+                            '[88.38, 7.18, 95.26, 81.47, 10.85]',
                           ),
                           _buildTechRow(
                             'Scaler Scale Vector',
-                            '[12.0, 2.5, 12.0, 11.5, 6.0]',
+                            '[21.27, 3.90, 27.64, 17.07, 13.07]',
                           ),
                           _buildTechRow(
-                            'Decision Boundary',
-                            'Euclidean z-distance threshold = 2.8',
-                          ),
-                          _buildTechRow(
-                            'Asset Checksum Status',
-                            'Valid TFL3 flatbuffer header',
+                            'Validation Status',
+                            'Synthetic pipeline test, not real validation',
                           ),
                           const SizedBox(height: 8.0),
                         ],
@@ -393,6 +507,54 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildMetricRow(String label, String value, String note) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            flex: 5,
+            child: Text(
+              label,
+              style: const TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 13.0,
+                color: AppColors.textSecondary,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8.0),
+          Expanded(
+            flex: 6,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  note,
+                  style: const TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 11.0,
+                    color: AppColors.accentCyan,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

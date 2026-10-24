@@ -152,13 +152,27 @@ class MeasurementCompleteScreen extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16.0),
-                  // Optical Pulse Waveform
+                  // Optical Pulse Waveform / Trend
                   PulseTraceChart(
                     points: defaultWaveform,
                     height: 90.0,
                     strokeWidth: 2.5,
                   ),
-                  const SizedBox(height: 16.0),
+                  const SizedBox(height: 8.0),
+                  Center(
+                    child: Text(
+                      isSampleData
+                          ? 'Optical pulse trace · Simulator'
+                          : 'Heart rate trend (BPM) · Real device (12-byte GATT stream)',
+                      style: const TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 12.0,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12.0),
                   // Hero stats block
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.baseline,

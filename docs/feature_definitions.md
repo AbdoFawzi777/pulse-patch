@@ -49,7 +49,7 @@ $$\text{end\_hr} = \text{median}(\{\text{BPM}_i \mid t_i \in [T_{\text{max}} - 1
 Standard deviation of successive differences (SDSD / RMSSD) computed from consecutive valid pulse intervals (in milliseconds):
 $$\text{variability} = \sqrt{\frac{1}{K-1} \sum_{k=1}^{K-1} (\Delta I_k - \overline{\Delta I})^2}$$
 where $\Delta I_k = I_{k+1} - I_k$ and $I_k \approx \frac{60000}{\text{BPM}_k}$.
-*Labeled in the UI strictly as "Estimated variability", never as clinical HRV.*
+*Labeled in the UI strictly as "Estimated variability", never as diagnostic HRV.*
 
 ---
 

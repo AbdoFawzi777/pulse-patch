@@ -75,7 +75,7 @@ If physical hardware is unavailable:
 
 ---
 
-## 5. History, Trends & PDF Clinical Summary Reports
+## 5. History, Trends & PDF Pulse Summary Reports
 
 1. **Measurement History Screen:**
    - Lists all recorded sessions with timestamp, BPM hero number, quality badge, and pattern label.

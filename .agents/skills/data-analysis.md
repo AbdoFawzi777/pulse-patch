@@ -5,7 +5,7 @@
 
 ## Deliverables
 1. **Sensor Validation Report (`docs/sensor_validation_report.md`):**
-   - MAX30102 optical sensor BPM vs Reference device (chest strap / clinical pulse oximeter).
+   - MAX30102 optical sensor BPM vs Reference device (chest strap / commercial pulse oximeter).
    - Metrics: Mean Absolute Error (MAE), Mean Absolute Percentage Error (MAPE), Pearson $r$.
    - Bland-Altman bias, limits of agreement ($95\% \text{ LoA}$), stratified by Rest vs Post-activity and signal quality.
 2. **Recovery Dynamics Study (`docs/recovery_analysis_report.md`):**

@@ -349,5 +349,5 @@
     ]
   },
   "non_diagnostic_disclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations.",
-  "training_cohort": "Educational volunteer resting and post-activity recovery protocol (synthetic bootstrap; 10 volunteers, 160 sessions)"
+  "training_cohort": "Educational volunteer resting and post-activity recovery protocol (synthetic pipeline test, not real validation; 10 modeled volunteers, 160 sessions)"
 }
