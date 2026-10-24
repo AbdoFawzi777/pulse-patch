@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'core/errors/global_error_boundary.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/l10n/locale_provider.dart';
 import 'core/theme/app_colors.dart';
@@ -41,6 +42,9 @@ class PulsePatchApp extends ConsumerWidget {
       ],
       supportedLocales: const [Locale('en', ''), Locale('ar', '')],
       locale: ref.watch(localeProvider),
+      builder: (context, widget) {
+        return GlobalErrorBoundary(child: widget ?? const SizedBox.shrink());
+      },
       home: const AppEntryGate(),
     );
   }
