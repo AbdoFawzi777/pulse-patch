@@ -19,7 +19,7 @@
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | DONE | Firmware Engineer | PlatformIO config, C++ PPG filter & SQI, GATT notify, README wiring | 5d558e6 |
 | Phase 13 | ML Data Pipeline, Training, Analysis | DONE | ML Engineer, QA | GroupKFold CV, Parity 100%, Model card, Validation report | 29c9c98 |
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Simulation verified; checklist documented in docs/hardware_integration_guide.md | Pending hardware |
-| Phase 15 | QA, Hardening & Release Build | PENDING | QA, Documentation | Release APK, full suite | Pending |
+| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | 81/81 tests pass, release APK built (74.9MB), user guide & demo script | Pending commit |
 
 ---
 
