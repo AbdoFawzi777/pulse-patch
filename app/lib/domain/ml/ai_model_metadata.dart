@@ -12,6 +12,7 @@ class AiModelMetadata {
     required this.scalerScale,
     required this.labels,
     required this.architecture,
+    this.weights,
     required this.nonDiagnosticDisclaimer,
     required this.trainingCohort,
   });
@@ -25,6 +26,7 @@ class AiModelMetadata {
   final List<double> scalerScale;
   final List<String> labels;
   final String architecture;
+  final Map<String, dynamic>? weights;
   final String nonDiagnosticDisclaimer;
   final String trainingCohort;
 
@@ -62,6 +64,7 @@ class AiModelMetadata {
           : ['Typical pattern', 'Different pattern'],
       architecture:
           json['architecture'] as String? ?? 'MLP (5 -> 16 -> 8 -> 2)',
+      weights: json['weights'] as Map<String, dynamic>?,
       nonDiagnosticDisclaimer:
           json['non_diagnostic_disclaimer'] as String? ??
           'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations.',
@@ -84,6 +87,7 @@ class AiModelMetadata {
     'scaler': {'mean': scalerMean, 'scale': scalerScale},
     'labels': labels,
     'architecture': architecture,
+    if (weights != null) 'weights': weights,
     'non_diagnostic_disclaimer': nonDiagnosticDisclaimer,
     'training_cohort': trainingCohort,
   };

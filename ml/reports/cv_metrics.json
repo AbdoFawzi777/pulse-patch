@@ -1,0 +1,62 @@
+{
+  "Logistic Regression": {
+    "mean_accuracy": 0.9375,
+    "std_accuracy": 0.05229125165837972,
+    "mean_precision": 0.85,
+    "mean_recall": 0.7828571428571429,
+    "mean_f1": 0.7971861471861472,
+    "mean_roc_auc": 0.9781164021164022,
+    "mean_brier_calibration": 0.038325212512274894,
+    "confusion_matrix": [
+      [
+        129,
+        4
+      ],
+      [
+        6,
+        21
+      ]
+    ],
+    "n_samples": 160
+  },
+  "Random Forest": {
+    "mean_accuracy": 1.0,
+    "std_accuracy": 0.0,
+    "mean_precision": 1.0,
+    "mean_recall": 1.0,
+    "mean_f1": 1.0,
+    "mean_roc_auc": 1.0,
+    "mean_brier_calibration": 0.002983063960793233,
+    "confusion_matrix": [
+      [
+        133,
+        0
+      ],
+      [
+        0,
+        27
+      ]
+    ],
+    "n_samples": 160
+  },
+  "Tiny MLP (5->16->8->2)": {
+    "mean_accuracy": 0.99375,
+    "std_accuracy": 0.012499999999999999,
+    "mean_precision": 1.0,
+    "mean_recall": 0.9714285714285715,
+    "mean_f1": 0.9846153846153847,
+    "mean_roc_auc": 1.0,
+    "mean_brier_calibration": 0.003411782531643308,
+    "confusion_matrix": [
+      [
+        133,
+        0
+      ],
+      [
+        1,
+        26
+      ]
+    ],
+    "n_samples": 160
+  }
+}

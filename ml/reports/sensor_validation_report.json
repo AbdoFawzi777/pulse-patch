@@ -1,0 +1,92 @@
+{
+  "overall": {
+    "n_samples": 1000,
+    "mae_bpm": 2.13,
+    "mape_percent": 2.5,
+    "bland_altman_bias_bpm": 0.13,
+    "bland_altman_sd_bpm": 2.99,
+    "loa_lower_bpm": -5.72,
+    "loa_upper_bpm": 5.99
+  },
+  "stratified_state": {
+    "rest": {
+      "n_samples": 500,
+      "mae_bpm": 1.21,
+      "mape_percent": 1.77,
+      "bland_altman_bias_bpm": 0.34,
+      "bland_altman_sd_bpm": 1.51,
+      "loa_lower_bpm": -2.63,
+      "loa_upper_bpm": 3.3
+    },
+    "post_activity": {
+      "n_samples": 300,
+      "mae_bpm": 2.35,
+      "mape_percent": 2.19,
+      "bland_altman_bias_bpm": 0.4,
+      "bland_altman_sd_bpm": 2.91,
+      "loa_lower_bpm": -5.31,
+      "loa_upper_bpm": 6.12
+    },
+    "motion_or_low_sqi": {
+      "n_samples": 200,
+      "mae_bpm": 4.11,
+      "mape_percent": 4.78,
+      "bland_altman_bias_bpm": -0.78,
+      "bland_altman_sd_bpm": 5.03,
+      "loa_lower_bpm": -10.63,
+      "loa_upper_bpm": 9.07
+    }
+  },
+  "stratified_sqi": {
+    "high_quality_ge_60": {
+      "n_samples": 824,
+      "mae_bpm": 1.69,
+      "mape_percent": 1.98,
+      "bland_altman_bias_bpm": 0.34,
+      "bland_altman_sd_bpm": 2.24,
+      "loa_lower_bpm": -4.05,
+      "loa_upper_bpm": 4.72
+    },
+    "low_quality_lt_60": {
+      "n_samples": 176,
+      "mae_bpm": 4.22,
+      "mape_percent": 4.91,
+      "bland_altman_bias_bpm": -0.83,
+      "bland_altman_sd_bpm": 5.13,
+      "loa_lower_bpm": -10.88,
+      "loa_upper_bpm": 9.23
+    }
+  },
+  "recovery_analysis": {
+    "rest_drop_mean": 0.11,
+    "rest_drop_std": 2.5,
+    "post_activity_drop_mean": 21.6,
+    "post_activity_drop_std": 10.3,
+    "per_volunteer_drop": {
+      "post_activity": {
+        "VOL_01": 23.96,
+        "VOL_02": 21.09,
+        "VOL_03": 19.41,
+        "VOL_04": 19.14,
+        "VOL_05": 20.29,
+        "VOL_06": 22.15,
+        "VOL_07": 18.32,
+        "VOL_08": 27.78,
+        "VOL_09": 27.41,
+        "VOL_10": 16.44
+      },
+      "rest": {
+        "VOL_01": -0.04,
+        "VOL_02": -0.01,
+        "VOL_03": -0.17,
+        "VOL_04": -0.04,
+        "VOL_05": -0.27,
+        "VOL_06": 0.09,
+        "VOL_07": 1.17,
+        "VOL_08": -0.73,
+        "VOL_09": 0.8,
+        "VOL_10": 0.3
+      }
+    }
+  }
+}

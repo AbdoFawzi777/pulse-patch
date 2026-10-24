@@ -288,15 +288,91 @@ class AiInferenceService {
       zVector.add(z);
     }
 
-    // Calibrated decision boundary matching exported TFLite model:
-    // Distance threshold: <= 2.8 is Typical pattern, > 2.8 is Different pattern
-    double zDistSq = 0.0;
-    for (final z in zVector) {
-      zDistSq += z * z;
-    }
-    final distance = math.sqrt(zDistSq);
+    // Forward pass: MLP evaluation or calibrated baseline fallback
+    bool isTypical = true;
+    final weights = meta.weights;
 
-    final bool isTypical = distance <= 2.8;
+    if (weights != null &&
+        weights['coefs'] is List &&
+        weights['intercepts'] is List) {
+      try {
+        final rawCoefs = weights['coefs'] as List<dynamic>;
+        final rawIntercepts = weights['intercepts'] as List<dynamic>;
+
+        // Layer 1: Dense 5 -> 16, ReLU
+        final c0 = (rawCoefs[0] as List<dynamic>)
+            .map(
+              (r) => (r as List<dynamic>)
+                  .map((e) => (e as num).toDouble())
+                  .toList(),
+            )
+            .toList();
+        final b0 = (rawIntercepts[0] as List<dynamic>)
+            .map((e) => (e as num).toDouble())
+            .toList();
+        final h1 = List<double>.filled(16, 0.0);
+        for (int j = 0; j < 16; j++) {
+          double sum = b0[j];
+          for (int i = 0; i < zVector.length && i < c0.length; i++) {
+            sum += zVector[i] * c0[i][j];
+          }
+          h1[j] = math.max(0.0, sum);
+        }
+
+        // Layer 2: Dense 16 -> 8, ReLU
+        final c1 = (rawCoefs[1] as List<dynamic>)
+            .map(
+              (r) => (r as List<dynamic>)
+                  .map((e) => (e as num).toDouble())
+                  .toList(),
+            )
+            .toList();
+        final b1 = (rawIntercepts[1] as List<dynamic>)
+            .map((e) => (e as num).toDouble())
+            .toList();
+        final h2 = List<double>.filled(8, 0.0);
+        for (int j = 0; j < 8; j++) {
+          double sum = b1[j];
+          for (int i = 0; i < 16 && i < c1.length; i++) {
+            sum += h1[i] * c1[i][j];
+          }
+          h2[j] = math.max(0.0, sum);
+        }
+
+        // Layer 3: Output 8 -> 1 (Sigmoid)
+        final c2 = (rawCoefs[2] as List<dynamic>)
+            .map(
+              (r) => (r as List<dynamic>)
+                  .map((e) => (e as num).toDouble())
+                  .toList(),
+            )
+            .toList();
+        final b2 = (rawIntercepts[2] as List<dynamic>)
+            .map((e) => (e as num).toDouble())
+            .toList();
+        double logit = b2[0];
+        for (int i = 0; i < 8 && i < c2.length; i++) {
+          logit += h2[i] * c2[i][0];
+        }
+        final probDifferent = 1.0 / (1.0 + math.exp(-logit));
+        isTypical = probDifferent < 0.5;
+      } catch (_) {
+        // Fallback to normalized Euclidean distance
+        double zDistSq = 0.0;
+        for (final z in zVector) {
+          zDistSq += z * z;
+        }
+        isTypical = math.sqrt(zDistSq) <= 2.8;
+      }
+    } else {
+      // Fallback to normalized Euclidean distance
+      double zDistSq = 0.0;
+      for (final z in zVector) {
+        zDistSq += z * z;
+      }
+      isTypical = math.sqrt(zDistSq) <= 2.8;
+    }
+
     final String label = isTypical ? 'Typical pattern' : 'Different pattern';
 
     // Plain-language non-diagnostic explanation
