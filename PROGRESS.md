@@ -5,9 +5,9 @@
 | Step 1 | Specification & Design Extraction | DONE | Lead Orchestrator, Architect | Pixel sampling, image audits, file verification | 85b055b |
 | Step 3 | Specialized Team & Role Skills | DONE | Lead Orchestrator | Playbook verification in `.agents/skills/` | 85b055b |
 | Phase 0 | Project Setup & Repo Layout | DONE | Architect, Flutter UI | `scripts/ci.ps1` (format, analyze clean, 2/2 tests pass) | 85b055b |
-| Phase 1 | Design System & Reusable Widgets | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 22/22 tests pass) | Phase 1 |
-| Phase 2 | Onboarding & Permissions | IN PROGRESS | Flutter UI, QA | Widget tests, l10n | Pending |
-| Phase 3 | Data Layer (Drift SQLite) | PENDING | Architect, QA | In-memory DB unit tests | Pending |
+| Phase 1 | Design System & Reusable Widgets | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 22/22 tests pass) | 03e3a6a |
+| Phase 2 | Onboarding & Permissions | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 28/28 tests pass) | Phase 2 |
+| Phase 3 | Data Layer (Drift SQLite) | IN PROGRESS | Architect, QA | In-memory DB unit tests | Pending |
 | Phase 4 | BLE Layer & Simulator | PENDING | BLE Engineer, QA | Packet parsing tests | Pending |
 | Phase 5 | Measurement Engine (Pure Dart) | PENDING | Signal Engineer, QA | Signal filter unit tests | Pending |
 | Phase 6 | Core Screens (Home, Measure, Live, Complete) | PENDING | Flutter UI, QA | Widget & golden tests | Pending |

@@ -1,13 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'core/l10n/app_localizations.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
+import 'data/repositories/preferences_repository.dart';
+import 'features/onboarding/onboarding_coordinator.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const ProviderScope(child: PulsePatchApp()));
+  final prefs = await SharedPreferences.getInstance();
+
+  runApp(
+    ProviderScope(
+      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      child: const PulsePatchApp(),
+    ),
+  );
 }
 
 class PulsePatchApp extends ConsumerWidget {
@@ -28,7 +38,36 @@ class PulsePatchApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('en', ''), Locale('ar', '')],
-      home: const ThemedShellScreen(),
+      home: const AppEntryGate(),
+    );
+  }
+}
+
+class AppEntryGate extends ConsumerStatefulWidget {
+  const AppEntryGate({super.key});
+
+  @override
+  ConsumerState<AppEntryGate> createState() => _AppEntryGateState();
+}
+
+class _AppEntryGateState extends ConsumerState<AppEntryGate> {
+  bool _showHome = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final prefsRepo = ref.read(preferencesRepositoryProvider);
+    _showHome = prefsRepo.isOnboardingCompleted;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_showHome) {
+      return const ThemedShellScreen();
+    }
+
+    return OnboardingCoordinator(
+      onCompleted: () => setState(() => _showHome = true),
     );
   }
 }
@@ -44,7 +83,6 @@ class ThemedShellScreen extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          // Background canvas with corner glows
           Positioned.fill(child: Container(color: AppColors.bgBase)),
           Positioned(
             top: -100,
