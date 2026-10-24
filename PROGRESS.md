@@ -2,11 +2,11 @@
 
 | Phase | Description | Status | Roles | Tested | Commit |
 |---|---|---|---|---|---|
-| Step 1 | Specification & Design Extraction | DONE | Lead Orchestrator, Architect | Pixel sampling, image audits, file verification | 48a5c2d |
-| Step 3 | Specialized Team & Role Skills | DONE | Lead Orchestrator | Playbook verification in `.agents/skills/` | 48a5c2d |
-| Phase 0 | Project Setup & Repo Layout | DONE | Architect, Flutter UI | `scripts/ci.ps1` (format, analyze clean, 2/2 tests pass) | Phase 0 |
-| Phase 1 | Design System & Reusable Widgets | IN PROGRESS | Flutter UI, QA | Golden tests, widget tests | Pending |
-| Phase 2 | Onboarding & Permissions | PENDING | Flutter UI, QA | Widget tests, l10n | Pending |
+| Step 1 | Specification & Design Extraction | DONE | Lead Orchestrator, Architect | Pixel sampling, image audits, file verification | 85b055b |
+| Step 3 | Specialized Team & Role Skills | DONE | Lead Orchestrator | Playbook verification in `.agents/skills/` | 85b055b |
+| Phase 0 | Project Setup & Repo Layout | DONE | Architect, Flutter UI | `scripts/ci.ps1` (format, analyze clean, 2/2 tests pass) | 85b055b |
+| Phase 1 | Design System & Reusable Widgets | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 22/22 tests pass) | Phase 1 |
+| Phase 2 | Onboarding & Permissions | IN PROGRESS | Flutter UI, QA | Widget tests, l10n | Pending |
 | Phase 3 | Data Layer (Drift SQLite) | PENDING | Architect, QA | In-memory DB unit tests | Pending |
 | Phase 4 | BLE Layer & Simulator | PENDING | BLE Engineer, QA | Packet parsing tests | Pending |
 | Phase 5 | Measurement Engine (Pure Dart) | PENDING | Signal Engineer, QA | Signal filter unit tests | Pending |
@@ -24,6 +24,6 @@
 ---
 
 ## Hardware & Environment Dependencies Status
-- **ESP32-C3 Physical Device:** Not currently connected via USB/BLE. Simulator (`SimulatedHeartRateSource`) will be used and clearly labeled `Simulator` / `Sample data`.
-- **Python ML Pipeline:** Python 3.14.3 is currently installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed without delay.
-- **Android SDK & Toolchain:** Fully configured (`Android SDK 36.1.0-rc1`, OpenJDK 21). 4 emulators available (`Pixel`, `Pixel_9`, `Pixel_3`, `Iphone_14`).
+- **ESP32-C3 Physical Device:** Not currently connected via USB/BLE. Simulator (`SimulatedHeartRateSource`) is used and clearly labeled `Simulator` / `Sample data`.
+- **Python ML Pipeline:** Python 3.14.3 is installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed immediately.
+- **Android SDK & Toolchain:** Configured and validated (`Android SDK 36.1.0-rc1`, OpenJDK 21). 4 emulators available (`Pixel`, `Pixel_9`, `Pixel_3`, `Iphone_14`).
