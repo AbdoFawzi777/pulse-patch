@@ -9,8 +9,8 @@
 | Phase 2 | Onboarding & Permissions | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 28/28 tests pass) | f8c13f5 |
 | Phase 3 | Data Layer (Drift SQLite) | DONE | Architect, QA | `scripts/ci.ps1` (format, analyze clean, 34/34 tests pass) | 4162b77 |
 | Phase 4 | BLE Layer & Simulator | DONE | BLE Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 41/41 tests pass) | 1be042b |
-| Phase 5 | Measurement Engine (Pure Dart) | DONE | Signal Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 49/49 tests pass) | Phase 5 |
-| Phase 6 | Core Screens (Home, Measure, Live, Complete) | IN PROGRESS | Flutter UI, QA | Widget & golden tests | Pending |
+| Phase 5 | Measurement Engine (Pure Dart) | DONE | Signal Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 49/49 tests pass) | 5883f26 |
+| Phase 6 | Core Screens (Home, Measure, Live, Complete) | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 53/53 tests pass) | In progress |
 | Phase 7 | History, Details, Trends, Reports | PENDING | Flutter UI, QA | PDF export, widget tests | Pending |
 | Phase 8 | Statistics & Recovery Analysis | PENDING | Signal Engineer, QA | Shared test vector tests | Pending |
 | Phase 9 | AI Insights Integration (TFLite) | PENDING | ML Engineer, Flutter UI | Isolate inference tests | Pending |

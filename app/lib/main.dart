@@ -6,6 +6,7 @@ import 'core/l10n/app_localizations.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'data/repositories/preferences_repository.dart';
+import 'features/home/app_shell.dart';
 import 'features/onboarding/onboarding_coordinator.dart';
 
 Future<void> main() async {
@@ -63,7 +64,7 @@ class _AppEntryGateState extends ConsumerState<AppEntryGate> {
   @override
   Widget build(BuildContext context) {
     if (_showHome) {
-      return const ThemedShellScreen();
+      return const AppShell();
     }
 
     return OnboardingCoordinator(

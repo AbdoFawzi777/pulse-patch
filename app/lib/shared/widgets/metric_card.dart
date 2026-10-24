@@ -12,6 +12,7 @@ class MetricCard extends StatelessWidget {
     this.onTap,
     this.width,
     this.height,
+    this.minHeight,
   });
 
   final Widget child;
@@ -21,6 +22,7 @@ class MetricCard extends StatelessWidget {
   final VoidCallback? onTap;
   final double? width;
   final double? height;
+  final double? minHeight;
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +37,9 @@ class MetricCard extends StatelessWidget {
     final cardContent = Container(
       width: width,
       height: height,
+      constraints: minHeight != null
+          ? BoxConstraints(minHeight: minHeight!)
+          : null,
       padding: padding,
       decoration: BoxDecoration(
         gradient: effectiveGradient,

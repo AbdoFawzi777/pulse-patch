@@ -59,18 +59,26 @@ class HeartRateHeroNumber extends StatelessWidget {
     );
 
     if (stacked) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [numberWidget, const SizedBox(height: 2.0), unitWidget],
+      return FittedBox(
+        fit: BoxFit.scaleDown,
+        alignment: Alignment.center,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [numberWidget, const SizedBox(height: 2.0), unitWidget],
+        ),
       );
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.baseline,
-      textBaseline: TextBaseline.alphabetic,
-      children: [numberWidget, const SizedBox(width: 8.0), unitWidget],
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      alignment: Alignment.centerLeft,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.baseline,
+        textBaseline: TextBaseline.alphabetic,
+        children: [numberWidget, const SizedBox(width: 8.0), unitWidget],
+      ),
     );
   }
 }
