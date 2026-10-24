@@ -11,7 +11,7 @@
 | Phase 4 | BLE Layer & Simulator | DONE | BLE Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 41/41 tests pass) | 1be042b |
 | Phase 5 | Measurement Engine (Pure Dart) | DONE | Signal Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 49/49 tests pass) | 5883f26 |
 | Phase 6 | Core Screens (Home, Measure, Live, Complete) | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 53/53 tests pass) | 14ae44b |
-| Phase 7 | History, Details, Trends, Reports | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 58/58 tests pass) | In progress |
+| Phase 7 | History, Details, Trends, Reports | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 58/58 tests pass) | c6e2b0e |
 | Phase 8 | Statistics & Recovery Analysis | PENDING | Signal Engineer, QA | Shared test vector tests | Pending |
 | Phase 9 | AI Insights Integration (TFLite) | PENDING | ML Engineer, Flutter UI | Isolate inference tests | Pending |
 | Phase 10 | Notifications, Settings, Privacy, About | PENDING | Flutter UI, QA | Notification & settings tests | Pending |
