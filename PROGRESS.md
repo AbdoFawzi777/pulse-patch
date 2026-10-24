@@ -17,7 +17,7 @@
 | Phase 10 | Notifications, Settings, Privacy, About | DONE | Flutter UI, QA, Architect | `scripts/ci.ps1` (format, analyze clean, 76/76 tests pass) | 06bc912 |
 | Phase 11 | System States & Hardening | DONE | Architect, QA, Flutter UI | `scripts/ci.ps1` (format, analyze clean, 81/81 tests pass) | 284be36 |
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | DONE | Firmware Engineer | PlatformIO config, C++ PPG filter & SQI, GATT notify, README wiring | 5d558e6 |
-| Phase 13 | ML Data Pipeline, Training, Analysis | PENDING | ML Engineer | Parity & model tests | Pending |
+| Phase 13 | ML Data Pipeline, Training, Analysis | DONE | ML Engineer, QA | GroupKFold CV, Parity 100%, Model card, Validation report | 29c9c98 |
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Physical BLE calibration | Pending |
 | Phase 15 | QA, Hardening & Release Build | PENDING | QA, Documentation | Release APK, full suite | Pending |
 
