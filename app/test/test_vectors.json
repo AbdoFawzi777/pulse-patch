@@ -1,0 +1,63 @@
+[
+  {
+    "name": "constant_resting_60s",
+    "protocol": "rest",
+    "samples": [
+      {"t_sec": 0, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 1, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 2, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 3, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 4, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 5, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 6, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 7, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 8, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 9, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 10, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 15, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 20, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 25, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 30, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 35, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 40, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 45, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 50, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 51, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 52, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 53, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 54, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 55, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 56, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 57, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 58, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 59, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 60, "bpm": 60.0, "quality": 90, "is_valid": true},
+      {"t_sec": 61, "bpm": 60.0, "quality": 90, "is_valid": true}
+    ],
+    "expected": {
+      "is_analyzable": true,
+      "mean_hr": 60.0,
+      "std_hr": 0.0,
+      "start_hr": 60.0,
+      "end_hr": 60.0,
+      "recovery_drop": 0.0
+    }
+  },
+  {
+    "name": "insufficient_short_session",
+    "protocol": "rest",
+    "samples": [
+      {"t_sec": 0, "bpm": 70.0, "quality": 85, "is_valid": true},
+      {"t_sec": 1, "bpm": 72.0, "quality": 85, "is_valid": true},
+      {"t_sec": 2, "bpm": 71.0, "quality": 85, "is_valid": true}
+    ],
+    "expected": {
+      "is_analyzable": false,
+      "mean_hr": null,
+      "std_hr": null,
+      "start_hr": null,
+      "end_hr": null,
+      "recovery_drop": null
+    }
+  }
+]
