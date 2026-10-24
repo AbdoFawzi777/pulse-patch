@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'core/l10n/app_localizations.dart';
+import 'core/l10n/locale_provider.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
 import 'data/repositories/preferences_repository.dart';
@@ -39,6 +40,7 @@ class PulsePatchApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       supportedLocales: const [Locale('en', ''), Locale('ar', '')],
+      locale: ref.watch(localeProvider),
       home: const AppEntryGate(),
     );
   }

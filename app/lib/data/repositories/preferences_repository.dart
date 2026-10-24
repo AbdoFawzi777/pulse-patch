@@ -55,6 +55,18 @@ class PreferencesRepository {
     await _prefs.setInt(PreferenceKeys.measurementDurationSeconds, seconds);
   }
 
+  bool get autoReconnectBle => _prefs.getBool('auto_reconnect_ble') ?? true;
+
+  Future<void> setAutoReconnectBle(bool value) async {
+    await _prefs.setBool('auto_reconnect_ble', value);
+  }
+
+  bool get useSmoothing => _prefs.getBool('use_smoothing') ?? true;
+
+  Future<void> setUseSmoothing(bool value) async {
+    await _prefs.setBool('use_smoothing', value);
+  }
+
   Future<void> clearAll() async {
     await _prefs.clear();
   }

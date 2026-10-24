@@ -22,6 +22,24 @@ class ReminderRecord {
     return '$h:$m';
   }
 
+  ReminderRecord copyWith({
+    int? id,
+    int? hour,
+    int? minute,
+    String? label,
+    bool? isEnabled,
+    List<int>? daysOfWeek,
+  }) {
+    return ReminderRecord(
+      id: id ?? this.id,
+      hour: hour ?? this.hour,
+      minute: minute ?? this.minute,
+      label: label ?? this.label,
+      isEnabled: isEnabled ?? this.isEnabled,
+      daysOfWeek: daysOfWeek ?? this.daysOfWeek,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
     'id': id,
     'hour': hour,

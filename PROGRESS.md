@@ -14,7 +14,7 @@
 | Phase 7 | History, Details, Trends, Reports | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 58/58 tests pass) | c6e2b0e |
 | Phase 8 | Statistics & Recovery Analysis | DONE | Signal Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 62/62 tests pass) | 5e79acb |
 | Phase 9 | AI Insights Integration (TFLite) | DONE | ML Engineer, Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 70/70 tests pass) | 44a047e |
-| Phase 10 | Notifications, Settings, Privacy, About | PENDING | Flutter UI, QA | Notification & settings tests | Pending |
+| Phase 10 | Notifications, Settings, Privacy, About | DONE | Flutter UI, QA, Architect | `scripts/ci.ps1` (format, analyze clean, 76/76 tests pass) | Pending commit |
 | Phase 11 | System States & Hardening | PENDING | Architect, QA | Error boundary & state tests | Pending |
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | PENDING | Firmware Engineer | PlatformIO verification | Pending |
 | Phase 13 | ML Data Pipeline, Training, Analysis | PENDING | ML Engineer | Parity & model tests | Pending |
