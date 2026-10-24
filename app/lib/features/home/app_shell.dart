@@ -6,6 +6,9 @@ import '../../domain/entities/session_record.dart';
 import '../../domain/signal/session_recorder.dart';
 import '../../shared/widgets/bottom_circle_nav.dart';
 import '../device/heart_rate_source.dart';
+import '../history/measurement_history_screen.dart';
+import '../history/session_details_screen.dart';
+import '../insights/ai_insights_dashboard_screen.dart';
 import '../measurement/live_measurement_screen.dart';
 import '../measurement/measurement_complete_screen.dart';
 import '../measurement/measurement_preparation_screen.dart';
@@ -162,9 +165,28 @@ class _AppShellState extends ConsumerState<AppShell> {
         break;
 
       case AppView.history:
+        body = MeasurementHistoryScreen(
+          onBack: () => setState(() => _currentView = AppView.home),
+          onSelectSession: (session) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => SessionDetailsScreen(
+                  session: session,
+                  onBack: () => Navigator.of(context).maybePop(),
+                  onDeleted: () => Navigator.of(context).maybePop(),
+                ),
+              ),
+            );
+          },
+        );
+        break;
+
       case AppView.insights:
+        body = const AiInsightsDashboardScreen();
+        break;
+
       case AppView.device:
-        // Placeholder shells for upcoming phases, maintaining active tab circle
+        // Placeholder shell for upcoming phases, maintaining active tab circle
         body = Center(
           child: Text(
             'Tab $_navIndex Active',

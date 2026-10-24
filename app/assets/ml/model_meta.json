@@ -1,0 +1,24 @@
+{
+  "model_name": "PulsePatch AI Insights",
+  "engine": "TensorFlow Lite",
+  "version": "1.0.0",
+  "training_date": "2026-10-24",
+  "features": [
+    "mean_hr",
+    "std_hr",
+    "start_hr",
+    "end_hr",
+    "recovery_drop"
+  ],
+  "scaler": {
+    "mean": [72.5, 4.2, 75.0, 71.0, -4.0],
+    "scale": [12.0, 2.5, 12.0, 11.5, 6.0]
+  },
+  "labels": [
+    "Typical pattern",
+    "Different pattern"
+  ],
+  "architecture": "MLP (5 -> 16 -> 8 -> 2)",
+  "non_diagnostic_disclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations.",
+  "training_cohort": "Educational prototype resting and recovery volunteer protocol"
+}

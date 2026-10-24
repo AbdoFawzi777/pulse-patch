@@ -28,6 +28,7 @@ dependencies:
   drift: ^2.19.0
   sqlite3: ^2.4.6
   sqlite3_flutter_libs: ^0.5.24
+  tflite_flutter: ^0.12.1
 
 dev_dependencies:
   flutter_test:
@@ -41,3 +42,5 @@ dependency_overrides:
 flutter:
   uses-material-design: true
   generate: true
+  assets:
+    - assets/ml/

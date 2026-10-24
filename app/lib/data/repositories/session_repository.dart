@@ -250,6 +250,35 @@ class SessionRepository {
     }
   }
 
+  /// Inserts or updates an AI classification result for a session.
+  void insertOrUpdateAiResult(AiResultRecord aiResult) {
+    try {
+      _db.rawDb.execute(
+        '''
+        INSERT INTO ai_results (session_id, model_version, label, features_json, created_at)
+        VALUES (?, ?, ?, ?, ?)
+        ON CONFLICT(session_id) DO UPDATE SET
+          model_version = excluded.model_version,
+          label = excluded.label,
+          features_json = excluded.features_json,
+          created_at = excluded.created_at;
+      ''',
+        [
+          aiResult.sessionId,
+          aiResult.modelVersion,
+          aiResult.label,
+          aiResult.featuresJson,
+          aiResult.createdAt.millisecondsSinceEpoch,
+        ],
+      );
+    } catch (e) {
+      throw StorageException(
+        'Failed to save AI result for session: ${aiResult.sessionId}',
+        e,
+      );
+    }
+  }
+
   /// Deletes a specific session and cascades to samples, stats, and AI results.
   Future<void> deleteSession(String id) async {
     try {
