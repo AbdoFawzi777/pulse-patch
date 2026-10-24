@@ -1,0 +1,55 @@
+{
+  "@@locale": "ar",
+  "appTitle": "PulsePatch Lite",
+  "greeting": "مرحباً!",
+  "questionToday": "كيف حالك اليوم؟",
+  "connectedDeviceChip": "متصل · {deviceName}",
+  "@connectedDeviceChip": {
+    "placeholders": {
+      "deviceName": {
+        "type": "String"
+      }
+    }
+  },
+  "sampleDataChip": "بيانات تجريبية",
+  "simulatorChip": "المحاكي",
+  "lastSession": "آخر جلسة",
+  "saved": "تم الحفظ",
+  "notLive": "غير مباشر",
+  "bpm": "نبضة/د",
+  "aiInsights": "رؤى الذكاء الاصطناعي",
+  "typicalPattern": "نمط معتاد",
+  "differentPattern": "نمط مختلف",
+  "measure": "قياس",
+  "measuring": "جاري القياس",
+  "opticalPulseTrace": "المخطط الضوئي للنبض",
+  "signalGood": "الإشارة: جيدة",
+  "signalWeak": "الإشارة: ضعيفة",
+  "signalFair": "الإشارة: مقبولة",
+  "stopAndSave": "إيقاف وحفظ",
+  "heartRate": "معدل النبض",
+  "pulseInterval": "فاصل النبض",
+  "variabilityEst": "التباين (تقديري)",
+  "history": "السجل",
+  "week": "أسبوع",
+  "day": "يوم",
+  "connectDevice": "توصيل الجهاز",
+  "scanningKeepWithin1m": "جاري المسح · أبقِ اللاصقة ضمن نطاق 1 متر",
+  "connect": "اتصال",
+  "disconnect": "قطع الاتصال",
+  "modelResult": "نتيجة النموذج",
+  "experimental": "تجريبي",
+  "measuredValuesUsed": "القيم المقاسة المستخدمة",
+  "patternExplanation": "مشابه لآخر 5 جلسات راحة لك. تصنيف نمط، وليس تقييماً صحياً.",
+  "runsOnPhone": "يعمل محلياً على هذا الهاتف · TensorFlow Lite · {count} جلسات متوفرة",
+  "@runsOnPhone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sensorDisclaimer": "المستشعر: MAX30102 · تظهر البطارية والبرنامج الثابت عند توفرهما فقط",
+  "sampleDataPeaksDisclaimer": "بيانات تجريبية · تقديرية بناءً على قمم النبض الضوئي",
+  "educationalDisclaimer": "تطبيق PulsePatch Lite نموذج تعليمي أولي ولا يقدم تشخيصاً طبياً."
+}

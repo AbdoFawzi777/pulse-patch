@@ -1,0 +1,55 @@
+{
+  "@@locale": "en",
+  "appTitle": "PulsePatch Lite",
+  "greeting": "Hi, there!",
+  "questionToday": "How are you today?",
+  "connectedDeviceChip": "Connected · {deviceName}",
+  "@connectedDeviceChip": {
+    "placeholders": {
+      "deviceName": {
+        "type": "String"
+      }
+    }
+  },
+  "sampleDataChip": "Sample data",
+  "simulatorChip": "Simulator",
+  "lastSession": "Last session",
+  "saved": "Saved",
+  "notLive": "not live",
+  "bpm": "BPM",
+  "aiInsights": "AI Insights",
+  "typicalPattern": "Typical pattern",
+  "differentPattern": "Different pattern",
+  "measure": "Measure",
+  "measuring": "Measuring",
+  "opticalPulseTrace": "Optical pulse trace",
+  "signalGood": "Signal: Good",
+  "signalWeak": "Signal: Weak",
+  "signalFair": "Signal: Fair",
+  "stopAndSave": "Stop and save",
+  "heartRate": "Heart Rate",
+  "pulseInterval": "Pulse interval",
+  "variabilityEst": "Variability (est.)",
+  "history": "History",
+  "week": "Week",
+  "day": "Day",
+  "connectDevice": "Connect device",
+  "scanningKeepWithin1m": "Scanning · keep the patch within 1 m",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "modelResult": "Model result",
+  "experimental": "Experimental",
+  "measuredValuesUsed": "Measured values used",
+  "patternExplanation": "Similar to your last 5 rest sessions. A pattern label, not a health rating.",
+  "runsOnPhone": "Runs on this phone · TensorFlow Lite · {count} sessions available",
+  "@runsOnPhone": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "sensorDisclaimer": "Sensor: MAX30102 · Battery and firmware shown only if reported",
+  "sampleDataPeaksDisclaimer": "Sample data · estimated from optical pulse peaks",
+  "educationalDisclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis."
+}
