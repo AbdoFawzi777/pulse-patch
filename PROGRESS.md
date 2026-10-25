@@ -19,12 +19,13 @@
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | DONE | Firmware Engineer | PlatformIO config, C++ PPG filter & SQI, GATT notify, README wiring | 5d558e6 |
 | Phase 13 | ML Data Pipeline, Training, Analysis | DONE | ML Engineer, QA | GroupKFold CV, Parity 100%, Model card, Validation report | 29c9c98 |
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Simulation verified; checklist documented in docs/hardware_integration_guide.md | Pending hardware |
-| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | 83/83 tests pass, release APK built (55.8MB) & verified on physical phone (NIC LX2) | 1a2febb |
-| Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation; 107/107 tests pass | In Progress |
+| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | Release APK built (53.3 MiB / 55.9 MB, 55,926,750 bytes); physical phone install currently Not Verified (no device attached) | 1a2febb |
+| Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation (physical band connection not yet tested); 107/107 tests pass | In Progress |
+| Phase 17 | Design Fidelity & Pixel Matching (>=95%) | DONE | Flutter UI, QA | All 7 master canvas screens achieved >=95.0% pixel match (Home 95.7%, Measuring 95.1%, Heart Rate 96.8%, AI Insights 95.0%, Connect device 95.4%, History 95.3%, App icon 100.0%); 107/107 tests pass | 1c75daa |
 
 ---
 
 ## Hardware & Environment Dependencies Status
 - **ESP32-C3 Physical Device:** Not currently connected via USB/BLE. Simulator (`SimulatedHeartRateSource`) is used and clearly labeled `Simulator` / `Sample data`.
 - **Python ML Pipeline:** Python 3.14.3 is installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed immediately.
-- **Android SDK & Physical Device:** Configured and validated (`Android SDK 36.1.0-rc1`, OpenJDK 21). Physical smartphone `NIC LX2` (Android 15, serial `A9VUCP5A08407069`) verified: release APK installed and running (PID `30677`).
+- **Android SDK & Physical Device:** Configured and validated (`Android SDK 36.1.0-rc1`, OpenJDK 21). Physical phone installation is currently **Not Verified**: live check `$ adb devices -l` returns an empty device list (`List of devices attached`). Release APK binary is compiled and verified (`app/build/app/outputs/flutter-apk/app-release.apk`, 53.3 MiB / 55.9 MB, 55,926,750 bytes); physical deployment awaits device reconnection.

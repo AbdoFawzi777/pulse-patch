@@ -69,16 +69,36 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
 ---
 
 ### 4.2 Real-Data Protocol (Xiaomi Mi Smart Band 5 Extension)
+
+> [!NOTE]
+> **Status: Code & Architecture Ready — Physical Session Not Yet Recorded**  
+> The data export adapter, training pipeline, and single-subject split logic are fully implemented and verified in code. However, **no physical Mi Band 5 session has been recorded yet**. The physical over-the-air BLE connection is not yet tested on a real band.
+
 1. **Device & Sensor Scope:**
    - Device: Xiaomi Mi Smart Band 5 connected via standard BLE Heart Rate Service (0x180D/0x2A37) or Huami protocol.
    - Sensor type: Wrist optical photoplethysmography (wrist optical sensor, not MAX30102).
    - Label: source=miband5.
    - **Crucial boundary:** The Mi Smart Band 5 is an educational input source, NOT a clinical gold standard. It is never used to validate MAX30102 sensor accuracy (MAE/Bland-Altman).
+
 2. **Collection & Evaluation Protocol:**
    - Single-subject guided collection mode: Repeated short resting sessions (60s) and post-activity recovery sessions (stairs 1 min + seated recovery 90s) recorded over multiple days.
    - Evaluation Method: Strictly time-ordered chronological session split (75% train earlier, 25% test later).
    - **Zero Generalization Claim:** When evaluating single-subject data, GroupKFold across subjects is prohibited. The evaluation shows pipeline stability on one person's data and does NOT generalize to the wider population.
-3. **Execution Command:**
+
+3. **Label Derivation for Single-Subject Data (Session Type Learning):**
+   When training on single-subject exported sessions without external clinical annotations, labels are derived programmatically from the recorded session protocol:
+   - **Resting Sessions (session_type == 'rest'):**
+     - **Typical pattern (Label 0):** Stable resting rhythm where average BPM remains within 45–95 BPM and standard deviation (std_hr) $< 8.0\text{ BPM}$.
+     - **Different pattern (Label 1):** Elevated resting rate ($> 95\text{ BPM}$) or erratic variability ($\text{std} \ge 8.0\text{ BPM}$).
+   - **Post-Activity Recovery Sessions (session_type == 'post_activity'):**
+     - **Typical pattern (Label 0):** Expected deceleration trajectory with rate recovery drop $\ge 12\text{ BPM}$ across the post-exercise window.
+     - **Different pattern (Label 1):** Blunted or delayed rate recovery drop ($< 12\text{ BPM}$).
+   
+   > [!IMPORTANT]
+   > **Model Learns Session Type Dynamics, NOT Health**  
+   > Because labels in real single-subject training are derived directly from the user's recorded session types (Resting stability vs Post-Activity recovery), the model is learning to classify **session type and recovery trajectory patterns**, NOT personal health, fitness, or wellness rating. It cannot evaluate medical status.
+
+4. **Execution Command:**
    `ash
    py ml/src/train.py --data <exported_sessions.csv> --export_production
    `

@@ -336,7 +336,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                                 borderRadius: BorderRadius.circular(6.0),
                               ),
                               child: const Text(
-                                'REAL WRIST SENSOR TRAINING',
+                                'SINGLE-SUBJECT DATA PROTOCOL',
                                 style: TextStyle(
                                   fontFamily: 'Outfit',
                                   fontSize: 11.0,
@@ -350,7 +350,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                         ),
                         const SizedBox(height: 12.0),
                         const Text(
-                          'Mi Smart Band 5 Training Dataset',
+                          'Session Type Pattern Classification',
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontSize: 16.0,
@@ -360,7 +360,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                         ),
                         const SizedBox(height: 6.0),
                         const Text(
-                          'Model trained on Mi Band 5 wrist data (wrist optical sensor, not MAX30102). Evaluated on single-subject time-ordered split (earlier sessions train, later sessions test). Demonstrates pipeline execution on real user data; does not generalize to other individuals. The wrist band is an educational input device, not a reference device for sensor accuracy or Bland-Altman claims.',
+                          'When training on single-subject recordings, labels (Typical vs Different pattern) are derived programmatically from the session protocol: resting stability vs post-activity rate recovery drop. The model learns session type dynamics and recovery trajectory, NOT health, wellness, or fitness. Physical over-the-air pairing with a Mi Band 5 is not yet tested on a real band.',
                           style: TextStyle(
                             fontFamily: 'Outfit',
                             fontSize: 13.0,
@@ -370,19 +370,19 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                         ),
                         const SizedBox(height: 12.0),
                         _buildMetricRow(
-                          'Sensor Source',
-                          'Wrist optical sensor (not MAX30102)',
-                          'Mi Band 5',
+                          'Learning Target',
+                          'Session type & recovery trajectory',
+                          'Not health rating',
                         ),
                         _buildMetricRow(
-                          'Evaluation Split',
-                          'Time-ordered session split',
-                          'No GroupKFold (1 subject)',
+                          'Label Derivation',
+                          'Rest stability vs recovery drop',
+                          'Programmatic protocol',
                         ),
                         _buildMetricRow(
-                          'Generalization Scope',
-                          'Single individual only',
-                          'Does not generalize',
+                          'Physical Band Status',
+                          'Not yet tested on a real band',
+                          'Awaits pairing',
                         ),
                       ],
                     ),
