@@ -13,6 +13,7 @@ This directory contains the production firmware for the **PulsePatch Lite** biom
 | Component | Part / Model | Operating Voltage | Interface | Description |
 |---|---|---|---|---|
 | **MCU** | ESP32-C3 SuperMini / DevKitM-1 | 3.3V DC (5V USB in) | BLE 5.0 / USB-C | 160MHz RISC-V Single-Core, 400KB SRAM |
+| **Battery** | Small Rechargeable LiPo/Li-ion | 3.7V nom (regulated to 3.3V) | Untethered Power / USB-C charging | Powers patch untethered; board lacks fuel gauge / voltage divider telemetry so level is not reported to app |
 | **Sensor** | Maxim MAX30102 Breakout Board | 3.3V DC VDD / 1.8V Core | I2C (0x57 address) | High-sensitivity Red (660nm) & IR (880nm) Photoplethysmography |
 | **Resistors** | 4.7kΩ Resistors (x2) | N/A | I2C Pull-Up | Pull-up resistors between 3.3V and SDA/SCL lines |
 | **Enclosure** | 3D-Printed Finger Clip / Band | N/A | Mechanical | Keeps optical sensor aligned against finger pad without excessive pressure |
@@ -21,11 +22,13 @@ This directory contains the production firmware for the **PulsePatch Lite** biom
 
 ## 2. Electrical Wiring & Pinout Diagram
 
+The PulsePatch hardware is powered by an onboard small rechargeable battery (or 5V USB-C while charging). Note that the board does not contain a battery level sensing circuit (no fuel gauge or ADC voltage divider), so battery percentage is not reported to the app.
+
 ```
 +------------------------------------+           +-------------------------------+
 |       ESP32-C3 DevKit / Mini       |           |   MAX30102 Breakout Board     |
 |                                    |           |                               |
-|                     [3.3V Pin] ----+-----------+--> [VIN / 3.3V]               |
+|                     [3.3V Pin] ----+-----------+--> [VIN / 3.3V] (NEVER 5V!)   |
 |                      [GND Pin] ----+-----------+--> [GND]                      |
 |                                    |           |                               |
 |        [GPIO 4] (I2C SDA) ---------+-----+-----+--> [SDA]                      |
@@ -39,7 +42,7 @@ This directory contains the production firmware for the **PulsePatch Lite** biom
 ```
 
 > [!CAUTION]
-> **Power Supply Rule:** Always supply **3.3V** to the MAX30102 breakout board. Supplying 5.0V directly to the sensor without a level converter will permanently destroy the MAX30102 optical photodiode array.
+> **Power Supply Rule:** Always connect MAX30102 `VIN` strictly to the ESP32-C3 board's **3.3V** pin, **NEVER to 5V**. Supplying 5.0V directly to the sensor without a level converter will permanently destroy the MAX30102 optical photodiode array.
 
 ---
 
@@ -81,11 +84,11 @@ PulsePatch Lite implements a custom 128-bit Primary GATT Service:
     Offset 4:   uint8_t  quality (0–100)
     Offset 5-8: uint32_t deviceTimestampMs (LE)
     Offset 9-10:uint16_t sequenceNumber (LE, wraps at 65535)
-    Offset 11:  uint8_t  reserved (0x00)
+    Offset 11:  uint8_t  reserved (0x00 padding; patch is battery-powered, but lacks level telemetry so no percentage is sent)
     ```
 - **Raw Optical Trace (Notify, Optional):** `180D0002-7243-4E64-8843-50554C534531`
 - **Device Info (Read):** `180D0003-7243-4E64-8843-50554C534531`
-  - Returns JSON: `{"fw":"1.0.0-esp32c3","sensor":"MAX30102_OK","battery_mv":null}`
+  - Returns JSON: `{"fw":"1.0.0-esp32c3","sensor":"MAX30102_OK","battery_mv":null}` (battery_mv is null because board lacks fuel gauge / voltage divider telemetry)
 
 ---
 

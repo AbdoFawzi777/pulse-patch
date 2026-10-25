@@ -31,7 +31,7 @@ void main() {
           0x01,
           0x00, // Offset 5-8: deviceTimestampMs = 123456 (0x0001E240) in Little-Endian
           0x2A, 0x00, // Offset 9-10: sequenceNumber = 42 in Little-Endian
-          0x00, // Offset 11: reserved = 0x00 (padding, no battery circuit)
+          0x00, // Offset 11: reserved = 0x00 (padding; rechargeable battery, no level telemetry)
         ]);
 
         expect(firmwareBytes.length, equals(12));

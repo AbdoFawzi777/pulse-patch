@@ -120,7 +120,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sensorDisclaimer =>
-      'المستشعر: MAX30102 · تشغيل عبر USB-C (لا توجد دائرة بطارية)';
+      'المستشعر: MAX30102 · بطارية قابلة للشحن / USB-C (لا تتوفر نسبة البطارية)';
 
   @override
   String get sampleDataPeaksDisclaimer =>

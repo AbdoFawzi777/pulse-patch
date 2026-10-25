@@ -120,7 +120,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sensorDisclaimer =>
-      'Sensor: MAX30102 · Powered via USB-C (no battery circuit)';
+      'Sensor: MAX30102 · Rechargeable battery / USB-C (no battery level reported)';
 
   @override
   String get sampleDataPeaksDisclaimer =>

@@ -53,6 +53,7 @@ To ensure complete engineering transparency and academic integrity, every layer 
 | **Physical ESP32-C3 Firmware Flashing** | **Not yet tested** | Requires connecting ESP32-C3 DevKitM-1 via USB-C cable | Owner must run `pio run --target upload` in `firmware/` |
 | **MAX30102 Sensor I2C Perfusion & SNR** | **Not yet tested** | Physical fingertip photoplethysmography with real IR/Red LEDs and ambient light cancellation | Awaits physical sensor wiring (GPIO4 SDA, GPIO5 SCL, 3.3V) and real human fingers |
 | **Physical BLE Radio Range & Packet Loss** | **Not yet tested** | 2.4 GHz RF propagation, 12-byte notify latency, and attenuation through physical obstacles | Verified with simulated packet drops, pending physical BLE over-the-air pairing |
+| **Sensor Power & Battery Telemetry** | **Verified (Design & Spec)** | Hardware is powered by a small rechargeable battery (or USB-C while charging); lacks level telemetry (no fuel gauge or voltage divider) | Mobile app never displays battery percentage; packet byte 11 remains reserved |
 
 ---
 
@@ -76,7 +77,7 @@ To ensure complete engineering transparency and academic integrity, every layer 
 
 ### Phase 4: Defensive BLE Protocol & Simulator (`1be042b`)
 - Implemented custom 128-bit GATT architecture under service UUID `180D0000-7243-4E64-8843-50554C534531`.
-- Built defensive 12-byte little-endian binary packet parser (`BlePacket`) handling corrupted packets, sequence drops, and duplicate packets gracefully.
+- Built defensive 12-byte little-endian binary packet parser (`BlePacket`) handling corrupted packets, sequence drops, and duplicate packets gracefully; byte offset 11 is reserved (hardware includes a small rechargeable battery or USB-C, but lacks battery-level telemetry so the app receives no percentage).
 - Implemented zero-dependency `SimulatedHeartRateSource` with truthful `Simulator` / `Sample data` UI badges.
 
 ### Phase 5: Measurement Engine & Signal Processing State Machine (`5883f26`)
@@ -220,8 +221,8 @@ Because physical ESP32-C3 hardware and human recordings were not physically conn
 
 1. **Physical Sensor Flashing:**
    Connect the ESP32-C3 via USB and run `pio run --target upload` in `firmware/`.
-2. **Physical Wire Verification:**
-   Ensure 3.3V power (NEVER 5V), common ground, and SDA=GPIO4, SCL=GPIO5 with 4.7kΩ pullups.
+2. **Physical Wire & Power Verification:**
+   Ensure MAX30102 `VIN` is connected to the ESP32-C3 board's **3.3V pin (NEVER 5V)**, common ground, and SDA=GPIO4, SCL=GPIO5 with 4.7kΩ pullups. The patch is powered by its small rechargeable battery (or USB-C while charging); no battery percentage is reported since the board lacks fuel gauge/divider telemetry.
 3. **Volunteer Consent & Real Cohort Recording:**
    Collect 8+ consenting volunteers using the app's **Export for training** button on the Privacy & Data Management screen.
 4. **Model Retraining:**

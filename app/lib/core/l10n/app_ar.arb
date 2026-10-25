@@ -49,7 +49,7 @@
       }
     }
   },
-  "sensorDisclaimer": "المستشعر: MAX30102 · تشغيل عبر USB-C (لا توجد دائرة بطارية)",
+  "sensorDisclaimer": "المستشعر: MAX30102 · بطارية قابلة للشحن / USB-C (لا تتوفر نسبة البطارية)",
   "sampleDataPeaksDisclaimer": "بيانات تجريبية · تقديرية بناءً على قمم النبض الضوئي",
   "educationalDisclaimer": "تطبيق PulsePatch Lite نموذج تعليمي أولي ولا يقدم تشخيصاً طبياً."
 }

@@ -101,7 +101,8 @@ class SystemStateInfo {
         return const SystemStateInfo(
           type: SystemStateType.disconnected,
           title: 'Sensor Disconnected',
-          message: 'BLE connection dropped. Verify sensor power and range.',
+          message:
+              'BLE connection dropped. Verify sensor battery charge, power, and range.',
           actionLabel: 'Reconnect',
           icon: Icons.bluetooth_disabled_rounded,
         );

@@ -49,7 +49,7 @@
       }
     }
   },
-  "sensorDisclaimer": "Sensor: MAX30102 · Powered via USB-C (no battery circuit)",
+  "sensorDisclaimer": "Sensor: MAX30102 · Rechargeable battery / USB-C (no battery level reported)",
   "sampleDataPeaksDisclaimer": "Sample data · estimated from optical pulse peaks",
   "educationalDisclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis."
 }

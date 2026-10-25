@@ -311,7 +311,7 @@ abstract class AppLocalizations {
   /// No description provided for @sensorDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'Sensor: MAX30102 · Powered via USB-C (no battery circuit)'**
+  /// **'Sensor: MAX30102 · Rechargeable battery / USB-C (no battery level reported)'**
   String get sensorDisclaimer;
 
   /// No description provided for @sampleDataPeaksDisclaimer.

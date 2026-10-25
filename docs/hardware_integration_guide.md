@@ -59,7 +59,7 @@ Before connecting USB power to the ESP32-C3, verify physical pin continuity and 
    - Verify Device Information card reads:
      - Firmware: `1.0.0-esp32c3`
      - Sensor: `MAX30102_OK`
-     - Battery: `Not installed on hardware` (truthful, un-fabricated).
+     - Battery: `Rechargeable battery powered (no level telemetry; percentage not received)`
 5. Start a **Measurement Session (Rest, 60s)**:
    - Observe live heart rate number updating every 1.0s.
    - Verify circular timer counts down smoothly from 60s to 0s.

@@ -54,7 +54,7 @@ All PulsePatch Lite GATT interactions are hosted under a custom 128-bit Primary 
 6. **`sequenceNumber` (uint16, Offset 9–10):**
    - Monotonically increasing packet counter (`0` to `65535`, wraps to `0`). Used by the client to calculate packet dropout and network latency.
 7. **`reserved` (uint8, Offset 11):**
-   - Padding byte, fixed to `0x00`. Hardware contains NO battery monitoring circuit and operates directly from 5V USB-C power. Battery percentage is neither tracked nor displayed.
+   - Padding byte, fixed to `0x00`. The hardware is powered by a small rechargeable battery (or USB-C while charging), but lacks battery-level telemetry (no fuel gauge or voltage divider circuit). The app does not receive battery level, so no battery percentage is displayed, and this byte remains reserved padding.
 
 ---
 
@@ -77,7 +77,7 @@ All PulsePatch Lite GATT interactions are hosted under a custom 128-bit Primary 
     "battery_mv": null
   }
   ```
-- **Rule:** Battery is exposed only if an actual voltage divider circuit exists on hardware; never fabricated.
+- **Rule:** The hardware is powered by a small rechargeable battery (or USB-C while charging), but lacks battery-level telemetry circuitry (no fuel gauge or ADC voltage divider), so `battery_mv` is null and the app does not display a battery percentage.
 
 ---
 
