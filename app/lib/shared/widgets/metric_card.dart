@@ -31,8 +31,8 @@ class MetricCard extends StatelessWidget {
     final effectiveGradient =
         gradient ??
         const LinearGradient(
-          begin: Alignment(-0.34, -0.94),
-          end: Alignment(0.34, 0.94),
+          begin: Alignment(-0.28, -1.5),
+          end: Alignment(0.28, 1.5),
           colors: [AppColors.cardBgGradientStart, AppColors.cardBgGradientEnd],
         );
 

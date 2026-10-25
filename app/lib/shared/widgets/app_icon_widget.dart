@@ -93,6 +93,7 @@ class _AppIconPainter extends CustomPainter {
     canvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100), bgPaint);
 
     final heartPath = _buildHeartPath();
+    final heartBounds = heartPath.getBounds();
 
     // 2. Outer Heart: scale(1.4) around (50, 54)
     canvas.save();
@@ -103,13 +104,13 @@ class _AppIconPainter extends CustomPainter {
     final h2Paint = Paint()
       ..style = PaintingStyle.fill
       ..shader = const LinearGradient(
-        begin: Alignment(0.0, -1.0),
-        end: Alignment(0.0, 1.0),
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
         colors: [
           Color(0x807C3AED), // #7C3AED stop-opacity .5
           Color(0x401D4ED8), // #1D4ED8 stop-opacity .25
         ],
-      ).createShader(const Rect.fromLTWH(0, 0, 100, 100));
+      ).createShader(heartBounds);
     canvas.drawPath(heartPath, h2Paint);
     canvas.restore();
 
@@ -130,11 +131,11 @@ class _AppIconPainter extends CustomPainter {
     final h1Paint = Paint()
       ..style = PaintingStyle.fill
       ..shader = const LinearGradient(
-        begin: Alignment(-0.6, -1.0), // x1=.2 y1=0
-        end: Alignment(0.6, 1.0), // x2=.8 y2=1
+        begin: Alignment(-0.6, -1.0), // x1=.2, y1=0 -> Alignment(-0.6, -1.0)
+        end: Alignment(0.6, 1.0), // x2=.8, y2=1 -> Alignment(0.6, 1.0)
         colors: [Color(0xFFE11D9B), Color(0xFF6D28D9), Color(0xFF2563EB)],
         stops: [0.0, 0.55, 1.0],
-      ).createShader(const Rect.fromLTWH(0, 0, 100, 100));
+      ).createShader(heartBounds);
     canvas.drawPath(heartPath, h1Paint);
 
     // 5. Optical Wave Cyan Glow: stroke #22D3EE strokeWidth 7 opacity .28

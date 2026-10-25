@@ -9,13 +9,15 @@ class DesignCanvasScaffold extends StatelessWidget {
   const DesignCanvasScaffold({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.fromLTRB(20.0, 33.0, 20.0, 20.0),
+    this.padding = const EdgeInsets.fromLTRB(20.0, 28.0, 20.0, 20.0),
     this.bottomNavigationBar,
+    this.useSafeArea = false,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final Widget? bottomNavigationBar;
+  final bool useSafeArea;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +37,8 @@ class DesignCanvasScaffold extends StatelessWidget {
             // Exact canvas background with dual radial glows
             const CustomPaint(painter: _CanvasBackgroundPainter()),
             SafeArea(
-              top: true,
-              bottom: true,
+              top: useSafeArea,
+              bottom: useSafeArea,
               child: Padding(
                 padding: padding,
                 child: Column(
@@ -60,43 +62,38 @@ class _CanvasBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Base background: #04030C
-    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.bgBase);
+    canvas.drawRect(
+      Offset.zero & size,
+      Paint()..color = const Color(0xFF04030C),
+    );
 
     // Glow 1: Top-Left radial-gradient(80% 35% at 0% 0%, #1A0F44 0%, transparent 70%)
-    final rectTL = Rect.fromLTWH(
-      -size.width * 0.2,
-      -size.height * 0.1,
-      size.width * 1.0,
-      size.height * 0.7,
+    final rxTL = 0.80 * size.width * 0.70;
+    final ryTL = 0.35 * size.height * 0.70;
+    final rectTL = Rect.fromCenter(
+      center: Offset.zero,
+      width: rxTL * 2,
+      height: ryTL * 2,
     );
     final paintTL = Paint()
-      ..shader = RadialGradient(
-        center: Alignment.topLeft,
-        radius: 0.85,
-        colors: [
-          const Color(0xFF1A0F44).withValues(alpha: 0.95),
-          Colors.transparent,
-        ],
-        stops: const [0.0, 0.7],
+      ..shader = const RadialGradient(
+        colors: [Color(0xFF1A0F44), Color(0x001A0F44)],
+        stops: [0.0, 1.0],
       ).createShader(rectTL);
     canvas.drawRect(Offset.zero & size, paintTL);
 
     // Glow 2: Bottom-Right radial-gradient(90% 45% at 100% 100%, #3A1566 0%, transparent 70%)
-    final rectBR = Rect.fromLTWH(
-      size.width * 0.1,
-      size.height * 0.4,
-      size.width * 1.0,
-      size.height * 0.7,
+    final rxBR = 0.90 * size.width * 0.70;
+    final ryBR = 0.45 * size.height * 0.70;
+    final rectBR = Rect.fromCenter(
+      center: Offset(size.width, size.height),
+      width: rxBR * 2,
+      height: ryBR * 2,
     );
     final paintBR = Paint()
-      ..shader = RadialGradient(
-        center: Alignment.bottomRight,
-        radius: 0.95,
-        colors: [
-          const Color(0xFF3A1566).withValues(alpha: 0.95),
-          Colors.transparent,
-        ],
-        stops: const [0.0, 0.7],
+      ..shader = const RadialGradient(
+        colors: [Color(0xFF3A1566), Color(0x003A1566)],
+        stops: [0.0, 1.0],
       ).createShader(rectBR);
     canvas.drawRect(Offset.zero & size, paintBR);
   }

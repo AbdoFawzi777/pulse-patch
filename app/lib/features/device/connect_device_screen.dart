@@ -120,9 +120,54 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
                   height: 1.0,
                 ),
               ),
-              const SizedBox(width: 56.0),
+              GestureDetector(
+                onLongPress: () {
+                  showModalBottomSheet(
+                    context: context,
+                    backgroundColor: AppColors.cardBgGradientEnd,
+                    builder: (ctx) => SafeArea(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          ListTile(
+                            leading: const Icon(
+                              Icons.file_upload,
+                              color: Colors.white,
+                            ),
+                            title: const Text(
+                              'Import CSV/JSON data',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onTap: () {
+                              Navigator.pop(ctx);
+                              _handleImportFile();
+                            },
+                          ),
+                          ListTile(
+                            leading: const Icon(
+                              Icons.settings,
+                              color: Colors.white,
+                            ),
+                            title: const Text(
+                              'Mi Band auth settings',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                            onTap: () {
+                              Navigator.pop(ctx);
+                              _showMiBandSettings();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+                child: const SizedBox(width: 56.0, height: 56.0),
+              ),
             ],
           ),
+
+          const SizedBox(height: 8.0),
 
           // Radar Scanner Illustration (width: 320, height: 250)
           const Center(
@@ -143,14 +188,12 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
             builder: (context, snapshot) {
               final state = snapshot.data ?? BleConnectionState.idle;
               final String label;
-              if (state == BleConnectionState.scanning) {
-                label = 'Scanning · keep patch or band within 1 m';
-              } else if (state == BleConnectionState.connected) {
+              if (state == BleConnectionState.connected) {
                 label = 'Connected to ${bleSource.sourceLabel}';
               } else if (state == BleConnectionState.connecting) {
                 label = 'Connecting to peripheral...';
               } else {
-                label = 'Keep the patch or band within 1 m';
+                label = 'Scanning · keep the patch within 1 m';
               }
               return Text(
                 label,
@@ -181,33 +224,32 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
                       category: BleDeviceCategory.pulsePatch,
                     ),
                     const DiscoveredBleDevice(
-                      id: 'sim-miband-1',
-                      name: 'Mi Smart Band 5',
-                      rssi: -64,
-                      category: BleDeviceCategory.miBand,
+                      id: 'sim-pulsepatch-2',
+                      name: 'PulsePatch-C3 (2)',
+                      rssi: -85,
+                      category: BleDeviceCategory.pulsePatch,
                     ),
                   ];
 
               return Column(
-                children: devices.take(2).map((dev) {
+                children: devices.take(2).toList().asMap().entries.map((entry) {
+                  final index = entry.key;
+                  final dev = entry.value;
                   final isConnected =
                       bleSource.currentState == BleConnectionState.connected;
                   final isConnecting =
                       _connectingDeviceId == dev.id &&
                       bleSource.currentState == BleConnectionState.connecting;
 
+                  final String minusRssi = '−${dev.rssi.abs()}';
                   final String signalText;
                   if (dev.rssi > -60) {
-                    signalText = 'Signal strong · ${dev.rssi} dBm';
+                    signalText = 'Signal strong · $minusRssi dBm';
                   } else if (dev.rssi > -75) {
-                    signalText = 'Signal good · ${dev.rssi} dBm';
+                    signalText = 'Signal good · $minusRssi dBm';
                   } else {
-                    signalText = 'Signal weak · ${dev.rssi} dBm';
+                    signalText = 'Signal weak · $minusRssi dBm';
                   }
-
-                  final String statusText = dev.isCompatible
-                      ? 'Compatible · $signalText'
-                      : 'Unsupported · $signalText';
 
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 10.0),
@@ -233,7 +275,7 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
                                 ),
                                 const SizedBox(height: 2.0),
                                 Text(
-                                  statusText,
+                                  signalText,
                                   style: const TextStyle(
                                     fontFamily: 'Outfit',
                                     fontSize: 14.0,
@@ -253,11 +295,9 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
                                       : (dev.isCompatible
                                             ? 'Connect'
                                             : 'Unavailable')),
-                            style: isConnected
+                            style: isConnected || index > 0
                                 ? PillButtonStyle.dark
-                                : (dev.isCompatible
-                                      ? PillButtonStyle.white
-                                      : PillButtonStyle.dark),
+                                : PillButtonStyle.white,
                             onPressed: () async {
                               if (isConnected) {
                                 await bleSource.disconnect();
@@ -276,39 +316,14 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
             },
           ),
 
-          const SizedBox(height: 8.0),
-
-          // Action row for File Import & Mi Band 5 Setup
-          Row(
-            children: [
-              Expanded(
-                child: PillButton(
-                  label: 'Import Data File',
-                  style: PillButtonStyle.dark,
-                  height: 44.0,
-                  onPressed: _handleImportFile,
-                ),
-              ),
-              const SizedBox(width: 10.0),
-              Expanded(
-                child: PillButton(
-                  label: 'Mi Band 5 Setup',
-                  style: PillButtonStyle.dark,
-                  height: 44.0,
-                  onPressed: _showMiBandSettings,
-                ),
-              ),
-            ],
-          ),
-
           const SizedBox(height: 12.0),
 
-          // Hardware Footnote
+          // Hardware Footnote (.m)
           const Text(
-            'Sensor: MAX30102, Standard 0x180D, or Mi Smart Band 5 · SpO2 shown only if reported',
+            'Sensor: MAX30102 · Battery and firmware shown only if reported',
             style: TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 13.0,
+              fontSize: 14.0,
               fontWeight: FontWeight.w300,
               color: AppColors.textMuted,
             ),

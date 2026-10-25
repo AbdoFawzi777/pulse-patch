@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,9 +16,11 @@ import 'package:app/domain/entities/session_stats_record.dart';
 import 'package:app/domain/ml/ai_inference_service.dart';
 import 'package:app/domain/signal/ble_packet.dart';
 import 'package:app/domain/signal/session_recorder.dart';
+import 'package:app/features/device/connect_device_screen.dart';
 import 'package:app/features/device/device_troubleshooting_screen.dart';
 import 'package:app/features/device/heart_rate_source.dart';
 import 'package:app/features/device/simulated_heart_rate_source.dart';
+import 'package:app/features/history/heart_rate_detail_screen.dart';
 import 'package:app/features/history/measurement_history_screen.dart';
 import 'package:app/features/history/session_details_screen.dart';
 import 'package:app/features/home/home_screen.dart';
@@ -42,6 +45,7 @@ import 'package:app/features/settings/notifications_center_screen.dart';
 import 'package:app/features/settings/privacy_data_management_screen.dart';
 import 'package:app/features/settings/profile_preferences_screen.dart';
 import 'package:app/features/settings/reminder_settings_screen.dart';
+import 'package:app/shared/widgets/app_icon_widget.dart';
 import 'package:app/shared/widgets/ble_device_card.dart';
 import 'package:app/shared/widgets/circle_icon_button.dart';
 
@@ -74,6 +78,8 @@ class FakeRealBleSource implements HeartRateSource {
   PacketDiagnostics get currentDiagnostics => const PacketDiagnostics();
   @override
   bool get isSimulator => false;
+  @override
+  SessionSource get source => SessionSource.pulsepatch;
   @override
   String get sourceLabel => 'ESP32-C3 BLE';
   @override
@@ -114,6 +120,29 @@ Widget _wrapScreen(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    final fontLoader = FontLoader('Outfit');
+    final fontLight = File('assets/fonts/Outfit-Light.ttf');
+    if (fontLight.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)),
+      );
+    }
+    final fontReg = File('assets/fonts/Outfit-Regular.ttf');
+    if (fontReg.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)),
+      );
+    }
+    final fontMed = File('assets/fonts/Outfit-Medium.ttf');
+    if (fontMed.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)),
+      );
+    }
+    await fontLoader.load();
+  });
 
   late AppDatabase db;
   late PreferencesRepository prefsRepo;
@@ -284,60 +313,9 @@ void main() {
     });
 
     testWidgets('07_connect_device', (tester) async {
-      final connectDeviceWidget = Scaffold(
-        backgroundColor: AppColors.bgBase,
-        body: SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 20.0,
-              vertical: 12.0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Row(
-                  children: [
-                    CircleIconButton(
-                      icon: Icons.chevron_left_rounded,
-                      onPressed: () {},
-                    ),
-                    const Expanded(
-                      child: Text(
-                        'Connect device',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 56.0),
-                  ],
-                ),
-                const SizedBox(height: 24.0),
-                BleDeviceCard(
-                  name: 'PulsePatch-C3 (Simulated)',
-                  rssi: -62,
-                  isConnected: true,
-                  onConnect: () {},
-                ),
-                const SizedBox(height: 14.0),
-                BleDeviceCard(
-                  name: 'PulsePatch-C3 (Hardware #084)',
-                  rssi: -78,
-                  isConnected: false,
-                  onConnect: () {},
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
       await renderAndCapture(
         tester,
-        connectDeviceWidget,
+        const ConnectDeviceScreen(),
         '07_connect_device.png',
       );
     });
@@ -384,7 +362,7 @@ void main() {
       final fakeBleSource = FakeRealBleSource();
       final recorder = SessionRecorder(
         sessionId: 'sess-live-ble',
-        source: SessionSource.device,
+        source: SessionSource.pulsepatch,
       );
       await renderAndCapture(
         tester,
@@ -402,14 +380,7 @@ void main() {
     testWidgets('12_heart_rate_summary', (tester) async {
       await renderAndCapture(
         tester,
-        MeasurementCompleteScreen(
-          stats: sampleStats,
-          isSampleData: true,
-          onSave: () {},
-          onDiscard: () {},
-          onViewInsights: () {},
-          onBack: () {},
-        ),
+        const HeartRateDetailScreen(),
         '12_heart_rate_summary.png',
       );
     });
@@ -534,34 +505,14 @@ void main() {
     });
 
     testWidgets('27_app_icon', (tester) async {
-      final appIconWidget = Scaffold(
-        backgroundColor: AppColors.bgBase,
-        body: Center(
-          child: Container(
-            width: 220,
-            height: 220,
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [Color(0xFF0D183A), Color(0xFF030712)],
-              ),
-              borderRadius: BorderRadius.circular(48.0),
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.accentBlue.withValues(alpha: 0.35),
-                  blurRadius: 32.0,
-                  spreadRadius: 4.0,
-                ),
-              ],
-            ),
-            child: const Center(
-              child: LayeredHeartWidget(width: 160.0, height: 160.0),
-            ),
-          ),
+      await renderAndCapture(
+        tester,
+        const Scaffold(
+          backgroundColor: Color(0xFF04030C),
+          body: Center(child: AppIconWidget(size: 360.0, clipToSquircle: true)),
         ),
+        '27_app_icon.png',
       );
-      await renderAndCapture(tester, appIconWidget, '27_app_icon.png');
     });
   });
 }

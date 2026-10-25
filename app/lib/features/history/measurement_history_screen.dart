@@ -88,7 +88,7 @@ class _MeasurementHistoryScreenState
 
           // Filter Row (.w + .w + .tg)
           Padding(
-            padding: const EdgeInsets.only(top: 8.0, bottom: 16.0),
+            padding: const EdgeInsets.only(top: 16.0, bottom: 16.0),
             child: Row(
               children: [
                 PillButton(
@@ -118,6 +118,7 @@ class _MeasurementHistoryScreenState
           Expanded(
             child: allSessions.isNotEmpty
                 ? ListView.separated(
+                    padding: EdgeInsets.zero,
                     physics: const BouncingScrollPhysics(),
                     itemCount: allSessions.length,
                     separatorBuilder: (context, index) =>
@@ -142,6 +143,7 @@ class _MeasurementHistoryScreenState
                     },
                   )
                 : ListView.separated(
+                    padding: EdgeInsets.zero,
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _defaultSessions.length,
                     separatorBuilder: (context, index) =>
@@ -193,7 +195,9 @@ class _MeasurementHistoryScreenState
                 ),
                 const SizedBox(height: 2.0),
                 Text(
-                  'Quality: $quality · $source · Pattern: $pattern',
+                  (source.isNotEmpty && source != 'Sample data')
+                      ? 'Quality: $quality · $source · Pattern: $pattern'
+                      : 'Quality: $quality · Pattern: $pattern',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(

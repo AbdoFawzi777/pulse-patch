@@ -15,8 +15,8 @@ import 'package:app/shared/widgets/app_icon_widget.dart';
 import 'package:app/features/device/connect_device_screen.dart';
 import 'package:app/features/device/heart_rate_source.dart';
 import 'package:app/features/device/simulated_heart_rate_source.dart';
+import 'package:app/features/history/heart_rate_detail_screen.dart';
 import 'package:app/features/history/measurement_history_screen.dart';
-import 'package:app/features/history/session_details_screen.dart';
 import 'package:app/features/home/home_screen.dart';
 import 'package:app/features/insights/ai_insights_dashboard_screen.dart';
 import 'package:app/features/measurement/live_measurement_screen.dart';
@@ -204,13 +204,10 @@ void main() {
     );
 
     await tester.pumpWidget(
-      ProviderScope(
-        overrides: [appDatabaseProvider.overrideWithValue(inMemDb)],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: AppTheme.darkTheme,
-          home: SessionDetailsScreen(session: session, onBack: () {}),
-        ),
+      MaterialApp(
+        debugShowCheckedModeBanner: false,
+        theme: AppTheme.darkTheme,
+        home: const HeartRateDetailScreen(),
       ),
     );
 
@@ -362,7 +359,7 @@ void main() {
       const MaterialApp(
         debugShowCheckedModeBanner: false,
         home: Scaffold(
-          backgroundColor: Colors.transparent,
+          backgroundColor: Color(0xFF04030C),
           body: Center(child: AppIconWidget(size: 360.0, clipToSquircle: true)),
         ),
       ),
