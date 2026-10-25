@@ -5,6 +5,7 @@ import '../../domain/ml/ai_inference_service.dart';
 import '../../domain/ml/ai_providers.dart';
 import '../../shared/widgets/bottom_circle_nav.dart';
 import '../../shared/widgets/circle_icon_button.dart';
+import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/error_banner.dart';
 import '../../shared/widgets/loading_state.dart';
@@ -26,49 +27,44 @@ class SessionPatternAnalysisScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final aiStateAsync = ref.watch(sessionAiAnalysisProvider(sessionId));
 
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar matching AI Insights.png
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 12.0,
+    return DesignCanvasScaffold(
+      child: Column(
+        children: [
+          // Top Bar matching AI Insights.png
+          Row(
+            children: [
+              CircleIconButton(
+                type: CircleIconType.back,
+                semanticLabel: 'Back',
+                onPressed: () => Navigator.of(context).maybePop(),
               ),
-              child: Row(
-                children: [
-                  CircleIconButton(
-                    icon: Icons.arrow_back_rounded,
-                    onPressed: () => Navigator.of(context).maybePop(),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'AI Insights',
-                        style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    'AI Insights',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  CircleIconButton(
-                    icon: Icons.info_outline_rounded,
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => const AiModelInfoScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
+                ),
               ),
-            ),
+              CircleIconButton(
+                icon: Icons.info_outline_rounded,
+                semanticLabel: 'Model Info',
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const AiModelInfoScreen(),
+                    ),
+                  );
+                },
+              ),
+            ],
+          ),
+          const SizedBox(height: 12.0),
 
             // Content Area
             Expanded(
@@ -148,8 +144,7 @@ class SessionPatternAnalysisScreen extends ConsumerWidget {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildSuccessView(BuildContext context, AiInferenceResult result) {

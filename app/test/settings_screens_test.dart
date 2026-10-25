@@ -69,7 +69,7 @@ void main() {
         expect(find.text('Measurement Saved'), findsOneWidget);
 
         // Tap clear sweep icon
-        await tester.tap(find.byIcon(Icons.delete_sweep_rounded));
+        await tester.tap(find.bySemanticsLabel('Clear All'));
         await tester.pumpAndSettle();
 
         expect(find.text('No Notifications'), findsOneWidget);

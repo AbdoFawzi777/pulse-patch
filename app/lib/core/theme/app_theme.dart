@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
 @immutable
@@ -196,11 +195,9 @@ class AppTheme {
   const AppTheme._();
 
   static ThemeData get darkTheme {
-    final baseTextTheme = GoogleFonts.outfitTextTheme(
-      ThemeData.dark().textTheme,
-    );
     return ThemeData(
       brightness: Brightness.dark,
+      fontFamily: 'Outfit',
       scaffoldBackgroundColor: AppColors.bgBase,
       primaryColor: AppColors.accentBlue,
       colorScheme: const ColorScheme.dark(
@@ -209,7 +206,8 @@ class AppTheme {
         surface: AppColors.cardBgNavy,
         onSurface: AppColors.textPrimary,
       ),
-      textTheme: baseTextTheme.apply(
+      textTheme: ThemeData.dark().textTheme.apply(
+        fontFamily: 'Outfit',
         bodyColor: AppColors.textPrimary,
         displayColor: AppColors.textPrimary,
       ),
@@ -218,11 +216,9 @@ class AppTheme {
   }
 
   static ThemeData get lightTheme {
-    final baseTextTheme = GoogleFonts.outfitTextTheme(
-      ThemeData.light().textTheme,
-    );
     return ThemeData(
       brightness: Brightness.light,
+      fontFamily: 'Outfit',
       scaffoldBackgroundColor: const Color(0xFFF8FAFC),
       primaryColor: AppColors.accentBlue,
       colorScheme: const ColorScheme.light(
@@ -231,7 +227,8 @@ class AppTheme {
         surface: Colors.white,
         onSurface: Color(0xFF0F172A),
       ),
-      textTheme: baseTextTheme.apply(
+      textTheme: ThemeData.light().textTheme.apply(
+        fontFamily: 'Outfit',
         bodyColor: const Color(0xFF0F172A),
         displayColor: const Color(0xFF0F172A),
       ),

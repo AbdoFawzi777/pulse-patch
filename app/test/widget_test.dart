@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -11,6 +13,29 @@ import 'package:app/main.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    final fontLoader = FontLoader('Outfit');
+    final fontLight = File('assets/fonts/Outfit-Light.ttf');
+    if (fontLight.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)),
+      );
+    }
+    final fontReg = File('assets/fonts/Outfit-Regular.ttf');
+    if (fontReg.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)),
+      );
+    }
+    final fontMed = File('assets/fonts/Outfit-Medium.ttf');
+    if (fontMed.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)),
+      );
+    }
+    await fontLoader.load();
+  });
 
   late SharedPreferences prefs;
   late AppDatabase db;
@@ -29,6 +54,11 @@ void main() {
   });
 
   testWidgets('App launches with themed shell smoke test', (tester) async {
+    tester.view.physicalSize = const Size(1170, 2532);
+    tester.view.devicePixelRatio = 3.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [

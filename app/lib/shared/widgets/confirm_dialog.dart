@@ -77,20 +77,23 @@ class ConfirmDialog extends StatelessWidget {
             ),
             const SizedBox(height: 24.0),
             Row(
-              mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                PillButton(
-                  label: cancelLabel,
-                  style: PillButtonStyle.dark,
-                  height: 40.0,
-                  onPressed: () => Navigator.of(context).pop(false),
+                Expanded(
+                  child: PillButton(
+                    label: cancelLabel,
+                    style: PillButtonStyle.dark,
+                    height: 40.0,
+                    onPressed: () => Navigator.of(context).pop(false),
+                  ),
                 ),
                 const SizedBox(width: 12.0),
-                PillButton(
-                  label: confirmLabel,
-                  style: PillButtonStyle.white,
-                  height: 40.0,
-                  onPressed: () => Navigator.of(context).pop(true),
+                Expanded(
+                  child: PillButton(
+                    label: confirmLabel,
+                    style: PillButtonStyle.white,
+                    height: 40.0,
+                    onPressed: () => Navigator.of(context).pop(true),
+                  ),
                 ),
               ],
             ),

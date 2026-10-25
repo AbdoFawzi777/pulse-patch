@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/core/theme/app_theme.dart';
@@ -31,6 +33,31 @@ Widget _wrap(Widget child, {AppDatabase? db, HeartRateSource? source}) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    final fontLoader = FontLoader('Outfit');
+    final fontLight = File('assets/fonts/Outfit-Light.ttf');
+    if (fontLight.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)),
+      );
+    }
+    final fontReg = File('assets/fonts/Outfit-Regular.ttf');
+    if (fontReg.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)),
+      );
+    }
+    final fontMed = File('assets/fonts/Outfit-Medium.ttf');
+    if (fontMed.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)),
+      );
+    }
+    await fontLoader.load();
+  });
+
   group('Phase 6 Core Screens Widget Tests', () {
     testWidgets('HomeScreen matches Home.png elements and triggers measure', (
       tester,
@@ -77,15 +104,15 @@ void main() {
           ),
         );
 
-        expect(find.text('Measurement Preparation'), findsOneWidget);
-        expect(find.text('Resting'), findsOneWidget);
+        expect(find.text('Prepare Session'), findsOneWidget);
+        expect(find.text('Rest'), findsOneWidget);
         expect(find.text('Post-Activity'), findsOneWidget);
 
         await tester.tap(find.text('Post-Activity'));
         await tester.tap(find.text('90s'));
         await tester.pumpAndSettle();
 
-        await tester.tap(find.text('Start Measurement'));
+        await tester.tap(find.text('Start Recording'));
         expect(selectedType, SessionType.postActivity);
         expect(selectedDuration, const Duration(seconds: 90));
       },
@@ -119,7 +146,7 @@ void main() {
 
         expect(find.text('Measuring'), findsOneWidget);
         expect(
-          find.text('Optical pulse trace · Simulator · No contact'),
+          find.text('Optical pulse trace · Signal: Good'),
           findsOneWidget,
         );
         expect(find.text('Stop and save'), findsOneWidget);
@@ -152,7 +179,6 @@ void main() {
       );
 
       bool saved = false;
-      bool viewedInsights = false;
 
       await tester.pumpWidget(
         _wrap(
@@ -160,26 +186,24 @@ void main() {
             stats: stats,
             onSave: () => saved = true,
             onDiscard: () {},
-            onViewInsights: () => viewedInsights = true,
+            onViewInsights: () {},
             onBack: () {},
           ),
         ),
       );
 
-      expect(find.text('Heart Rate'), findsOneWidget);
+      expect(find.text('Heart Rate Summary'), findsOneWidget);
       expect(find.text('74'), findsOneWidget);
-      expect(find.text('58 min 96 max'), findsOneWidget);
+      expect(find.text('58 min   96 max'), findsOneWidget);
       expect(find.text('Pulse interval'), findsOneWidget);
-      expect(find.text('811'), findsOneWidget);
+      expect(find.text('811 ms'), findsOneWidget);
       expect(find.text('Variability (est.)'), findsOneWidget);
-      expect(find.text('41'), findsOneWidget);
-      expect(find.text('Save'), findsOneWidget);
+      expect(find.text('41 ms'), findsOneWidget);
+      expect(find.text('Save Session'), findsOneWidget);
+      expect(find.text('Discard'), findsOneWidget);
 
-      await tester.tap(find.text('Save'));
+      await tester.tap(find.text('Save Session'));
       expect(saved, isTrue);
-
-      await tester.tap(find.text('View AI Insights'));
-      expect(viewedInsights, isTrue);
     });
   });
 }

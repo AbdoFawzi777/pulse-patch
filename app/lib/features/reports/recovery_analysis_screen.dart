@@ -6,6 +6,7 @@ import '../../domain/entities/session_record.dart';
 import '../../domain/entities/session_stats_record.dart';
 import '../../domain/signal/feature_extractor.dart';
 import '../../shared/widgets/circle_icon_button.dart';
+import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/status_chip.dart';
 import '../../shared/widgets/trend_chart.dart';
@@ -84,77 +85,36 @@ class RecoveryAnalysisScreen extends ConsumerWidget {
       }
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: Stack(
-        children: [
-          // Background corner glows
-          Positioned(
-            top: -120,
-            left: -120,
-            width: 360,
-            height: 360,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.bgGlowTopLeft.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
+    return DesignCanvasScaffold(
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header Row
+            Row(
+              children: [
+                CircleIconButton(
+                  type: CircleIconType.back,
+                  semanticLabel: 'Back',
+                  onPressed: onBack,
                 ),
-              ),
-            ),
-          ),
-          Positioned(
-            bottom: -120,
-            right: -120,
-            width: 360,
-            height: 360,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.bgGlowBottomRight.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: SingleChildScrollView(
-              physics: const BouncingScrollPhysics(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 12.0),
-                    // Header Row
-                    Row(
-                      children: [
-                        CircleIconButton(
-                          icon: Icons.chevron_left_rounded,
-                          semanticLabel: 'Back',
-                          onPressed: onBack,
-                        ),
-                        const Expanded(
-                          child: Text(
-                            'Recovery Analysis',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 22.0,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 56.0),
-                      ],
+                const Expanded(
+                  child: Text(
+                    'Recovery Analysis',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.textPrimary,
                     ),
+                  ),
+                ),
+                const SizedBox(width: 56.0),
+              ],
+            ),
+            const SizedBox(height: 16.0),
                     const SizedBox(height: 18.0),
 
                     // Recovery Drop Metric Card
@@ -429,10 +389,6 @@ class RecoveryAnalysisScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
 }

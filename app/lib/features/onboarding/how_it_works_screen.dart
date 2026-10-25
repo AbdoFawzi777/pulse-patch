@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/circle_icon_button.dart';
+import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/pill_button.dart';
 
@@ -15,8 +16,7 @@ class HowItWorksScreen extends StatelessWidget {
   final VoidCallback onBack;
 
   static const List<
-    ({String step, String title, String description, IconData icon})
-  >
+      ({String step, String title, String description, IconData icon})>
   _steps = [
     (
       step: '1',
@@ -57,147 +57,116 @@ class HowItWorksScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: Stack(
+    return DesignCanvasScaffold(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Background corner glow
-          Positioned(
-            top: -100,
-            left: -100,
-            width: 350,
-            height: 350,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.bgGlowTopLeft.withValues(alpha: 0.6),
-                    Colors.transparent,
-                  ],
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              CircleIconButton(
+                type: CircleIconType.back,
+                semanticLabel: 'Back',
+                onPressed: onBack,
+              ),
+              const Text(
+                'How It Works',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w300,
+                  color: AppColors.textPrimary,
+                  height: 1.0,
                 ),
               ),
+              const SizedBox(width: 56.0),
+            ],
+          ),
+          const SizedBox(height: 16.0),
+          const Text(
+            'Five essential steps for accurate optical pulse recordings.',
+            style: TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 14.0,
+              fontWeight: FontWeight.w300,
+              color: AppColors.textMuted,
             ),
           ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+          const SizedBox(height: 16.0),
+          Expanded(
+            child: ListView.separated(
+              physics: const BouncingScrollPhysics(),
+              itemCount: _steps.length,
+              separatorBuilder: (context, index) =>
                   const SizedBox(height: 12.0),
-                  CircleIconButton(
-                    icon: Icons.chevron_left_rounded,
-                    semanticLabel: 'Back',
-                    onPressed: onBack,
-                  ),
-                  const SizedBox(height: 20.0),
-                  const Text(
-                    'How It Works',
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6.0),
-                  const Text(
-                    'Five essential steps for accurate optical pulse recordings.',
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 14.0,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Expanded(
-                    child: ListView.separated(
-                      physics: const BouncingScrollPhysics(),
-                      itemCount: _steps.length,
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 12.0),
-                      itemBuilder: (context, index) {
-                        final s = _steps[index];
-                        return MetricCard(
-                          padding: const EdgeInsets.all(16.0),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 36.0,
-                                height: 36.0,
-                                decoration: BoxDecoration(
-                                  color: AppColors.accentBlue.withValues(
-                                    alpha: 0.15,
-                                  ),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: AppColors.accentBlue.withValues(
-                                      alpha: 0.4,
-                                    ),
-                                    width: 1.0,
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    s.step,
-                                    style: const TextStyle(
-                                      fontFamily: 'Outfit',
-                                      fontSize: 16.0,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.accentCyan,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 14.0),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      s.title,
-                                      style: const TextStyle(
-                                        fontFamily: 'Outfit',
-                                        fontSize: 15.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textPrimary,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 4.0),
-                                    Text(
-                                      s.description,
-                                      style: const TextStyle(
-                                        fontFamily: 'Outfit',
-                                        fontSize: 13.0,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColors.textSecondary,
-                                        height: 1.35,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
+              itemBuilder: (context, index) {
+                final item = _steps[index];
+                return MetricCard(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                        width: 32.0,
+                        height: 32.0,
+                        decoration: const BoxDecoration(
+                          color: AppColors.cardBgNavy,
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          item.step,
+                          style: const TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.accentCyan,
                           ),
-                        );
-                      },
-                    ),
+                        ),
+                      ),
+                      const SizedBox(width: 14.0),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              item.title,
+                              style: const TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            const SizedBox(height: 4.0),
+                            Text(
+                              item.description,
+                              style: const TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                fontWeight: FontWeight.w300,
+                                color: AppColors.textMuted,
+                                height: 1.35,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12.0),
-                  PillButton(
-                    label: 'Continue',
-                    style: PillButtonStyle.white,
-                    width: double.infinity,
-                    height: 52.0,
-                    onPressed: onContinue,
-                  ),
-                  const SizedBox(height: 20.0),
-                ],
-              ),
+                );
+              },
             ),
           ),
+          const SizedBox(height: 16.0),
+          PillButton(
+            label: 'Continue',
+            style: PillButtonStyle.white,
+            width: double.infinity,
+            height: 48.0,
+            onPressed: onContinue,
+          ),
+          const SizedBox(height: 10.0),
         ],
       ),
     );

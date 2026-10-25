@@ -1,197 +1,153 @@
-# PulsePatch Lite — Design Specification & Contract
+# PulsePatch Lite — Design Specification Contract
 
-**Version:** 1.1.0  
-**Status:** Approved Design Contract (Pixel & Metric Calibrated)  
-**Source of Truth:** Design boards in `docs/design/` (`Home.png`, `Measuring.png`, `Heart Rate.png`, `AI Insights.png`, `Connect device.png`, `History.png`, `App icon.png`) and `AGENT_PLAN.md`.
-
----
-
-## 1. Executive Summary & Design Principles
-
-PulsePatch Lite is an educational, non-diagnostic biomonitoring application interfacing with an ESP32-C3 + MAX30102 pulse patch over BLE.
-The visual identity communicates high precision, calm modern telemetry, and dark-mode elegance:
-- **Atmospheric Canvas:** Base deep near-black (`#04030C`) with exact calibrated radial glows:
-  - Top-left corner: Deep cosmic indigo glow (`#190E41`).
-  - Bottom-right corner: Deep royal purple glow (`#381463`).
-  - Top-right and bottom-left: Pure near-black canvas (`#04030C`).
-- **Precision Numerals:** Large, thin typography with tabular figures (`Outfit`, font-weight 300) for instant, legible readings.
-- **Tactile Geometric Components:** 22 px rounded navy gradient cards (`#0C1A4A` to `#0B1844`), 56 px circular action buttons, 64 px circular bottom navigation pills, and crisp pill buttons.
-- **Truthful Waveforms:** Optical pulse traces represented as smooth, continuous flowing waves. Never ECG spikes, never fabricated waveforms, and never diagnostic labels (no "Sinus Rhythm", "Normal/Abnormal", or ECG claims).
-- **Dual-Language & Accessibility First:** Fully responsive to English and Arabic (RTL), text scaling up to 2.0x, high contrast ratios, and minimum 48x48 px touch targets.
+**Reference Base Resolution:** $390 \times 844\text{ logical px}$  
+**Font Family:** `Outfit` (Bundled locally: weights 300, 400, 500)  
+**Base Background:** `#04030C` with dual radial glows  
+**Source of Truth:** `docs/design/source/*.dc.html` & `docs/design/TOKENS.md`
 
 ---
 
-## 2. Calibrated Design Tokens (Direct Pixel Extraction)
+## 1. Global Shell & Layout System
 
-### 2.1 Color Palette
+1. **Root Scaffolding:**
+   - Background: Dark canvas `#04030C` overlaid with:
+     - Top-left radial glow: `radial-gradient(80% 35% at 0% 0%, #1A0F44 0%, transparent 70%)`
+     - Bottom-right radial glow: `radial-gradient(90% 45% at 100% 100%, #3A1566 0%, transparent 70%)`
+   - Padding: Exactly `28px` top, `20px` horizontal, `20px` bottom (scaled by $S = \text{screenWidth} / 390.0$).
+   - Status bar: Transparent with light content (`SystemUiOverlayStyle.light`).
+   - Zero Material AppBar, zero Material elevation, zero M3 surface tints.
 
-#### Base Canvas & Corner Glows
-| Token Name | Hex Code / RGB | Usage |
-|---|---|---|
-| `bgBase` | `#04030C` (4, 3, 12) | Canvas base near-black |
-| `bgGlowTopLeft` | `#190E41` (25, 14, 65) | Deep indigo radial glow in top-left |
-| `bgGlowBottomRight` | `#381463` (56, 20, 99) | Deep purple radial glow in bottom-right |
+2. **Card Surfaces (`.c`):**
+   - Background: `linear-gradient(160deg, #0F2160 0%, #08122E 100%)`
+   - Border radius: `22px`
+   - Padding: `16px`
 
-#### Surface & Card Tokens
-| Token Name | Hex Code / RGB | Usage |
-|---|---|---|
-| `cardBgNavy` | `#0B1947` (11, 25, 71) | Standard card base |
-| `cardBgGradientStart` | `#0C1A4A` (12, 26, 74) | Card gradient top boundary |
-| `cardBgGradientEnd` | `#0B1844` (11, 24, 68) | Card gradient bottom boundary |
-| `cardBorder` | `#1E2D60` (30, 45, 96) | Subtle 1 px card contour border |
-| `cardAiGradientStart` | `#451A8B` (69, 26, 139) | AI Model Result card top-left violet |
-| `cardAiGradientEnd` | `#112061` (17, 32, 97) | AI Model Result card bottom-right navy |
+3. **Buttons & Controls:**
+   - Circular Action Button (`.rb`): $56 \times 56\text{ px}$, background `#0B1840`, border none, icon `#FFFFFF` (24x24, stroke 1.6).
+   - White Pill Button (`.w`): Height `48px`, border radius `24px`, background `#FFFFFF`, text `#0B1840`, Outfit 500 16px, padding `0 24px`.
+   - Dark Pill Button (`.w` dark): Height `48px`, border radius `24px`, background `#0B1840`, text `#FFFFFF`, Outfit 500 16px.
 
-#### Feature & Accent Tokens
-| Token Name | Hex Code / RGB | Usage |
-|---|---|---|
-| `timerArcBlue` | `#4C8DF5` (76, 141, 245) | Circular timer active progress arc |
-| `timerInnerDisc` | `#070F2B` (7, 15, 43) | Circular timer inner background circle |
-| `timerTrackRing` | `#1B2A66` (27, 42, 102) | Circular timer inactive track ring |
-| `buttonStopSave` | `#0B1840` (11, 24, 64) | Measuring screen "Stop and save" pill button |
-| `accentPurple` | `#6D28D9` (109, 40, 217) | Secondary accent, radar mid-rings |
-| `accentMagenta` | `#E11D9B` (225, 29, 155) | Variability dots, radar beacon, heart gradient |
-| `accentBlue` | `#2563EB` (37, 99, 235) | Variability dots, heart gradient lower stop |
-| `accentCyan` | `#22D3EE` (34, 211, 238) | Radar inner ring, pulse contour glow |
-| `textPrimary` | `#FFFFFF` | Hero numbers, headings, high-contrast labels |
-| `textSecondary` | `#94A3B8` | Subtitles, unit labels, inactive states |
-| `textMuted` | `#64748B` | Footers, disclaimer notes, subtle metadata |
-
-#### Interactive Component Dimensions & Colors
-| Component | Logical Dimensions | Background | Text / Icon | Border |
-|---|---|---|---|---|
-| PillButton (White) | Width 96 pt, Height 42–48 pt | `#FFFFFF` | `#04030C` (Outfit 600) | None |
-| PillButton (Dark) | Width 96 pt, Height 42 pt | `#0F1C3F` | `#FFFFFF` (Outfit 500) | `1px #22335E` |
-| Stop and Save Pill | Width 165 pt, Height 50 pt | `#0B1840` | `#FFFFFF` (Outfit 600) | `1px #1E2D60` |
-| Header Circle (56px) | 56 x 56 pt | `#0F172A` | `#FFFFFF` (24 pt icon) | `1px rgba(255,255,255,0.08)` |
-| Bottom Circle (64px) Active | 64 x 64 pt | `#FFFFFF` | `#04030C` (28 pt icon) | None |
-| Bottom Circle (64px) Inactive | 64 x 64 pt | `#0D1632` | `#94A3B8` (28 pt icon) | None |
-| Circular Timer | Diameter 145 pt (radius 72.5 pt) | `#070F2B` | White 30 pt time, pause icon | Arc `#4C8DF5`, Track `#1B2A66` |
+4. **Bottom Navigation Bar (`.nv`):**
+   - Four $64 \times 64\text{ px}$ circular buttons with `12px` horizontal gap.
+   - Active: background `#FFFFFF`, icon `#0B1840`.
+   - Inactive: background `#0B1840`, icon `#C9D0F5`.
+   - Order:
+     1. Home (house outline)
+     2. History (clock outline with hands)
+     3. AI Insights (three vertical bars)
+     4. Connect Device (heartbeat patch/shield)
 
 ---
 
-### 2.2 Typography (`Outfit`)
+## 2. Core Master Screens
 
-The entire application standardizes on the **Outfit** Google Font family, explicitly utilizing OpenType tabular figures (`FontFeature.tabularFigures()`) for numerical stability.
+### 2.1 Home Screen (`Main.dc.html` $\rightarrow$ `Home.png`)
+- **Header:**
+  - Left: Title `"Hi, there!"` (26px, Outfit 300, `#FFFFFF`), Subtitle `"How are you today?"` (26px, Outfit 300, `#6B6F95`).
+  - Right: Two 56px circular buttons (Profile, Notifications) in `#0B1840`.
+- **Status Tags:** Row with 8px gap:
+  - `"Connected · PulsePatch-C3"` (border 1px `#3B4270`, radius 8px, padding 2px 6px, text 11px `#9AA0C4`)
+  - `"Sample data"` (same style)
+- **Hero Heart Illustration:**
+  - Outer Heart: 330x300 viewBox 0 0 200 180, fill `#3A2A8F` (0.7) to `#0B2A7A` (0.6).
+  - Inner Heart: Scale 0.6, translate (40, 36), fill `#C0148F` $\rightarrow$ `#4B1E9E` $\rightarrow$ `#1D4ED8`.
+  - Negative margin: `-70px` overlap with cards below.
+- **Card Row (2 cards side by side, gap 12px):**
+  - Card 1 (Last session): Header `"Last session"` + tag `"Saved"`. Subtitle `"Mon 18:05 · not live"`. Large text `"74 BPM"` (44px, Outfit 300, tabular figures).
+  - Card 2 (AI Insights): Header `"AI Insights"`. Title `"Typical pattern"` (24px, Outfit 300). White pill button `"Measure"` (48px height, 100% card width).
+- **Bottom Navigation:** Circle 1 (Home) active.
 
-| Role | Font Size | Line Height | Weight | Letter Spacing | Features / Notes |
-|---|---|---|---|---|---|
-| `HeroNumberLarge` | 96 px | 1.0 | 300 (Light) | -2.0 px | Measuring screen live BPM |
-| `HeroNumberMedium` | 84 px | 1.0 | 300 (Light) | -1.5 px | Heart Rate screen summary BPM |
-| `HeroNumberCard` | 48 – 56 px | 1.0 | 300 (Light) | -1.0 px | Home last session & History items |
-| `HeadingLarge` | 28 px | 34 px | 600 (SemiBold) | -0.5 px | Screen greeting, primary titles |
-| `HeadingMedium` | 22 – 24 px | 28 px | 500 (Medium) | -0.3 px | Screen headers, modal titles |
-| `Subtitle` | 20 – 22 px | 26 px | 400 (Regular) | 0 px | Secondary greeting ("How are you today?") |
-| `BodyText` | 15 – 16 px | 22 px | 400 (Regular) | 0 px | Informational copy, card descriptions |
-| `LabelBold` | 16 px | 20 px | 600 (SemiBold) | 0 px | Button text, interactive targets |
-| `LabelRegular` | 13 – 14 px | 18 px | 400 / 500 | 0.2 px | Card headers, metrics labels, timestamps |
-| `CaptionMuted` | 11 – 12 px | 16 px | 400 (Regular) | 0.3 px | Disclaimers, footer notices, chip text |
+### 2.2 Measuring Screen (`Live.dc.html` $\rightarrow$ `Measuring.png`)
+- **Header:** 56px Back button, Title `"Measuring"` (22px, Outfit 300, center-aligned), 56px empty spacer.
+- **Hero Pulse Rate:** Giant numeral `"74"` (96px, Outfit 300, tabular figures, `#FFFFFF`), subtitle `"BPM"` (20px, `#FFFFFF`).
+- **Optical Pulse Trace:** 350x130 vector trace, white stroke 1.3px.
+- **Trace Subtitle:** `"Optical pulse trace · Signal: Good"` (14px `#9AA0C4`).
+- **Circular Countdown Timer:**
+  - 160x160 circular container, dark disc fill `#070F2B`.
+  - Track ring: r=72, stroke `#1B2A66` 4px.
+  - Progress ring: r=72, stroke `#4C8DF5` 4px, stroke-linecap round, dasharray 130 452, rotated 90°.
+  - Center: Time `"00:09"` (26px, Outfit 300) + Pause icon.
+- **Bottom Action Button:** 48px Dark pill button (`#0B1840`, text `#FFFFFF`) labeled `"Stop and save"`.
 
----
+### 2.3 Heart Rate / Detail Screen (`Detail.dc.html` $\rightarrow$ `Heart Rate.png`)
+- **Header:** 56px Back button, Title `"Heart Rate"` (22px), 56px spacer.
+- **Optical Pulse Trace:** 350x130 vector wave, stroke 1.3px white.
+- **Hero Pulse Rate Row:**
+  - Left: Giant `"74"` (96px, Outfit 300) + small `" BPM"` (22px, top-aligned).
+  - Right: Range `"58 min  96 max"` (14px `#9AA0C4`).
+- **Card 1 (Pulse interval):** Title `"Pulse interval"`, Value `"811 ms"` (24px).
+- **Card 2 (Variability est.):** Title `"Variability (est.)"`, Value `"41 ms"` (24px).
+  - 48-dot variability matrix (318x120, colors `#C026D3` magenta and `#2563EB` blue, radius 5, opacity 0.85).
+  - Timeline labels: `6am`, `9am`, `12pm`, `3pm`, `6pm`, `9pm` (14px `#9AA0C4`).
+- **Footer Disclaimer:** `"Sample data · estimated from optical pulse peaks"` (14px `#9AA0C4`).
 
-## 3. Analysis of the 6 Canvas Screens & App Icon
+### 2.4 AI Insights Screen (`Insights.dc.html` $\rightarrow$ `AI Insights.png`)
+- **Header:** 56px Back button, Title `"AI Insights"` (22px), 56px spacer.
+- **Model Result Card:** Linear gradient `#4A1A8F` to `#0F2160`, radius 22px, padding 16px.
+  - Header: `"Model result"` + Tag `"Experimental"`.
+  - Title: `"Typical pattern"` (40px, Outfit 300, line-height 1.1).
+  - Explanation: `"Similar to your last 5 rest sessions. A pattern label, not a health rating."` (14px `#9AA0C4`).
+- **Measured Values Header:** `"Measured values used"` (14px `#9AA0C4`).
+- **Feature Cards Grid (flex wrap, gap 10px):**
+  - Card 1: `"mean_hr"` $\rightarrow$ `"74 BPM"` (26px)
+  - Card 2: `"std_hr"` $\rightarrow$ `"3.1"` (26px)
+  - Card 3: `"start_hr"` $\rightarrow$ `"78 BPM"` (26px)
+  - Card 4: `"end_hr"` $\rightarrow$ `"70 BPM"` (26px)
+  - Card 5: Full width, `"recovery_drop"` $\rightarrow$ `"−8 BPM"` (26px)
+- **Footer Text:** `"Runs on this phone · small neural network running locally in the app · 6 sessions available"` (14px `#9AA0C4`).
+- **Bottom Navigation:** Circle 3 (Insights) active.
 
-### 3.1 `Home.png` (Screen 6: Home)
-- **Top Header:** Left: "Hi, there!" (White, 28 px SemiBold); below it "How are you today?" (`#64748B`, 22 px Regular). Right: Profile and Notifications 56 px circular buttons.
-- **Status Chips:** Pill chips `Connected · PulsePatch-C3` and `Sample data` (`#0B1229`, border `#1E2B52`).
-- **Centerpiece Illustration:** Layered heart graphic: outer navy-purple silhouette (`#171B42`); inner heart gradient magenta (`#E11D9B`) to blue (`#2563EB`).
-- **Metrics Grid (Two columns, 22 px radius cards `#0B1947`):**
-  - Left ("Last session"): "Mon 18:05 · not live", hero `74` with `BPM`.
-  - Right ("AI Insights"): "Typical\npattern", white PillButton "Measure".
-- **Bottom Navigation Bar:** Four 64 px circles; Circle 1 (Home) is active (solid white background `#FFFFFF`, dark icon `#04030C`).
-
-### 3.2 `Measuring.png` (Screen 11: Live Heart Rate)
-- **Top Bar:** 56 px circular Back button, centered title "Measuring".
-- **Live Display:** Hero `74` (Outfit 300, 96 px) + `BPM` (16 px).
-- **Waveform:** Smooth white optical pulse trace, stroke width 2.5 px. Subtitle: "Optical pulse trace · Signal: Good".
-- **Circular Timer Widget (Calibrated):**
-  - Diameter: 145 pt logical (290 px at 2x).
-  - Center disc: `#070F2B`.
-  - Inactive ring: `#1B2A66`.
-  - Active progress arc: `#4C8DF5` (vibrant blue, stroke 3 pt / 6 px).
-  - Time text: `00:09` (Outfit 400, tabular, 30 px, white).
-  - Pause icon: `||` centered beneath the time.
-- **Primary Button (Calibrated):** Navy PillButton "Stop and save", width 165 pt, height 50 pt, background `#0B1840`.
-
-### 3.3 `Heart Rate.png` (Screen 13: Measurement Complete / Summary)
-- **Top Bar:** 56 px circular Back button, title "Heart Rate".
-- **Upper Waveform:** Smooth optical pulse trace (~100 px).
-- **Hero Stats:** Hero `74` (84 px) + `BPM` (18 px), right-aligned "58 min 96 max" (`#94A3B8`).
-- **Pulse Interval Card:** 22 px radius navy card, "Pulse interval" (`#FFFFFF`, 16 px) -> `811 ms` (26 px).
-- **Variability (est.) Card:** 22 px radius navy card, "Variability (est.)" -> `41 ms`. Dot chart: 6 time columns (`6am`, `9am`, `12pm`, `3pm`, `6pm`, `9pm`) with magenta (`#E11D9B`) and blue (`#2563EB`) scatter dots.
-- **Footer Disclaimer:** "Sample data · estimated from optical pulse peaks".
-
-### 3.4 `AI Insights.png` (Screen 15: Session Pattern Analysis)
-- **Top Bar:** 56 px circular Back button, title "AI Insights".
-- **Model Result Card:** Violet-to-navy gradient (`#451A8B` to `#112061`, 22 px radius). "Model result" + "Experimental" pill chip. Main text "Typical pattern" (Outfit 500, 32 px). Plain explanation: "Similar to your last 5 rest sessions. A pattern label, not a health rating."
-- **Feature Cards Stack (5 cards in `#0B1947`):**
-  1. `mean_hr` -> `74 BPM`
-  2. `std_hr` -> `3.1`
-  3. `start_hr` -> `78 BPM`
-  4. `end_hr` -> `70 BPM`
-  5. `recovery_drop` -> `-8 BPM`
-- **Footer Text:** "Runs on this phone · small neural network running locally in the app · 6 sessions available".
-- **Bottom Navigation:** Circle 3 (Insights) is active.
-
-### 3.5 `Connect device.png` (Screen 7: Device Connection)
-- **Top Bar:** 56 px circular Back button, title "Connect device".
-- **Scanning Radar:** Concentric circles: center solid magenta beacon (`#E11D9B`, 28 px diameter), cyan inner ring (`#22D3EE`), purple middle ring (`#6D28D9`), dark indigo outer ring (`#1D1C48`). Subtitle: "Scanning · keep the patch within 1 m".
+### 2.5 Connect Device Screen (`Device.dc.html` $\rightarrow$ `Connect device.png`)
+- **Header:** 56px Back button, Title `"Connect device"` (22px), 56px spacer.
+- **Scanning Radar:** 320x250 vector radar with center magenta beacon (r=14 `#C0148F`) and concentric rings (r=45 `#4C8DF5`, r=80 `#3A2A8F` 0.6, r=115 `#3A2A8F` 0.4).
+- **Scanning Subtitle:** `"Scanning · keep the patch within 1 m"` (14px `#9AA0C4`, center-aligned).
 - **Device List:**
-  - Card 1: "PulsePatch-C3", "Signal strong · -52 dBm", white PillButton "Connect".
-  - Card 2: "PulsePatch-C3 (2)", "Signal weak · -85 dBm", dark PillButton "Connect".
-- **Footer Disclaimer:** "Sensor: MAX30102 · Battery and firmware shown only if reported".
+  - Device Card 1: `"PulsePatch-C3"`, `"Signal strong · −52 dBm"`, White pill button `"Connect"`.
+  - Device Card 2: `"PulsePatch-C3 (2)"`, `"Signal weak · −85 dBm"`, Dark pill button `"Connect"` (`#0B1840`, text `#FFFFFF`).
+- **Footer Disclaimer:** `"Sensor: MAX30102 · Rechargeable battery / USB-C (no battery level reported)"` (14px `#9AA0C4`).
+- **Bottom Navigation:** Circle 4 (Device) active.
 
-### 3.6 `History.png` (Screen 19: Measurement History)
-- **Top Bar:** 56 px circular Back button, title "History".
-- **Filter Bar:** Segmented pill toggle: "Week" (active: white `#FFFFFF`, black text) vs "Day" (navy `#0E1736`, white text). Right: "Sample data" pill chip.
-- **Session Cards (`#0B1947`):**
-  - Item 1: "Today 18:05", "Quality: Good · Pattern: typical", `74 BPM`.
-  - Item 2: "Sun 09:30", "Quality: Good · Pattern: typical", `71 BPM`.
-  - Item 3: "Fri 20:12", "Quality: Fair · Pattern: typical", `82 BPM`.
-  - Item 4: "Thu 07:45", "Quality: Good · Pattern: typical", `68 BPM`.
-- **Bottom Navigation:** Circle 2 (History) is active.
-
-### 3.7 `App icon.png` (Application Launcher Icon)
-- 1024x1024 master squircle, layered heart with magenta-to-purple gradient, smooth white optical pulse line with cyan glow border. Non-ECG single smooth wave. Palette tokens: `#04030C`, `#6D28D9`, `#E11D9B`, `#2563EB`, `#22D3EE`.
+### 2.6 History Screen (`History.dc.html` $\rightarrow$ `History.png`)
+- **Header:** 56px Back button, Title `"History"` (22px), 56px spacer.
+- **Filter Row:** White pill button `"Week"`, Dark pill button `"Day"`, Tag `"Sample data"` right-aligned.
+- **History List (4 cards, gap 10px):**
+  - Card 1: `"Today 18:05"`, `"Quality: Good · Pattern: typical"`, `"74 BPM"` (40px, Outfit 300).
+  - Card 2: `"Sun 09:30"`, `"Quality: Good · Pattern: typical"`, `"71 BPM"` (40px, Outfit 300).
+  - Card 3: `"Fri 20:12"`, `"Quality: Fair · Pattern: typical"`, `"82 BPM"` (40px, Outfit 300).
+  - Card 4: `"Thu 07:45"`, `"Quality: Good · Pattern: typical"`, `"68 BPM"` (40px, Outfit 300).
+- **Bottom Navigation:** Circle 2 (History) active.
 
 ---
 
-## 4. The 21 Derived Screens (Master Screen Inventory)
+## 3. Derived Screens (21 Screens)
 
-Out of the 27 screens in Section 9 of the Master Build Plan, 6 are provided in the canvas images and 21 are derived. All 21 derived screens strictly adhere to the calibrated design tokens, 22 px card radii, 56 px circular action buttons, and `Outfit` typography:
+All derived screens strictly inherit these identical tokens:
+- Background: `#04030C` with top-left `#1A0F44` and bottom-right `#3A1566` radial glows.
+- Fonts: `Outfit` (300 headings, 400 body, 500 buttons).
+- Headers: 56px circular back button (`#0B1840`), 22px Outfit 300 title, 56px spacer.
+- Cards: `linear-gradient(160deg, #0F2160, #08122E)`, radius `22px`, padding `16px`.
+- Buttons: 48px pill buttons (white for primary, `#0B1840` for secondary).
+- Chips: 1px border `#3B4270`, radius 8px, text 11px `#9AA0C4`.
 
-1. **Splash Screen:** Atmospheric dark background with glowing animated pulse heart icon, thin app title `PulsePatch Lite`, and version tag.
-2. **Welcome Screen:** Introductory walkthrough, hero graphic, 3 core value cards (Offline first, BLE sensor, On-device pattern analysis), white PillButton "Get Started".
-3. **How It Works Screen:** 5-step numbered cards: 1. Place patch on fingertip; 2. Keep hand still; 3. Optical LED detects pulse; 4. View live telemetry; 5. Explore local AI patterns.
-4. **User Preferences Screen:** Optional user display name, metric units selector, educational privacy statement, white PillButton "Continue".
-5. **Permissions Screen:** Educational pre-permission cards explaining Bluetooth and Notification access. Grant buttons with Settings redirect if permanently denied.
-6. **Device Details Screen:** 56 px back button, connected device card, live RSSI signal meter, firmware version string, MAX30102 sensor status, packet diagnostics (sequence, loss count).
-7. **Device Troubleshooting Screen:** Guided recovery steps for connection drops, Bluetooth off, weak signal, sensor error, or finger detachment.
-8. **Measurement Preparation Screen:** Session type selector: Pill toggle for "Resting Session" vs "Post-Activity Session". Fingertip placement check card, white PillButton "Start Measurement".
-9. **Measurement Quality Screen:** Dedicated real-time diagnostic panel: MAX30102 signal quality score (0–100), finger contact status, and motion artifact flags.
-10. **AI Insights Dashboard Screen:** Aggregated pattern history: count of Typical vs Different sessions, consistency score, recovery trends.
-11. **Recovery Analysis Screen:** Post-activity recovery drop metric (`recovery_drop = start_hr - 60s_window_hr`), personal baseline comparison against user's prior sessions, recovery curve chart.
-12. **Historical Trends Screen:** Daily and weekly trend charts with explicit gap handling (missing days show gaps, never zeroed). Rest vs Post-activity filtering.
-13. **AI Model Information Screen:** Model transparency card: `PulsePatch AI Insights`, small neural network running locally in the app, version, training date, input features, limitations, non-diagnostic disclaimer.
-14. **Session Details Screen:** Drill-down view for an individual session: date/time, optical pulse trace playback, full statistics, AI classification, export to CSV/JSON, delete with confirmation.
-15. **Reports Screen:** Date range picker, session count, PDF generation preview with charts, share intent button, print action.
-16. **Notifications Center Screen:** Real event logs: Device connected/disconnected, measurement completed, quality warnings, scheduled reminders.
-17. **Reminder Settings Screen:** Daily measurement schedule picker, permission status, explicit disclaimer: No background sensor monitoring.
-18. **Profile and Preferences Screen:** User display name, theme toggle (Dark default / Light available), language selector (English / Arabic RTL), data export.
-19. **Application Settings Screen:** BLE auto-reconnect toggle, measurement duration default (30s to 120s), chart smoothing preference, developer mode.
-20. **Privacy and Data Management Screen:** Transparent local SQLite storage declaration, export complete database, "Erase All Data" red confirmation modal.
-21. **About and Project Information Screen:** Graduation project credits, ESP32-C3 + MAX30102 hardware documentation, open source licenses, educational prototype disclaimer.
-
----
-
-## 5. Medical & Non-Diagnostic Compliance Guardrails
-
-1. **Strict Terminology:**
-   - Always write: `Optical pulse trace`, `Pulse interval`, `Estimated variability`, `Typical pattern`, `Different pattern`.
-   - Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.
-2. **Data Truthfulness:**
-   - Any synthetic or simulator data must bear a prominent visible chip: `Sample data` or `Simulator`.
-   - Any stale value must be labeled with its exact timestamp and `not live` / `Saved`.
-   - Gaps in sensor streams are displayed as gaps in charts, never connected as 0 BPM.
-3. **No Medical Claims:**
-   - Every report and AI screen includes the explicit disclaimer: *"PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations."*
+Inventory of 21 Derived Screens:
+1. `Splash Screen`
+2. `Welcome / Onboarding Screen`
+3. `How It Works Screen`
+4. `Permissions Screen`
+5. `User Preferences Screen`
+6. `Measurement Preparation Screen`
+7. `Session Details Screen`
+8. `Historical Trends Screen`
+9. `Reports Screen`
+10. `Recovery Analysis Screen`
+11. `AI Insights Dashboard Screen`
+12. `AI Model Information Screen`
+13. `Notifications Center Screen`
+14. `Reminder Settings Screen`
+15. `Profile & Preferences Screen`
+16. `Application Settings Screen`
+17. `Privacy & Data Management Screen`
+18. `About Screen`
+19. `Device Troubleshooting Screen`
+20. `System State Banner / Overlay`
+21. `Global Error Boundary View`

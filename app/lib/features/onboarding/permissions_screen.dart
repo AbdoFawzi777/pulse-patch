@@ -4,6 +4,7 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/repositories/preferences_repository.dart';
 import '../../shared/widgets/circle_icon_button.dart';
+import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/pill_button.dart';
 
@@ -72,7 +73,7 @@ class _PermissionsScreenState extends ConsumerState<PermissionsScreen> {
     }
   }
 
-  Future<void> _completeOnboarding() async {
+  Future<void> _handleComplete() async {
     final prefs = ref.read(preferencesRepositoryProvider);
     await prefs.setOnboardingCompleted(true);
     widget.onFinish();
@@ -80,225 +81,179 @@ class _PermissionsScreenState extends ConsumerState<PermissionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final hasPermanentlyDenied =
-        _bluetoothStatus.isPermanentlyDenied ||
-        _notificationStatus.isPermanentlyDenied;
+    final isBtGranted = _bluetoothStatus.isGranted;
+    final isNotifGranted = _notificationStatus.isGranted;
 
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: Stack(
-        children: [
-          // Background corner glow
-          Positioned(
-            top: -100,
-            left: -100,
-            width: 350,
-            height: 350,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.bgGlowTopLeft.withValues(alpha: 0.6),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 12.0),
-                  CircleIconButton(
-                    icon: Icons.chevron_left_rounded,
-                    semanticLabel: 'Back',
-                    onPressed: widget.onBack,
-                  ),
-                  const SizedBox(height: 20.0),
-                  const Text(
-                    'Permissions',
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 6.0),
-                  const Text(
-                    'PulsePatch Lite requires Bluetooth to communicate with your patch hardware.',
-                    style: TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 14.0,
-                      color: AppColors.textSecondary,
-                    ),
-                  ),
-                  const SizedBox(height: 24.0),
-                  Expanded(
-                    child: ListView(
-                      physics: const BouncingScrollPhysics(),
-                      children: [
-                        // Bluetooth permission card
-                        _PermissionCard(
-                          icon: Icons.bluetooth_rounded,
-                          title: 'Bluetooth Low Energy',
-                          description:
-                              'Used exclusively to discover and stream optical pulse telemetry from your ESP32-C3 patch.',
-                          status: _bluetoothStatus,
-                          onRequest: _requestBluetooth,
-                        ),
-                        const SizedBox(height: 16.0),
-                        // Notification permission card
-                        _PermissionCard(
-                          icon: Icons.notifications_active_rounded,
-                          title: 'Measurement Alerts',
-                          description:
-                              'Alerts you when a timed pulse session finishes, without keeping your screen on continuously.',
-                          status: _notificationStatus,
-                          onRequest: _requestNotification,
-                        ),
-                        if (hasPermanentlyDenied) ...[
-                          const SizedBox(height: 20.0),
-                          MetricCard(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Row(
-                              children: [
-                                const Icon(
-                                  Icons.settings_outlined,
-                                  color: AppColors.accentCyan,
-                                  size: 24.0,
-                                ),
-                                const SizedBox(width: 12.0),
-                                const Expanded(
-                                  child: Text(
-                                    'A permission was permanently denied. Open Settings to grant access.',
-                                    style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      fontSize: 13.0,
-                                      color: AppColors.textSecondary,
-                                    ),
-                                  ),
-                                ),
-                                TextButton(
-                                  onPressed: openAppSettings,
-                                  child: const Text(
-                                    'Settings',
-                                    style: TextStyle(
-                                      fontFamily: 'Outfit',
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.accentBlue,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  PillButton(
-                    label: _isLoading ? 'Checking...' : 'Finish Setup',
-                    style: PillButtonStyle.white,
-                    width: double.infinity,
-                    height: 52.0,
-                    onPressed: _isLoading ? null : _completeOnboarding,
-                  ),
-                  const SizedBox(height: 20.0),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _PermissionCard extends StatelessWidget {
-  const _PermissionCard({
-    required this.icon,
-    required this.title,
-    required this.description,
-    required this.status,
-    required this.onRequest,
-  });
-
-  final IconData icon;
-  final String title;
-  final String description;
-  final PermissionStatus status;
-  final VoidCallback onRequest;
-
-  @override
-  Widget build(BuildContext context) {
-    final isGranted = status.isGranted;
-
-    return MetricCard(
-      padding: const EdgeInsets.all(18.0),
+    return DesignCanvasScaffold(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Container(
-                width: 40.0,
-                height: 40.0,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF131D44),
-                  borderRadius: BorderRadius.circular(10.0),
-                ),
-                child: Icon(
-                  icon,
-                  color: isGranted
-                      ? AppColors.accentCyan
-                      : AppColors.textSecondary,
-                  size: 20.0,
+              CircleIconButton(
+                type: CircleIconType.back,
+                semanticLabel: 'Back',
+                onPressed: widget.onBack,
+              ),
+              const Text(
+                'Permissions',
+                style: TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 22.0,
+                  fontWeight: FontWeight.w300,
+                  color: AppColors.textPrimary,
+                  height: 1.0,
                 ),
               ),
-              const SizedBox(width: 14.0),
-              Expanded(
-                child: Text(
-                  title,
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary,
-                  ),
-                ),
-              ),
-              if (isGranted)
-                const Icon(
-                  Icons.check_circle_rounded,
-                  color: Color(0xFF10B981),
-                  size: 22.0,
-                )
-              else
-                PillButton(
-                  label: 'Allow',
-                  style: PillButtonStyle.white,
-                  height: 38.0,
-                  width: 80.0,
-                  onPressed: onRequest,
-                ),
+              const SizedBox(width: 56.0),
             ],
           ),
-          const SizedBox(height: 12.0),
-          Text(
-            description,
-            style: const TextStyle(
+          const SizedBox(height: 16.0),
+          const Text(
+            'Grant permissions to discover and connect with your PulsePatch hardware.',
+            style: TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 13.0,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textSecondary,
-              height: 1.35,
+              fontSize: 14.0,
+              fontWeight: FontWeight.w300,
+              color: AppColors.textMuted,
             ),
           ),
+          const SizedBox(height: 20.0),
+          Expanded(
+            child: ListView(
+              physics: const BouncingScrollPhysics(),
+              children: [
+                // Bluetooth Card
+                MetricCard(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44.0,
+                        height: 44.0,
+                        decoration: const BoxDecoration(
+                          color: AppColors.cardBgNavy,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.bluetooth_searching_rounded,
+                          color: isBtGranted
+                              ? AppColors.accentCyan
+                              : AppColors.textMuted,
+                          size: 24.0,
+                        ),
+                      ),
+                      const SizedBox(width: 14.0),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Bluetooth Low Energy',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            SizedBox(height: 2.0),
+                            Text(
+                              'Required for scanning and receiving real-time packets.',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                fontWeight: FontWeight.w300,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      PillButton(
+                        label: isBtGranted ? 'Granted' : 'Allow',
+                        style: isBtGranted
+                            ? PillButtonStyle.dark
+                            : PillButtonStyle.white,
+                        onPressed: isBtGranted ? null : _requestBluetooth,
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14.0),
+                // Notification Card
+                MetricCard(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 44.0,
+                        height: 44.0,
+                        decoration: const BoxDecoration(
+                          color: AppColors.cardBgNavy,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.notifications_active_outlined,
+                          color: isNotifGranted
+                              ? AppColors.accentCyan
+                              : AppColors.textMuted,
+                          size: 24.0,
+                        ),
+                      ),
+                      const SizedBox(width: 14.0),
+                      const Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Notifications',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            SizedBox(height: 2.0),
+                            Text(
+                              'Optional reminders for scheduled rest measurements.',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                fontWeight: FontWeight.w300,
+                                color: AppColors.textMuted,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8.0),
+                      PillButton(
+                        label: isNotifGranted ? 'Granted' : 'Allow',
+                        style: isNotifGranted
+                            ? PillButtonStyle.dark
+                            : PillButtonStyle.white,
+                        onPressed:
+                            isNotifGranted ? null : _requestNotification,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16.0),
+          PillButton(
+            label: 'Complete Setup',
+            style: PillButtonStyle.white,
+            width: double.infinity,
+            height: 48.0,
+            onPressed: _isLoading ? null : _handleComplete,
+          ),
+          const SizedBox(height: 10.0),
         ],
       ),
     );

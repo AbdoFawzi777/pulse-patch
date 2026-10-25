@@ -3,7 +3,10 @@ import '../../core/theme/app_colors.dart';
 
 enum PillButtonStyle { white, dark, stopSave }
 
-/// Pill button adhering to design specification for white, dark, and stop/save variants.
+/// Pill button matching design canvas:
+/// Height 48px, border-radius 24px, border 0, font Outfit 500 16px, padding 0 24px.
+/// White: #FFFFFF background, #0B1840 text.
+/// Dark: #0B1840 background, #FFFFFF text.
 class PillButton extends StatelessWidget {
   const PillButton({
     super.key,
@@ -11,7 +14,7 @@ class PillButton extends StatelessWidget {
     required this.onPressed,
     this.style = PillButtonStyle.white,
     this.width,
-    this.height,
+    this.height = 48.0,
     this.icon,
   });
 
@@ -19,93 +22,66 @@ class PillButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final PillButtonStyle style;
   final double? width;
-  final double? height;
+  final double height;
   final IconData? icon;
 
   @override
   Widget build(BuildContext context) {
     Color bg;
     Color textColor;
-    Border? border;
-    double defaultHeight = 44.0;
-    double defaultMinWidth = 88.0;
 
     switch (style) {
       case PillButtonStyle.white:
         bg = AppColors.pillWhite;
-        textColor = AppColors.bgBase;
-        border = null;
+        textColor = AppColors.pillDark;
         break;
       case PillButtonStyle.dark:
+      case PillButtonStyle.stopSave:
         bg = AppColors.pillDark;
         textColor = AppColors.textPrimary;
-        border = Border.all(color: const Color(0xFF22335E), width: 1.0);
-        break;
-      case PillButtonStyle.stopSave:
-        bg = AppColors.buttonStopSave;
-        textColor = AppColors.textPrimary;
-        border = Border.all(color: AppColors.cardBorder, width: 1.0);
-        defaultHeight = 50.0;
-        defaultMinWidth = 165.0;
         break;
     }
-
-    final effectiveHeight = height ?? defaultHeight;
 
     return Semantics(
       button: true,
       enabled: onPressed != null,
       label: label,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: width ?? defaultMinWidth,
-          minHeight: 48.0, // Accessible touch target
-        ),
-        child: SizedBox(
+      child: GestureDetector(
+        onTap: onPressed,
+        child: Container(
           width: width,
-          height: effectiveHeight,
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: BorderRadius.circular(999.0),
-            child: Ink(
-              decoration: BoxDecoration(
-                color: onPressed == null ? bg.withValues(alpha: 0.5) : bg,
-                borderRadius: BorderRadius.circular(999.0),
-                border: border,
-              ),
-              child: InkWell(
-                borderRadius: BorderRadius.circular(999.0),
-                onTap: onPressed,
-                child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        if (icon != null) ...[
-                          Icon(icon, size: 18.0, color: textColor),
-                          const SizedBox(width: 6.0),
-                        ],
-                        Flexible(
-                          child: Text(
-                            label,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 15.0,
-                              fontWeight: FontWeight.w600,
-                              color: textColor,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+          height: height,
+          padding: EdgeInsets.symmetric(
+            horizontal: width != null && width! < 120 ? 8.0 : 16.0,
+          ),
+          decoration: BoxDecoration(
+            color: bg,
+            borderRadius: BorderRadius.circular(24.0),
+          ),
+          alignment: Alignment.center,
+          child: Row(
+            mainAxisSize: width == null ? MainAxisSize.min : MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon, size: 18.0, color: textColor),
+                const SizedBox(width: 8.0),
+              ],
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                    height: 1.0,
                   ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),

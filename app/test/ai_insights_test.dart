@@ -255,24 +255,20 @@ void main() {
         );
         await tester.pumpAndSettle();
 
-        // Header and disclaimers
+        // Header and model result card
         expect(find.text('AI Insights'), findsOneWidget);
+        expect(find.text('Model result'), findsOneWidget);
+        expect(find.text('Experimental'), findsOneWidget);
+        expect(find.text('Typical pattern'), findsWidgets);
         expect(
-          find.textContaining(
-            'Pattern classifications are statistical clusters',
+          find.text(
+            'Similar to your last 5 rest sessions. A pattern label, not a health rating.',
           ),
           findsOneWidget,
         );
 
-        // Metric cards
-        expect(find.text('Typical'), findsOneWidget);
-        expect(find.text('Different'), findsOneWidget);
-        expect(find.text('Consistency'), findsOneWidget);
-
-        // Recent session list item
-        expect(find.text('Recent Classified Sessions'), findsOneWidget);
-        expect(find.text('72 BPM'), findsOneWidget);
-        expect(find.text('Typical pattern'), findsOneWidget);
+        // Section header and values
+        expect(find.text('Measured values used'), findsOneWidget);
       },
     );
 
@@ -296,13 +292,11 @@ void main() {
         expect(find.text('100% Offline & Private'), findsOneWidget);
 
         // Technical panel toggle
-        expect(find.text('Technical Evaluator Panel'), findsOneWidget);
-        await tester.drag(
-          find.byType(SingleChildScrollView),
-          const Offset(0, -600),
-        );
+        final panelFinder = find.text('Technical Evaluator Panel');
+        expect(panelFinder, findsOneWidget);
+        await tester.ensureVisible(panelFinder);
         await tester.pumpAndSettle();
-        await tester.tap(find.text('Technical Evaluator Panel'));
+        await tester.tap(panelFinder);
         await tester.pumpAndSettle();
 
         // Verify expanded technical details

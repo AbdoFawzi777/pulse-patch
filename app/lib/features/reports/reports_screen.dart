@@ -10,6 +10,7 @@ import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/error_banner.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/pill_button.dart';
+import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/status_chip.dart';
 import '../device/heart_rate_source.dart';
 import 'pdf_report_generator.dart';
@@ -92,76 +93,34 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
               .round()
         : null;
 
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: Stack(
+    return DesignCanvasScaffold(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Background corner glows
-          Positioned(
-            top: -120,
-            left: -120,
-            width: 360,
-            height: 360,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.bgGlowTopLeft.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
-                ),
+          // Header Row
+          Row(
+            children: [
+              CircleIconButton(
+                type: CircleIconType.back,
+                semanticLabel: 'Back',
+                onPressed: widget.onBack,
               ),
-            ),
-          ),
-          Positioned(
-            bottom: -120,
-            right: -120,
-            width: 360,
-            height: 360,
-            child: Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.bgGlowBottomRight.withValues(alpha: 0.7),
-                    Colors.transparent,
-                  ],
-                ),
-              ),
-            ),
-          ),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SizedBox(height: 12.0),
-                  // Header Row
-                  Row(
-                    children: [
-                      CircleIconButton(
-                        icon: Icons.chevron_left_rounded,
-                        semanticLabel: 'Back',
-                        onPressed: widget.onBack,
-                      ),
-                      const Expanded(
-                        child: Text(
-                          'Biomonitoring Reports',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 22.0,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 56.0),
-                    ],
+              const Expanded(
+                child: Text(
+                  'Biomonitoring Reports',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 22.0,
+                    fontWeight: FontWeight.w300,
+                    color: AppColors.textPrimary,
                   ),
-                  const SizedBox(height: 16.0),
+                ),
+              ),
+              const SizedBox(width: 56.0),
+            ],
+          ),
+          const SizedBox(height: 16.0),
 
                   // Date range selector buttons
                   SingleChildScrollView(
@@ -384,11 +343,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   ),
                 ],
               ),
-            ),
-          ),
-        ],
-      ),
-    );
+            );
   }
 
   Future<void> _generateAndSharePdf(

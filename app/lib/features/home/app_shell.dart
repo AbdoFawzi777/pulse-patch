@@ -5,11 +5,11 @@ import '../../data/repositories/session_repository.dart';
 import '../../domain/entities/session_record.dart';
 import '../../domain/signal/session_recorder.dart';
 import '../../shared/widgets/bottom_circle_nav.dart';
+import '../device/connect_device_screen.dart';
 import '../device/heart_rate_source.dart';
 import '../history/measurement_history_screen.dart';
 import '../history/session_details_screen.dart';
 import '../insights/ai_insights_dashboard_screen.dart';
-import '../settings/application_settings_screen.dart';
 import '../measurement/live_measurement_screen.dart';
 import '../measurement/measurement_complete_screen.dart';
 import '../measurement/measurement_preparation_screen.dart';
@@ -187,7 +187,11 @@ class _AppShellState extends ConsumerState<AppShell> {
         break;
 
       case AppView.device:
-        body = const ApplicationSettingsScreen();
+        body = ConnectDeviceScreen(
+          onBack: () => setState(() => _currentView = AppView.home),
+          onSelectTab: _navigateToTab,
+          showBottomNav: false,
+        );
         break;
     }
 

@@ -3,7 +3,9 @@ import '../../core/theme/app_colors.dart';
 
 enum StatusChipVariant { neutral, active, sample, experimental }
 
-/// Pill chip matching design canvas (e.g. "Sample data", "Saved", "Connected · ...").
+/// Pill chip matching design canvas:
+/// border: 1px solid #3B4270, border-radius: 8px, padding: 2px 6px,
+/// text: 11px Outfit 300 #9AA0C4.
 class StatusChip extends StatelessWidget {
   const StatusChip({
     super.key,
@@ -20,64 +22,36 @@ class StatusChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color bg;
-    Color border;
-    Color text;
-
-    switch (variant) {
-      case StatusChipVariant.neutral:
-        bg = AppColors.chipBg;
-        border = AppColors.chipBorder;
-        text = AppColors.textSecondary;
-        break;
-      case StatusChipVariant.active:
-        bg = const Color(0xFF0F2445);
-        border = const Color(0xFF2563EB);
-        text = const Color(0xFF93C5FD);
-        break;
-      case StatusChipVariant.sample:
-        bg = AppColors.chipBg;
-        border = const Color(0xFF334155);
-        text = AppColors.textMuted;
-        break;
-      case StatusChipVariant.experimental:
-        bg = const Color(0xFF2A1657);
-        border = const Color(0xFF4C1D95);
-        text = const Color(0xFFDDD6FE);
-        break;
-    }
-
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+      padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 2.0),
       decoration: BoxDecoration(
-        color: bg,
-        borderRadius: BorderRadius.circular(999.0),
-        border: Border.all(color: border, width: 1.0),
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(8.0),
+        border: Border.all(color: AppColors.chipBorder, width: 1.0),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           if (leadingDot) ...[
             Container(
-              width: 6.0,
-              height: 6.0,
+              width: 5.0,
+              height: 5.0,
+              margin: const EdgeInsets.only(right: 4.0),
               decoration: BoxDecoration(
-                color: dotColor ?? AppColors.accentCyan,
                 shape: BoxShape.circle,
+                color: dotColor ?? AppColors.textSecondary,
               ),
             ),
-            const SizedBox(width: 6.0),
           ],
-          Flexible(
-            child: Text(
-              label,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: 'Outfit',
-                fontSize: 12.0,
-                fontWeight: FontWeight.w400,
-                color: text,
-              ),
+          Text(
+            label,
+            style: const TextStyle(
+              fontFamily: 'Outfit',
+              fontSize: 11.0,
+              fontWeight: FontWeight.w300,
+              color: AppColors.chipText,
+              height: 1.1,
             ),
           ),
         ],

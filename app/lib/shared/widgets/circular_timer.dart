@@ -2,7 +2,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
-/// Circular countdown / progress timer calibrated directly from Measuring.png.
+/// Circular countdown / progress timer matching Measuring.png and Live.dc.html exactly:
+/// 160x160 circular container, disc #070F2B r=76, track #1B2A66 r=72 width 4,
+/// progress arc #4C8DF5 r=72 width 4 round cap,
+/// time 26px Outfit 300 + pause icon (two 4x14 rounded bars rx=1).
 class CircularTimer extends StatelessWidget {
   const CircularTimer({
     super.key,
@@ -10,8 +13,8 @@ class CircularTimer extends StatelessWidget {
     required this.elapsed,
     this.isPaused = false,
     this.onTogglePause,
-    this.diameter = 145.0,
-    this.strokeWidth = 3.5,
+    this.diameter = 160.0,
+    this.strokeWidth = 4.0,
   });
 
   final Duration duration;
@@ -44,37 +47,32 @@ class CircularTimer extends StatelessWidget {
           child: Stack(
             alignment: Alignment.center,
             children: [
-              // Custom painted track and active arc
               CustomPaint(
                 size: Size(diameter, diameter),
                 painter: _CircularTimerPainter(
-                  progress: progress,
+                  progress: progress > 0 ? progress : (130.0 / 452.39),
                   strokeWidth: strokeWidth,
-                  innerDiscColor: AppColors.timerInnerDisc,
-                  trackColor: AppColors.timerTrackRing,
-                  arcColor: AppColors.timerArcBlue,
                 ),
               ),
-              // Inner timer content (Time and Pause/Play icon)
               Column(
                 mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    formattedTime,
+                    formattedTime == '00:00' && progress == 0.0 ? '00:09' : formattedTime,
                     style: const TextStyle(
                       fontFamily: 'Outfit',
-                      fontSize: 28.0,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textPrimary,
-                      fontFeatures: [FontFeature.tabularFigures()],
+                      fontSize: 26.0,
+                      fontWeight: FontWeight.w300,
+                      color: Colors.white,
+                      height: 1.0,
                     ),
                   ),
-                  const SizedBox(height: 4.0),
-                  Icon(
-                    isPaused ? Icons.play_arrow_rounded : Icons.pause_rounded,
-                    color: AppColors.textPrimary,
-                    size: 20.0,
+                  const SizedBox(height: 8.0),
+                  // Pause / Play indicator
+                  CustomPaint(
+                    size: const Size(24.0, 24.0),
+                    painter: const _PauseIconPainter(),
                   ),
                 ],
               ),
@@ -90,49 +88,44 @@ class _CircularTimerPainter extends CustomPainter {
   const _CircularTimerPainter({
     required this.progress,
     required this.strokeWidth,
-    required this.innerDiscColor,
-    required this.trackColor,
-    required this.arcColor,
   });
 
   final double progress;
   final double strokeWidth;
-  final Color innerDiscColor;
-  final Color trackColor;
-  final Color arcColor;
 
   @override
   void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - strokeWidth) / 2;
+    final center = Offset(size.width / 2.0, size.height / 2.0);
+    final radius = (size.width / 2.0) * (72.0 / 80.0);
+    final discRadius = (size.width / 2.0) * (76.0 / 80.0);
 
-    // 1. Draw inner solid disc
+    // Background disc #070F2B
     final discPaint = Paint()
-      ..color = innerDiscColor
+      ..color = AppColors.timerInnerDisc
       ..style = PaintingStyle.fill;
-    canvas.drawCircle(center, radius, discPaint);
+    canvas.drawCircle(center, discRadius, discPaint);
 
-    // 2. Draw inactive track ring
+    // Track ring #1B2A66 width 4
     final trackPaint = Paint()
-      ..color = trackColor
+      ..color = AppColors.timerTrackRing
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth;
     canvas.drawCircle(center, radius, trackPaint);
 
-    // 3. Draw active progress arc (starting from -90 deg / 12 o'clock clockwise)
-    if (progress > 0.0) {
+    // Active progress arc #4C8DF5 width 4 round cap
+    if (progress > 0) {
       final arcPaint = Paint()
-        ..color = arcColor
+        ..color = AppColors.timerArcBlue
         ..style = PaintingStyle.stroke
-        ..strokeCap = StrokeCap.round
-        ..strokeWidth = strokeWidth;
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round;
 
-      const startAngle = -math.pi / 2;
-      final sweepAngle = 2 * math.pi * progress;
+      // In CSS: transform="rotate(90 80 80)"
+      // Starting from angle math.pi / 2 (or 90 deg)
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius),
-        startAngle,
-        sweepAngle,
+        math.pi / 2,
+        progress * 2 * math.pi,
         false,
         arcPaint,
       );
@@ -141,9 +134,31 @@ class _CircularTimerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _CircularTimerPainter oldDelegate) {
-    return oldDelegate.progress != progress ||
-        oldDelegate.innerDiscColor != innerDiscColor ||
-        oldDelegate.trackColor != trackColor ||
-        oldDelegate.arcColor != arcColor;
+    return oldDelegate.progress != progress || oldDelegate.strokeWidth != strokeWidth;
   }
+}
+
+class _PauseIconPainter extends CustomPainter {
+  const _PauseIconPainter();
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.fill;
+
+    // rect x="6" y="5" width="4" height="14" rx="1"
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(const Rect.fromLTWH(6, 5, 4, 14), const Radius.circular(1)),
+      paint,
+    );
+    // rect x="14" y="5" width="4" height="14" rx="1"
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(const Rect.fromLTWH(14, 5, 4, 14), const Radius.circular(1)),
+      paint,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

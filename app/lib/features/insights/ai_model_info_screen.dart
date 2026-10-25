@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../shared/widgets/circle_icon_button.dart';
 
+import '../../shared/widgets/design_canvas_scaffold.dart';
+
 /// Screen displaying transparency metadata for the AI model.
 /// Derived screen #13 adhering strictly to design tokens.
 class AiModelInfoScreen extends StatefulWidget {
@@ -16,40 +18,34 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 12.0,
+    return DesignCanvasScaffold(
+      child: Column(
+        children: [
+          // Top Bar
+          Row(
+            children: [
+              CircleIconButton(
+                type: CircleIconType.back,
+                semanticLabel: 'Back',
+                onPressed: () => Navigator.of(context).maybePop(),
               ),
-              child: Row(
-                children: [
-                  CircleIconButton(
-                    icon: Icons.arrow_back_rounded,
-                    onPressed: () => Navigator.of(context).maybePop(),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'AI Model Information',
-                        style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    'AI Model Information',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  const SizedBox(width: 56.0), // Balance top bar
-                ],
+                ),
               ),
-            ),
+              const SizedBox(width: 56.0), // Balance top bar
+            ],
+          ),
+          const SizedBox(height: 12.0),
 
             // Main Content
             Expanded(
@@ -507,8 +503,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
             ),
           ],
         ),
-      ),
-    );
+      );
   }
 
   Widget _buildMetricRow(String label, String value, String note) {

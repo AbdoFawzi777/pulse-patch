@@ -48,17 +48,19 @@ void main() {
       bool tapped = false;
       await tester.pumpWidget(
         _wrap(
-          CircleIconButton(
-            icon: Icons.chevron_left_rounded,
-            semanticLabel: 'Back',
-            onPressed: () => tapped = true,
+          Center(
+            child: CircleIconButton(
+              icon: Icons.chevron_left_rounded,
+              semanticLabel: 'Back',
+              onPressed: () => tapped = true,
+            ),
           ),
         ),
       );
 
-      final ink = tester.widget<Ink>(find.byType(Ink));
-      expect(ink.width, 56.0);
-      expect(ink.height, 56.0);
+      final size = tester.getSize(find.byType(CircleIconButton));
+      expect(size.width, 56.0);
+      expect(size.height, 56.0);
 
       await tester.tap(find.byType(CircleIconButton));
       expect(tapped, isTrue);
@@ -162,7 +164,7 @@ void main() {
         );
 
         expect(find.text('00:51'), findsOneWidget);
-        expect(find.byIcon(Icons.pause_rounded), findsOneWidget);
+        expect(find.byType(CircularTimer), findsOneWidget);
 
         await tester.tap(find.byType(CircularTimer));
         expect(toggled, isTrue);
@@ -180,7 +182,7 @@ void main() {
       );
 
       expect(find.byType(BottomCircleNav), findsOneWidget);
-      await tester.tap(find.byIcon(Icons.access_time_rounded));
+      await tester.tap(find.bySemanticsLabel('History'));
       expect(selected, 1);
     });
 

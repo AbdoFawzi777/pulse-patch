@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,9 +11,27 @@ import 'package:app/features/onboarding/permissions_screen.dart';
 import 'package:app/features/onboarding/splash_screen.dart';
 import 'package:app/features/onboarding/user_preferences_screen.dart';
 import 'package:app/features/onboarding/welcome_screen.dart';
+import 'package:app/shared/widgets/app_icon_widget.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    final fontLoader = FontLoader('Outfit');
+    final fontLight = File('assets/fonts/Outfit-Light.ttf');
+    if (fontLight.existsSync()) {
+      fontLoader.addFont(Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)));
+    }
+    final fontReg = File('assets/fonts/Outfit-Regular.ttf');
+    if (fontReg.existsSync()) {
+      fontLoader.addFont(Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)));
+    }
+    final fontMed = File('assets/fonts/Outfit-Medium.ttf');
+    if (fontMed.existsSync()) {
+      fontLoader.addFont(Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)));
+    }
+    await fontLoader.load();
+  });
 
   late SharedPreferences prefs;
   late PreferencesRepository prefsRepo;
@@ -56,8 +76,8 @@ void main() {
       );
 
       expect(find.text('PulsePatch Lite'), findsOneWidget);
-      expect(find.text('v1.0.0 · Educational Prototype'), findsOneWidget);
-      expect(find.byIcon(Icons.favorite_rounded), findsOneWidget);
+      expect(find.text('Educational Pulse Biomonitoring'), findsOneWidget);
+      expect(find.byType(AppIconWidget), findsOneWidget);
     });
 
     testWidgets('WelcomeScreen renders value propositions and fires callback', (
@@ -75,9 +95,9 @@ void main() {
         ),
       );
 
-      expect(find.text('Welcome to\nPulsePatch Lite'), findsOneWidget);
-      expect(find.text('Offline Telemetry'), findsOneWidget);
-      expect(find.text('Truthful Optical Trace'), findsOneWidget);
+      expect(find.text('PulsePatch Lite'), findsOneWidget);
+      expect(find.text('Educational Tool Only'), findsOneWidget);
+      expect(find.byType(AppIconWidget), findsOneWidget);
 
       await tester.tap(find.text('Get Started'));
       expect(started, isTrue);
@@ -137,15 +157,15 @@ void main() {
         ),
       );
 
-      expect(find.text('Preferences'), findsOneWidget);
+      expect(find.text('Personalize'), findsOneWidget);
       expect(find.text('BPM'), findsOneWidget);
-      expect(find.text('ms'), findsOneWidget);
+      expect(find.text('ms (Interval)'), findsOneWidget);
 
       await tester.enterText(find.byType(TextField), 'TestVolunteer');
-      await tester.tap(find.text('ms'));
+      await tester.tap(find.text('ms (Interval)'));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('Continue without account'));
+      await tester.tap(find.text('Save & Continue'));
       await tester.pumpAndSettle();
 
       expect(nextTapped, isTrue);
@@ -177,9 +197,9 @@ void main() {
 
         expect(find.text('Permissions'), findsOneWidget);
         expect(find.text('Bluetooth Low Energy'), findsOneWidget);
-        expect(find.text('Measurement Alerts'), findsOneWidget);
+        expect(find.text('Notifications'), findsOneWidget);
 
-        await tester.tap(find.text('Finish Setup'));
+        await tester.tap(find.text('Complete Setup'));
         await tester.pumpAndSettle();
 
         expect(finished, isTrue);

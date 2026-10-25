@@ -5,6 +5,7 @@ import '../../data/repositories/reminder_repository.dart';
 import '../../domain/entities/reminder_record.dart';
 import '../../domain/notifications/notification_service.dart';
 import '../../shared/widgets/circle_icon_button.dart';
+import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/empty_state.dart';
 import '../../shared/widgets/pill_button.dart';
 
@@ -82,204 +83,190 @@ class _ReminderSettingsScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Top Bar
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 20.0,
-                vertical: 12.0,
+    return DesignCanvasScaffold(
+      child: Column(
+        children: [
+          // Top Bar
+          Row(
+            children: [
+              CircleIconButton(
+                type: CircleIconType.back,
+                semanticLabel: 'Back',
+                onPressed: () => Navigator.of(context).maybePop(),
               ),
-              child: Row(
-                children: [
-                  CircleIconButton(
-                    icon: Icons.arrow_back_rounded,
-                    onPressed: () => Navigator.of(context).maybePop(),
-                  ),
-                  const Expanded(
-                    child: Center(
-                      child: Text(
-                        'Reminder Settings',
-                        style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    'Reminder Settings',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.textPrimary,
                     ),
                   ),
-                  CircleIconButton(
-                    icon: Icons.add_alarm_rounded,
-                    onPressed: _addNewReminder,
-                  ),
-                ],
-              ),
-            ),
-
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 8.0,
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Disclaimer & Scope Card
-                    Container(
-                      padding: const EdgeInsets.all(18.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBgNavy,
-                        borderRadius: BorderRadius.circular(20.0),
-                        border: Border.all(
-                          color: AppColors.cardBorder,
-                          width: 1.0,
-                        ),
+              ),
+              const SizedBox(width: 56.0),
+            ],
+          ),
+          const SizedBox(height: 12.0),
+
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Disclaimer & Scope Card
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment(-0.6, -0.8),
+                        end: Alignment(0.6, 0.8),
+                        colors: [Color(0xFF0F2160), Color(0xFF08122E)],
                       ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.info_outline_rounded,
-                                color: AppColors.accentCyan,
-                                size: 22.0,
+                      borderRadius: BorderRadius.circular(22.0),
+                    ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.info_outline_rounded,
+                              color: AppColors.accentCyan,
+                              size: 22.0,
+                            ),
+                            SizedBox(width: 8.0),
+                            Text(
+                              'No Background Monitoring',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textPrimary,
                               ),
-                              SizedBox(width: 8.0),
-                              Text(
-                                'No Background Monitoring',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 15.0,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                            ],
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'PulsePatch Lite does not run continuous background sensor monitoring. Reminders simply alert you to place the optical patch on your fingertip and manually take a timed session.',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13.0,
+                            color: AppColors.textSecondary,
+                            height: 1.4,
                           ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'PulsePatch Lite does not run continuous background sensor monitoring. Reminders simply alert you to place the optical patch on your fingertip and manually take a timed session.',
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 13.0,
-                              color: AppColors.textSecondary,
-                              height: 1.4,
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 14.0),
+
+                  // Permission Status Card
+                  if (!_hasPermission)
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      margin: const EdgeInsets.only(bottom: 14.0),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          begin: Alignment(-0.6, -0.8),
+                          end: Alignment(0.6, 0.8),
+                          colors: [Color(0xFF3B1566), Color(0xFF1B0F33)],
+                        ),
+                        borderRadius: BorderRadius.circular(22.0),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.notifications_off_outlined,
+                            color: Color(0xFFDDD6FE),
+                            size: 24.0,
+                          ),
+                          const SizedBox(width: 12.0),
+                          const Expanded(
+                            child: Text(
+                              'Notifications are disabled on this device.',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                color: Color(0xFFDDD6FE),
+                              ),
+                            ),
+                          ),
+                          TextButton(
+                            onPressed: () async {
+                              await ref
+                                  .read(notificationServiceProvider.notifier)
+                                  .requestPermission();
+                              _checkPermission();
+                            },
+                            child: const Text(
+                              'Enable',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                color: AppColors.accentCyan,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ),
                         ],
                       ),
                     ),
 
-                    const SizedBox(height: 16.0),
-
-                    // Permission Status Card
-                    if (!_hasPermission)
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        margin: const EdgeInsets.only(bottom: 16.0),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2A1657),
-                          borderRadius: BorderRadius.circular(18.0),
-                          border: Border.all(
-                            color: AppColors.accentPurple,
-                            width: 1.0,
-                          ),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.notifications_off_outlined,
-                              color: Color(0xFFDDD6FE),
-                              size: 24.0,
-                            ),
-                            const SizedBox(width: 12.0),
-                            const Expanded(
-                              child: Text(
-                                'Notifications are disabled on this device.',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 13.0,
-                                  color: Color(0xFFDDD6FE),
-                                ),
-                              ),
-                            ),
-                            TextButton(
-                              onPressed: () async {
-                                await ref
-                                    .read(notificationServiceProvider.notifier)
-                                    .requestPermission();
-                                _checkPermission();
-                              },
-                              child: const Text(
-                                'Enable',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  color: AppColors.accentCyan,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                          ],
+                  // Reminders List Header
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text(
+                        'Scheduled Check-Ins',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textPrimary,
                         ),
                       ),
+                      PillButton(
+                        label: '+ Add',
+                        style: PillButtonStyle.white,
+                        onPressed: _addNewReminder,
+                        width: 80.0,
+                        height: 36.0,
+                      ),
+                    ],
+                  ),
 
-                    // Reminders List Header
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Scheduled Check-Ins',
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textPrimary,
-                          ),
-                        ),
-                        PillButton(
-                          label: '+ Add',
-                          style: PillButtonStyle.white,
-                          onPressed: _addNewReminder,
-                          width: 80.0,
-                          height: 36.0,
-                        ),
-                      ],
+                  const SizedBox(height: 12.0),
+
+                  if (_isLoading)
+                    const Center(
+                      child: CircularProgressIndicator(
+                        color: AppColors.accentPurple,
+                      ),
+                    )
+                  else if (_reminders.isEmpty)
+                    const EmptyState(
+                      title: 'No Reminders Scheduled',
+                      description:
+                          'Tap "+ Add" to create a daily reminder to take your resting pulse.',
+                      icon: Icons.alarm_off_rounded,
+                    )
+                  else
+                    ..._reminders.map(
+                      (reminder) => _buildReminderTile(reminder),
                     ),
 
-                    const SizedBox(height: 12.0),
-
-                    if (_isLoading)
-                      const Center(
-                        child: CircularProgressIndicator(
-                          color: AppColors.accentPurple,
-                        ),
-                      )
-                    else if (_reminders.isEmpty)
-                      const EmptyState(
-                        title: 'No Reminders Scheduled',
-                        description:
-                            'Tap "+ Add" to create a daily reminder to take your resting pulse.',
-                        icon: Icons.alarm_off_rounded,
-                      )
-                    else
-                      ..._reminders.map(
-                        (reminder) => _buildReminderTile(reminder),
-                      ),
-
-                    const SizedBox(height: 24.0),
-                  ],
-                ),
+                  const SizedBox(height: 24.0),
+                ],
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -293,9 +280,12 @@ class _ReminderSettingsScreenState
       margin: const EdgeInsets.only(bottom: 12.0),
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: AppColors.cardBgNavy,
-        borderRadius: BorderRadius.circular(18.0),
-        border: Border.all(color: AppColors.cardBorder, width: 1.0),
+        gradient: const LinearGradient(
+          begin: Alignment(-0.6, -0.8),
+          end: Alignment(0.6, 0.8),
+          colors: [Color(0xFF0F2160), Color(0xFF08122E)],
+        ),
+        borderRadius: BorderRadius.circular(22.0),
       ),
       child: Row(
         children: [
@@ -308,7 +298,7 @@ class _ReminderSettingsScreenState
                   style: const TextStyle(
                     fontFamily: 'Outfit',
                     fontSize: 24.0,
-                    fontWeight: FontWeight.w500,
+                    fontWeight: FontWeight.w300,
                     color: AppColors.textPrimary,
                   ),
                 ),

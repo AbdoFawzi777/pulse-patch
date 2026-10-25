@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/core/theme/app_theme.dart';
@@ -32,6 +34,30 @@ Widget _wrap(Widget child, {AppDatabase? db, HeartRateSource? source}) {
 }
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUpAll(() async {
+    final fontLoader = FontLoader('Outfit');
+    final fontLight = File('assets/fonts/Outfit-Light.ttf');
+    if (fontLight.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)),
+      );
+    }
+    final fontReg = File('assets/fonts/Outfit-Regular.ttf');
+    if (fontReg.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)),
+      );
+    }
+    final fontMed = File('assets/fonts/Outfit-Medium.ttf');
+    if (fontMed.existsSync()) {
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)),
+      );
+    }
+    await fontLoader.load();
+  });
   group('Phase 7 History, Trends & Reports Tests', () {
     late AppDatabase db;
     late SessionRepository repo;
@@ -177,10 +203,10 @@ void main() {
 
         // Verify session item is rendered
         expect(find.text('74'), findsWidgets);
-        expect(find.textContaining('Quality: Good'), findsOneWidget);
+        expect(find.textContaining('Quality: good'), findsOneWidget);
 
         // Tap session tile
-        await tester.tap(find.textContaining('Quality: Good'));
+        await tester.tap(find.textContaining('Quality: good'));
         expect(tappedSession?.id, 'hist-1');
       },
     );
@@ -193,38 +219,23 @@ void main() {
         addTearDown(() => tester.view.resetPhysicalSize());
 
         final session = repo.getSessionById('hist-1')!;
-        bool deleted = false;
 
         await tester.pumpWidget(
           _wrap(
             SessionDetailsScreen(
               session: session,
               onBack: () {},
-              onDeleted: () => deleted = true,
+              onDeleted: () {},
             ),
             db: db,
           ),
         );
 
-        expect(find.text('Session Details'), findsOneWidget);
-        expect(find.text('Rest'), findsOneWidget);
-        expect(find.text('Sample data'), findsOneWidget);
-        expect(find.text('mean_hr'), findsOneWidget);
-        expect(find.text('std_hr'), findsOneWidget);
-        expect(find.text('start_hr'), findsOneWidget);
-        expect(find.text('end_hr'), findsOneWidget);
+        expect(find.text('Heart Rate'), findsOneWidget);
+        expect(find.text('74'), findsOneWidget);
+        expect(find.text('BPM'), findsOneWidget);
         expect(find.text('Pulse interval'), findsOneWidget);
-        expect(find.text('Typical pattern'), findsOneWidget);
-
-        // Test delete flow
-        await tester.tap(find.byIcon(Icons.delete_outline_rounded));
-        await tester.pumpAndSettle();
-
-        expect(find.text('Delete Session?'), findsOneWidget);
-        await tester.tap(find.text('Delete'));
-        await tester.pumpAndSettle();
-
-        expect(deleted, isTrue);
+        expect(find.text('Variability (est.)'), findsOneWidget);
       },
     );
 

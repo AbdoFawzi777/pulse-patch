@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/app_colors.dart';
 
-/// Layered gradient heart illustration matching Home.png canvas.
+/// Layered gradient heart illustration matching Home.png canvas exactly:
+/// viewBox="0 0 200 180", width=330, height=300.
+/// Outer path: M100 172C14 112 12 48 62 36c24-5 38 19 38 19s14-24 38-19c50 12 48 76-38 136z
+/// Inner path: translate(40 36) scale(.6)
 class LayeredHeartWidget extends StatelessWidget {
   const LayeredHeartWidget({
     super.key,
-    this.width = 280.0,
-    this.height = 280.0,
+    this.width = 330.0,
+    this.height = 300.0,
   });
 
   final double width;
@@ -17,86 +19,86 @@ class LayeredHeartWidget extends StatelessWidget {
     return SizedBox(
       width: width,
       height: height,
-      child: Stack(
-        alignment: Alignment.center,
-        children: [
-          // Outer dark indigo layered heart silhouette
-          CustomPaint(
-            size: Size(width, height),
-            painter: _HeartPainter(
-              color: const Color(0xFF171B42),
-              isGradient: false,
-            ),
-          ),
-          // Inner vibrant magenta-to-blue gradient heart
-          CustomPaint(
-            size: Size(width * 0.72, height * 0.72),
-            painter: _HeartPainter(
-              isGradient: true,
-              gradientColors: const [
-                AppColors.accentMagenta,
-                AppColors.accentBlue,
-              ],
-            ),
-          ),
-        ],
+      child: CustomPaint(
+        size: Size(width, height),
+        painter: const _HeartSvgPainter(),
       ),
     );
   }
 }
 
-class _HeartPainter extends CustomPainter {
-  const _HeartPainter({
-    this.color = Colors.white,
-    this.isGradient = false,
-    this.gradientColors = const [Color(0xFFE11D9B), Color(0xFF2563EB)],
-  });
+class _HeartSvgPainter extends CustomPainter {
+  const _HeartSvgPainter();
 
-  final Color color;
-  final bool isGradient;
-  final List<Color> gradientColors;
+  Path _buildBaseHeartPath() {
+    // M100 172C14 112 12 48 62 36c24-5 38 19 38 19s14-24 38-19c50 12 48 76-38 136z
+    final p = Path();
+    p.moveTo(100.0, 172.0);
+    p.cubicTo(14.0, 112.0, 12.0, 48.0, 62.0, 36.0);
+    // c24-5 38 19 38 19 -> from (62, 36)
+    p.cubicTo(86.0, 31.0, 100.0, 55.0, 100.0, 55.0);
+    // s14-24 38-19 -> smooth cubic from (100, 55)
+    p.cubicTo(114.0, 31.0, 138.0, 36.0, 138.0, 36.0);
+    // c50 12 48 76 -38 136 -> from (138, 36)
+    p.cubicTo(188.0, 48.0, 186.0, 112.0, 100.0, 172.0);
+    p.close();
+    return p;
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
-    final path = Path();
-    final w = size.width;
-    final h = size.height;
+    // ViewBox is 200 x 180
+    final scaleX = size.width / 200.0;
+    final scaleY = size.height / 180.0;
 
-    // Standard smooth parametric heart Bézier curve
-    path.moveTo(w * 0.5, h * 0.85);
+    canvas.save();
+    canvas.scale(scaleX, scaleY);
 
-    // Left bottom to left top lobe
-    path.cubicTo(w * 0.05, h * 0.55, w * 0.0, h * 0.25, w * 0.25, h * 0.15);
+    final basePath = _buildBaseHeartPath();
 
-    // Left top lobe to center cleft
-    path.cubicTo(w * 0.40, h * 0.08, w * 0.50, h * 0.28, w * 0.50, h * 0.35);
-
-    // Right top cleft to right lobe
-    path.cubicTo(w * 0.50, h * 0.28, w * 0.60, h * 0.08, w * 0.75, h * 0.15);
-
-    // Right lobe down to bottom tip
-    path.cubicTo(w * 1.0, h * 0.25, w * 0.95, h * 0.55, w * 0.5, h * 0.85);
-
-    path.close();
-
-    final paint = Paint()..style = PaintingStyle.fill;
-    if (isGradient) {
-      paint.shader = LinearGradient(
+    // 1. Outer Heart
+    // linearGradient id="a" x1="0" y1="0" x2="0" y2="1"
+    // stop 0: #3A2A8F opacity .7, stop 1: #0B2A7A opacity .6
+    final outerPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: gradientColors,
-      ).createShader(Rect.fromLTWH(0, 0, w, h));
-    } else {
-      paint.color = color;
-    }
+        colors: [
+          Color(0xB33A2A8F),
+          Color(0x990B2A7A),
+        ],
+      ).createShader(const Rect.fromLTWH(0, 0, 200, 180));
 
-    canvas.drawPath(path, paint);
+    canvas.drawPath(basePath, outerPaint);
+
+    // 2. Inner Heart
+    // transform="translate(40 36) scale(.6)"
+    // linearGradient id="b" x1="0" y1="0" x2="0" y2="1"
+    // stop 0: #C0148F, stop .5: #4B1E9E, stop 1: #1D4ED8
+    canvas.save();
+    canvas.translate(40.0, 36.0);
+    canvas.scale(0.6, 0.6);
+
+    final innerPaint = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = const LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: [
+          Color(0xFFC0148F),
+          Color(0xFF4B1E9E),
+          Color(0xFF1D4ED8),
+        ],
+        stops: [0.0, 0.5, 1.0],
+      ).createShader(const Rect.fromLTWH(0, 0, 200, 180));
+
+    canvas.drawPath(basePath, innerPaint);
+    canvas.restore();
+
+    canvas.restore();
   }
 
   @override
-  bool shouldRepaint(covariant _HeartPainter oldDelegate) {
-    return oldDelegate.color != color ||
-        oldDelegate.isGradient != isGradient ||
-        oldDelegate.gradientColors != gradientColors;
-  }
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
