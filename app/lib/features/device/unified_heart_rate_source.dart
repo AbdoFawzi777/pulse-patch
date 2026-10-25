@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../data/repositories/preferences_repository.dart';
 import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
+import '../../domain/signal/generic_ble_hr_parser.dart';
+import 'generic_ble_heart_rate_source.dart';
 import 'heart_rate_source.dart';
 import 'mi_band_5_source.dart';
 import 'pulse_patch_source.dart';
@@ -14,7 +17,8 @@ import 'standard_ble_heart_rate_source.dart';
 /// Unified Heart Rate Source managing multi-protocol routing:
 /// - PulsePatch-C3 (Custom 12-byte protocol)
 /// - Standard BLE 0x180D / 0x2A37 (Chest straps, smartwatches, Mi Band broadcast)
-/// - Mi Smart Band 5 (Experimental direct & broadcast modes)
+/// - Generic BLE / UART (Nordic UART Service, ESP32/Arduino, custom mapping)
+/// - Mi Smart Band 5 (Standard BLE without credentials)
 /// - Simulator (Offline testing)
 class UnifiedHeartRateSource implements HeartRateSource {
   UnifiedHeartRateSource({required this.prefs}) {
@@ -23,6 +27,11 @@ class UnifiedHeartRateSource implements HeartRateSource {
   }
 
   final SharedPreferences prefs;
+
+  static const String keyRememberedDeviceId = 'remembered_ble_device_id';
+  static const String keyRememberedDeviceName = 'remembered_ble_device_name';
+  static const String keyRememberedCategory = 'remembered_ble_category';
+  static const String keyGenericMappingPrefix = 'generic_ble_mapping_';
 
   late HeartRateSource _activeSource;
   StreamSubscription? _activeStateSub;
@@ -43,6 +52,11 @@ class UnifiedHeartRateSource implements HeartRateSource {
   final Map<String, DiscoveredBleDevice> _discoveredMap = {};
   bool _isDisposed = false;
 
+  bool isSessionActive = false;
+  int _reconnectAttempts = 0;
+  Timer? _reconnectTimer;
+  String? _lastConnectedDeviceId;
+
   void _forwardActiveSourceStreams() {
     _activeStateSub?.cancel();
     _activePacketSub?.cancel();
@@ -50,7 +64,19 @@ class UnifiedHeartRateSource implements HeartRateSource {
     _activeWaveSub?.cancel();
 
     _activeStateSub = _activeSource.connectionStateStream.listen((state) {
-      if (!_isDisposed) _connectionStateController.add(state);
+      if (!_isDisposed) {
+        _connectionStateController.add(state);
+        if (state == BleConnectionState.connected ||
+            state == BleConnectionState.streaming) {
+          _reconnectAttempts = 0;
+          _reconnectTimer?.cancel();
+        } else if (state == BleConnectionState.disconnected &&
+            isSessionActive &&
+            _lastConnectedDeviceId != null &&
+            _reconnectAttempts < 4) {
+          _handleAutoReconnect();
+        }
+      }
     });
     _activePacketSub = _activeSource.packetStream.listen((packet) {
       if (!_isDisposed) _packetController.add(packet);
@@ -61,6 +87,58 @@ class UnifiedHeartRateSource implements HeartRateSource {
     _activeWaveSub = _activeSource.opticalWaveformStream.listen((wave) {
       if (!_isDisposed) _waveformController.add(wave);
     });
+  }
+
+  void _handleAutoReconnect() {
+    if (_lastConnectedDeviceId == null || _isDisposed) return;
+    _reconnectAttempts++;
+    final delaySeconds = 1 << (_reconnectAttempts - 1); // 1, 2, 4, 8s backoff
+    _connectionStateController.add(BleConnectionState.reconnecting);
+
+    _reconnectTimer?.cancel();
+    _reconnectTimer = Timer(Duration(seconds: delaySeconds), () {
+      if (isSessionActive && _lastConnectedDeviceId != null && !_isDisposed) {
+        connect(_lastConnectedDeviceId!);
+      }
+    });
+  }
+
+  // --- Persistence Methods ---
+
+  Future<void> rememberDevice(
+    String id,
+    String name,
+    BleDeviceCategory category,
+  ) async {
+    await prefs.setString(keyRememberedDeviceId, id.toUpperCase());
+    await prefs.setString(keyRememberedDeviceName, name);
+    await prefs.setString(keyRememberedCategory, category.name);
+  }
+
+  Future<void> forgetDevice() async {
+    await prefs.remove(keyRememberedDeviceId);
+    await prefs.remove(keyRememberedDeviceName);
+    await prefs.remove(keyRememberedCategory);
+  }
+
+  String? getRememberedDeviceId() => prefs.getString(keyRememberedDeviceId);
+  String? getRememberedDeviceName() => prefs.getString(keyRememberedDeviceName);
+
+  Future<void> saveGenericMapping(GenericBleMapping mapping) async {
+    final key = '$keyGenericMappingPrefix${mapping.deviceId.toUpperCase()}';
+    await prefs.setString(key, jsonEncode(mapping.toJson()));
+  }
+
+  GenericBleMapping? getGenericMapping(String deviceId) {
+    final key = '$keyGenericMappingPrefix${deviceId.toUpperCase()}';
+    final raw = prefs.getString(key);
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      return GenericBleMapping.fromJson(map);
+    } catch (_) {
+      return null;
+    }
   }
 
   @override
@@ -102,11 +180,17 @@ class UnifiedHeartRateSource implements HeartRateSource {
     try {
       _discoveredMap.clear();
 
+      // Query connected system devices
       try {
         final sysDevices = await FlutterBluePlus.systemDevices([]);
         for (final d in sysDevices) {
           final id = d.remoteId.str.toUpperCase();
-          final name = d.platformName.isNotEmpty ? d.platformName : d.advName;
+          final rawName = d.platformName.isNotEmpty
+              ? d.platformName
+              : d.advName;
+          final name = rawName.trim().isNotEmpty
+              ? rawName.trim()
+              : 'Unnamed device';
           BleDeviceCategory cat = BleDeviceCategory.unknown;
           if (name.contains('PulsePatch')) {
             cat = BleDeviceCategory.pulsePatch;
@@ -117,22 +201,54 @@ class UnifiedHeartRateSource implements HeartRateSource {
           }
           _discoveredMap[id] = DiscoveredBleDevice(
             id: id,
-            name: name.isNotEmpty ? name : 'Connected BLE Device',
+            name: name,
             rssi: -50,
             category: cat,
             advertisedServices: const [],
           );
         }
-        if (!_isDisposed && sysDevices.isNotEmpty) {
-          _discoveredDevicesController.add(_discoveredMap.values.toList());
+      } catch (_) {}
+
+      // Query bonded devices
+      try {
+        final bonded = await FlutterBluePlus.bondedDevices;
+        for (final d in bonded) {
+          final id = d.remoteId.str.toUpperCase();
+          if (!_discoveredMap.containsKey(id)) {
+            final rawName = d.platformName.isNotEmpty
+                ? d.platformName
+                : d.advName;
+            final name = rawName.trim().isNotEmpty
+                ? rawName.trim()
+                : 'Unnamed device';
+            BleDeviceCategory cat = BleDeviceCategory.unknown;
+            if (name.contains('PulsePatch')) {
+              cat = BleDeviceCategory.pulsePatch;
+            } else if (name.contains('Band 5') ||
+                name.contains('Mi Smart') ||
+                name.contains('Mi Band')) {
+              cat = BleDeviceCategory.miBand;
+            }
+            _discoveredMap[id] = DiscoveredBleDevice(
+              id: id,
+              name: name,
+              rssi: -55,
+              category: cat,
+              advertisedServices: const [],
+            );
+          }
         }
       } catch (_) {}
+
+      if (!_isDisposed && _discoveredMap.isNotEmpty) {
+        _discoveredDevicesController.add(_discoveredMap.values.toList());
+      }
 
       await _scanSubscription?.cancel();
       _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
         for (final r in results) {
           final id = r.device.remoteId.str.toUpperCase();
-          final name = r.advertisementData.advName.isNotEmpty
+          final rawName = r.advertisementData.advName.isNotEmpty
               ? r.advertisementData.advName
               : r.device.platformName;
 
@@ -141,18 +257,20 @@ class UnifiedHeartRateSource implements HeartRateSource {
               .toList();
 
           BleDeviceCategory cat = BleDeviceCategory.unknown;
-          if (name.contains('PulsePatch') ||
+          if (rawName.contains('PulsePatch') ||
               serviceUuids.any((u) => u.contains('7243-4e64'))) {
             cat = BleDeviceCategory.pulsePatch;
-          } else if (name.contains('Band 5') ||
-              name.contains('Mi Smart') ||
-              name.contains('Mi Band') ||
+          } else if (rawName.contains('Band 5') ||
+              rawName.contains('Mi Smart') ||
+              rawName.contains('Mi Band') ||
               serviceUuids.any(
                 (u) => u.contains('fee0') || u.contains('fee1'),
               )) {
             cat = BleDeviceCategory.miBand;
           } else if (serviceUuids.any((u) => u.contains('180d'))) {
             cat = BleDeviceCategory.standardBle;
+          } else if (serviceUuids.any((u) => u.contains('6e40'))) {
+            cat = BleDeviceCategory.genericBle;
           }
 
           final existing = _discoveredMap[id];
@@ -160,15 +278,17 @@ class UnifiedHeartRateSource implements HeartRateSource {
               ? {...existing.advertisedServices, ...serviceUuids}.toList()
               : serviceUuids;
 
+          final cleanName = rawName.trim().isNotEmpty
+              ? rawName.trim()
+              : (existing != null &&
+                        existing.name.trim().isNotEmpty &&
+                        existing.name != 'Unnamed device'
+                    ? existing.name.trim()
+                    : 'Unnamed device');
+
           _discoveredMap[id] = DiscoveredBleDevice(
             id: id,
-            name: name.isNotEmpty
-                ? name
-                : (existing != null &&
-                          existing.name.isNotEmpty &&
-                          !existing.name.startsWith('BLE Device')
-                      ? existing.name
-                      : 'BLE Device ()'),
+            name: cleanName,
             rssi: r.rssi,
             category: (cat != BleDeviceCategory.unknown)
                 ? cat
@@ -199,18 +319,45 @@ class UnifiedHeartRateSource implements HeartRateSource {
         _discoveredMap[deviceId.toUpperCase()] ?? _discoveredMap[deviceId];
     if (dev == null) return null;
 
+    final savedMapping = getGenericMapping(dev.id);
+
     HeartRateSource checker;
-    switch (dev.category) {
-      case BleDeviceCategory.pulsePatch:
-        checker = PulsePatchSource();
-        break;
-      case BleDeviceCategory.miBand:
-        checker = MiBand5Source(prefs: prefs);
-        break;
-      case BleDeviceCategory.standardBle:
-      case BleDeviceCategory.unknown:
-        checker = StandardBleHeartRateSource(customDeviceName: dev.name);
-        break;
+    if (savedMapping != null || dev.category == BleDeviceCategory.genericBle) {
+      checker = GenericBleHeartRateSource(
+        mapping:
+            savedMapping ??
+            GenericBleMapping(
+              deviceId: dev.id,
+              serviceUuid: '',
+              characteristicUuid: '',
+            ),
+        customDeviceName: dev.name,
+      );
+    } else {
+      switch (dev.category) {
+        case BleDeviceCategory.pulsePatch:
+          checker = PulsePatchSource();
+          break;
+        case BleDeviceCategory.miBand:
+          checker = MiBand5Source(prefs: prefs);
+          break;
+        case BleDeviceCategory.genericBle:
+          checker = GenericBleHeartRateSource(
+            mapping:
+                savedMapping ??
+                GenericBleMapping(
+                  deviceId: dev.id,
+                  serviceUuid: '',
+                  characteristicUuid: '',
+                ),
+            customDeviceName: dev.name,
+          );
+          break;
+        case BleDeviceCategory.standardBle:
+        case BleDeviceCategory.unknown:
+          checker = StandardBleHeartRateSource(customDeviceName: dev.name);
+          break;
+      }
     }
 
     try {
@@ -240,8 +387,9 @@ class UnifiedHeartRateSource implements HeartRateSource {
   Future<void> connect(String deviceId) async {
     await stopScan();
 
-    final device =
-        _discoveredMap[deviceId.toUpperCase()] ?? _discoveredMap[deviceId];
+    final upperId = deviceId.toUpperCase();
+    final device = _discoveredMap[upperId] ?? _discoveredMap[deviceId];
+
     if (deviceId.startsWith('sim-') || device == null) {
       // Connecting to simulator
       if (_activeSource is! SimulatedHeartRateSource) {
@@ -253,22 +401,52 @@ class UnifiedHeartRateSource implements HeartRateSource {
       return;
     }
 
-    // Determine target source adapter by category
+    _lastConnectedDeviceId = device.id;
+
+    // Determine target source adapter by category or saved generic mapping
     _activeSource.dispose();
 
-    switch (device.category) {
-      case BleDeviceCategory.pulsePatch:
-        _activeSource = PulsePatchSource();
-        break;
-      case BleDeviceCategory.miBand:
-        _activeSource = MiBand5Source(prefs: prefs);
-        break;
-      case BleDeviceCategory.standardBle:
-      case BleDeviceCategory.unknown:
-        _activeSource = StandardBleHeartRateSource(
-          customDeviceName: device.name,
-        );
-        break;
+    final savedMapping = getGenericMapping(device.id);
+
+    if (savedMapping != null ||
+        device.category == BleDeviceCategory.genericBle) {
+      _activeSource = GenericBleHeartRateSource(
+        mapping:
+            savedMapping ??
+            GenericBleMapping(
+              deviceId: device.id,
+              serviceUuid: '',
+              characteristicUuid: '',
+            ),
+        customDeviceName: device.name,
+      );
+    } else {
+      switch (device.category) {
+        case BleDeviceCategory.pulsePatch:
+          _activeSource = PulsePatchSource();
+          break;
+        case BleDeviceCategory.miBand:
+          _activeSource = MiBand5Source(prefs: prefs);
+          break;
+        case BleDeviceCategory.genericBle:
+          _activeSource = GenericBleHeartRateSource(
+            mapping:
+                savedMapping ??
+                GenericBleMapping(
+                  deviceId: device.id,
+                  serviceUuid: '',
+                  characteristicUuid: '',
+                ),
+            customDeviceName: device.name,
+          );
+          break;
+        case BleDeviceCategory.standardBle:
+        case BleDeviceCategory.unknown:
+          _activeSource = StandardBleHeartRateSource(
+            customDeviceName: device.name,
+          );
+          break;
+      }
     }
 
     _forwardActiveSourceStreams();
@@ -277,12 +455,15 @@ class UnifiedHeartRateSource implements HeartRateSource {
 
   @override
   Future<void> disconnect() async {
+    _reconnectTimer?.cancel();
+    _reconnectAttempts = 0;
     await _activeSource.disconnect();
   }
 
   @override
   void dispose() {
     _isDisposed = true;
+    _reconnectTimer?.cancel();
     _activeStateSub?.cancel();
     _activePacketSub?.cancel();
     _activeDiagSub?.cancel();

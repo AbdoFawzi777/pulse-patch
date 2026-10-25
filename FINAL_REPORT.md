@@ -211,31 +211,17 @@ Total Tests Passed: 81 (100% Pass Rate)
 2. **Physical Wire & Power Verification:**
    Ensure MAX30102 `VIN` is connected to the ESP32-C3 board's **3.3V pin (NEVER 5V)**, common ground, and SDA=GPIO4, SCL=GPIO5 with 4.7kΩ pullups. The patch is powered by its small rechargeable battery (or USB-C while charging); no battery percentage is reported since the board lacks fuel gauge/divider telemetry.
 
-### 7.2 Xiaomi Mi Smart Band 5 Real-World Setup (Not Yet Tested on a Real Band)
+### 7.2 Third-Party Wearables & Xiaomi Mi Smart Band 5 Status
 
 > [!IMPORTANT]
-> **Status: Software Architecture Ready — Physical Band Connection Not Yet Tested**  
-> No real band session has been recorded yet. The over-the-air BLE connection, the Zepp Life heart-rate-sharing instructions, and the Huami auth flow are **not yet tested on a real band**. Setting names in Zepp Life vary across firmware and app versions and are unconfirmed from official Xiaomi documentation. Check the **Connect Device** scan result in PulsePatch Lite first to confirm what your band broadcasts.
+> **Status: Observed Fact & Safe Gating**  
+> Physical testing on an Android phone (HONOR `NIC-LX2`) confirmed that while the Xiaomi Mi Smart Band 5 advertises standard Heart Rate Service `0x180D` and characteristic `0x2A37`, its stock firmware explicitly refuses descriptor writes (`CCCD 0x2902`) with `GATT_WRITE_NOT_PERMITTED (status 3)`. The app states strictly: *"The device refused to enable heart-rate notifications (GATT status 3). Cause not confirmed."* No proprietary authentication keys, reverse engineering, or credentials are used.
 
-#### Method A: Standard Heart Rate Sharing / Broadcast (Zero Unpairing)
-1. Open the **Zepp Life** companion app on your phone.
-2. Navigate to your paired **Mi Smart Band 5** device settings.
-3. Check for settings such as *Automatic heart rate monitoring* or *Heart rate sharing / broadcast*.
-   *(Note: These setting names are unconfirmed from official documentation and may differ depending on your Zepp Life version and band firmware. Check the Scan result in PulsePatch Lite first).*
-4. Open **PulsePatch Lite** -> Tap **Connect Device** -> Tap **Scan**.
-5. Check if your Mi Smart Band 5 is detected under **Compatible Heart Rate Monitors** (broadcasting standard BLE Heart Rate Service `0x180D`).
-6. If detected, tap **Connect** to stream live heart rate without needing an authentication key or unpairing from Zepp Life.
-
-#### Method B: Direct Huami Proprietary BLE Mode (Advanced — Not Yet Tested on a Real Band)
-If your band does not broadcast standard 0x180D without authentication, the app includes experimental support for the Huami cryptographic handshake:
-
-> [!CAUTION]
-> **Safety Note: Never Enter Credentials on Third-Party Websites or Use Untrusted APKs**  
-> Never enter your account credentials, passwords, or authentication tokens on third-party websites (such as third-party token extractors) or install untrusted modified APKs. Use only methods you can inspect and verify yourself (e.g. direct ADB inspection from a trusted backup), or simply use the file import adapter (`ImportSource`) to import heart rate data exported from companion apps without handling raw BLE keys.
-
-1. If you obtain the 16-byte authentication key through your own verified backup method:
-2. In PulsePatch Lite, open **Connect Device** -> long-press the header action -> select **Mi Band auth settings** -> paste your 32-character hexadecimal key (16 bytes).
-3. The app stores the key securely on local device storage only.
+#### Supported Data Collection Paths
+1. **Standard BLE Heart Rate (0x180D / 0x2A37):** Any chest strap (Polar, Garmin) or smartwatch broadcasting standard unauthenticated notifications.
+2. **Generic BLE Chip Adapter (Nordic UART & Custom Mapping):** Compatible with ESP32, ESP32-C3, Arduino, or custom BLE modules transmitting uint8, uint16, uint16x10, or ASCII text lines. Documented in `docs/ble_generic_adapter.md`.
+3. **Session File Import (`ImportSource`):** Export resting or post-activity heart-rate sessions from companion apps or Gadgetbridge as CSV or JSON, and import them directly into PulsePatch Lite with one tap.
+4. **Deterministic Sensor Simulator (`SimulatedHeartRateSource`):** Full offline testing with synthetic MAX30102 telemetry.
 
 ### 7.3 Guided Training Data Collection & Model Training
 1. Put on your Mi Smart Band 5 and open PulsePatch Lite.

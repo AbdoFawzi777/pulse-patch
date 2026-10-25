@@ -11,7 +11,8 @@ import '../../shared/widgets/pulse_trace_chart.dart';
 import '../../shared/widgets/trend_chart.dart';
 import '../device/heart_rate_source.dart';
 
-/// Live measurement screen matching Live.dc.html and Measuring.png exactly.
+/// Live measurement screen matching Live.dc.html and Measuring.png.
+/// Displays real-time heart rate telemetry, validity gating, and watchdog timeout.
 class LiveMeasurementScreen extends StatefulWidget {
   const LiveMeasurementScreen({
     super.key,
@@ -34,9 +35,15 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
   StreamSubscription<BlePacket>? _packetSub;
   StreamSubscription<double>? _waveformSub;
   StreamSubscription<RecorderSnapshot>? _snapshotSub;
+  StreamSubscription<PacketDiagnostics>? _diagnosticsSub;
 
   final List<double> _waveformPoints = [];
   late RecorderSnapshot _snapshot;
+  PacketDiagnostics _diagnostics = const PacketDiagnostics();
+
+  Timer? _watchdogTimer;
+  DateTime? _lastPacketReceivedAt;
+  bool _watchdogTriggered = false;
 
   @override
   void initState() {
@@ -56,7 +63,16 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
     });
 
     _packetSub = widget.source.packetStream.listen((pkt) {
+      _lastPacketReceivedAt = DateTime.now();
+      if (_watchdogTriggered) {
+        setState(() => _watchdogTriggered = false);
+      }
       widget.recorder.processPacket(pkt);
+    });
+
+    _diagnosticsSub = widget.source.diagnosticsStream.listen((diag) {
+      if (!mounted) return;
+      setState(() => _diagnostics = diag);
     });
 
     _waveformSub = widget.source.opticalWaveformStream.listen((point) {
@@ -68,13 +84,33 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
         }
       });
     });
+
+    _startWatchdog();
+  }
+
+  void _startWatchdog() {
+    _watchdogTimer?.cancel();
+    _watchdogTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (!mounted) return;
+      final now = DateTime.now();
+      final last = _lastPacketReceivedAt;
+      if (last == null) {
+        if (_snapshot.elapsed.inSeconds >= 10 && !_watchdogTriggered) {
+          setState(() => _watchdogTriggered = true);
+        }
+      } else if (now.difference(last).inSeconds >= 10 && !_watchdogTriggered) {
+        setState(() => _watchdogTriggered = true);
+      }
+    });
   }
 
   @override
   void dispose() {
+    _watchdogTimer?.cancel();
     _packetSub?.cancel();
     _waveformSub?.cancel();
     _snapshotSub?.cancel();
+    _diagnosticsSub?.cancel();
     super.dispose();
   }
 
@@ -105,19 +141,19 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
           color: AppColors.cardBgNavy,
           borderRadius: BorderRadius.circular(16.0),
         ),
-        child: const Column(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.bluetooth_searching_rounded,
               color: AppColors.accentCyan,
               size: 28.0,
             ),
-            SizedBox(height: 8.0),
+            const SizedBox(height: 8.0),
             Text(
-              'Awaiting BLE packets from ESP32-C3...',
+              'Awaiting heart rate packets from ${widget.source.sourceLabel}...',
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: 13.0,
                 color: AppColors.textSecondary,
@@ -141,7 +177,21 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
   @override
   Widget build(BuildContext context) {
     final isPaused = _snapshot.state == SessionRecorderState.paused;
-    final displayBpm = _snapshot.currentDisplayBpm ?? 74;
+    final int? currentBpm = _snapshot.currentDisplayBpm;
+    final String displayBpmStr;
+    if (currentBpm != null && currentBpm >= 30 && currentBpm <= 220) {
+      displayBpmStr = '$currentBpm';
+    } else if (widget.source.isSimulator) {
+      displayBpmStr = '74';
+    } else {
+      displayBpmStr = '--';
+    }
+
+    final sourceCode = widget.source.source.code;
+    final packetRate = _diagnostics.packetRateHz.toStringAsFixed(1);
+    final qualityStr = _snapshot.currentQuality > 0
+        ? '${_snapshot.currentQuality}%'
+        : 'Assessing...';
 
     return DesignCanvasScaffold(
       child: Column(
@@ -172,12 +222,50 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
 
           const SizedBox(height: 20.0),
 
+          // 10-Second Watchdog Alert Banner
+          if (_watchdogTriggered)
+            Container(
+              margin: const EdgeInsets.only(bottom: 12.0),
+              padding: const EdgeInsets.all(12.0),
+              decoration: BoxDecoration(
+                color: const Color(0x33EF4444),
+                borderRadius: BorderRadius.circular(12.0),
+                border: Border.all(color: const Color(0xFFEF4444), width: 1.0),
+              ),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: Color(0xFFEF4444),
+                    size: 20.0,
+                  ),
+                  const SizedBox(width: 8.0),
+                  const Expanded(
+                    child: Text(
+                      'No heart-rate data from this device yet',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 13.0,
+                        fontWeight: FontWeight.w400,
+                        color: Color(0xFFFCA5A5),
+                      ),
+                    ),
+                  ),
+                  PillButton(
+                    label: 'Troubleshoot',
+                    style: PillButtonStyle.dark,
+                    onPressed: widget.onBack,
+                  ),
+                ],
+              ),
+            ),
+
           // Hero BPM Number & Subtitle
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                '$displayBpm',
+                displayBpmStr,
                 style: const TextStyle(
                   fontFamily: 'Outfit',
                   fontSize: 96.0,
@@ -203,7 +291,7 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
 
           const SizedBox(height: 40.0),
 
-          // Optical Pulse Trace Waveform
+          // Optical Pulse Trace Waveform / Trend
           Center(
             child: widget.source.isSimulator
                 ? const PulseTraceChart(
@@ -216,7 +304,7 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
 
           const SizedBox(height: 8.0),
 
-          // Trace Subtitle
+          // Trace Subtitle matching Live.dc.html
           const Text(
             'Optical pulse trace · Signal: Good',
             textAlign: TextAlign.center,
@@ -227,6 +315,20 @@ class _LiveMeasurementScreenState extends State<LiveMeasurementScreen> {
               color: AppColors.textMuted,
             ),
           ),
+
+          if (!widget.source.isSimulator) ...[
+            const SizedBox(height: 4.0),
+            Text(
+              'Source: $sourceCode · $packetRate Hz · Quality: $qualityStr',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 12.0,
+                fontWeight: FontWeight.w300,
+                color: AppColors.textMuted,
+              ),
+            ),
+          ],
 
           const Spacer(),
 

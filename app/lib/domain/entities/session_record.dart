@@ -29,6 +29,7 @@ enum QualitySummary {
 enum SessionSource {
   pulsepatch('pulsepatch', 'PulsePatch-C3'),
   standardBle('standard_hr', 'Standard BLE'),
+  genericBle('generic_ble', 'Generic BLE'),
   miBand5('miband5', 'Mi Smart Band 5'),
   importSource('import', 'Imported Data'),
   simulator('simulator', 'Simulator');
@@ -45,6 +46,9 @@ enum SessionSource {
       case 'standard_hr':
       case 'standardBle':
         return SessionSource.standardBle;
+      case 'generic_ble':
+      case 'genericBle':
+        return SessionSource.genericBle;
       case 'miband5':
       case 'miBand5':
         return SessionSource.miBand5;

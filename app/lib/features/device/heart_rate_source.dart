@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../data/repositories/preferences_repository.dart';
 import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
 import 'simulated_heart_rate_source.dart';
@@ -11,7 +10,9 @@ enum BleConnectionState {
   idle,
   scanning,
   connecting,
+  bonding,
   discovering,
+  checking,
   subscribing,
   connected,
   streaming,
@@ -20,11 +21,13 @@ enum BleConnectionState {
   reconnecting,
   noSensorData,
   timeout,
+  failed,
 }
 
 enum BleDeviceCategory {
   pulsePatch('PulsePatch-C3', true),
   standardBle('Standard Heart Rate', true),
+  genericBle('Generic BLE / UART', true),
   miBand('Mi Smart Band 5', true),
   unknown('Other Bluetooth Device', false);
 
@@ -77,8 +80,24 @@ class DiscoveredBleDevice {
             s.toLowerCase().contains('fee1'),
       );
 
+  bool get hasNordicUart =>
+      advertisedServices.any((s) => s.toLowerCase().contains('6e40')) ||
+      discoveredServices.any((s) => s.toLowerCase().contains('6e40'));
+
   bool get isCompatible =>
-      hasHeartRate || hasPulsePatch || isMiBand || category.isCompatible;
+      hasHeartRate ||
+      hasPulsePatch ||
+      hasNordicUart ||
+      isMiBand ||
+      category.isCompatible;
+
+  String get displayName {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty || trimmed == 'BLE Device ()' || trimmed == '()') {
+      return 'Unnamed device';
+    }
+    return trimmed;
+  }
 
   String get maskedId {
     if (id.length >= 17 && id.contains(':')) {
@@ -121,6 +140,7 @@ class PacketDiagnostics {
     this.malformedPackets = 0,
     this.lostPackets = 0,
     this.duplicatePackets = 0,
+    this.packetRateHz = 0.0,
     this.lastReceivedTime,
   });
 
@@ -128,6 +148,7 @@ class PacketDiagnostics {
   final int malformedPackets;
   final int lostPackets;
   final int duplicatePackets;
+  final double packetRateHz;
   final DateTime? lastReceivedTime;
 
   PacketDiagnostics copyWith({
@@ -135,6 +156,7 @@ class PacketDiagnostics {
     int? malformedPackets,
     int? lostPackets,
     int? duplicatePackets,
+    double? packetRateHz,
     DateTime? lastReceivedTime,
   }) {
     return PacketDiagnostics(
@@ -142,6 +164,7 @@ class PacketDiagnostics {
       malformedPackets: malformedPackets ?? this.malformedPackets,
       lostPackets: lostPackets ?? this.lostPackets,
       duplicatePackets: duplicatePackets ?? this.duplicatePackets,
+      packetRateHz: packetRateHz ?? this.packetRateHz,
       lastReceivedTime: lastReceivedTime ?? this.lastReceivedTime,
     );
   }
@@ -173,10 +196,7 @@ abstract class HeartRateSource {
 
 final heartRateSourceProvider = Provider<HeartRateSource>((ref) {
   try {
-    final prefs = ref.watch(sharedPreferencesProvider);
-    final source = UnifiedHeartRateSource(prefs: prefs);
-    ref.onDispose(source.dispose);
-    return source;
+    return ref.watch(unifiedHeartRateSourceProvider);
   } catch (_) {
     final source = SimulatedHeartRateSource();
     ref.onDispose(source.dispose);

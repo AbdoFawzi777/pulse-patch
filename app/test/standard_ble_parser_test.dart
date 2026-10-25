@@ -101,5 +101,20 @@ void main() {
 
       expect(p1!.quality, lessThan(50));
     });
+
+    test('Parses packets produced by tools/ble_test_peripheral.py', () {
+      // Flags 0x16: uint8 BPM, contact supported & detected (0x06), RR present (0x10)
+      // BPM: 72 (0x48)
+      // RR: 853 1/1024s units -> [0x55, 0x03] = approx 833.0 ms
+      final raw = [0x16, 0x48, 0x55, 0x03];
+      final packet = StandardBleHrParser.parse(raw);
+
+      expect(packet, isNotNull);
+      expect(packet!.rawBpm, 72.0);
+      expect(packet.contactDetected, isTrue);
+      expect(packet.rrIntervalsMs, isNotNull);
+      expect(packet.rrIntervalsMs!.length, 1);
+      expect(packet.rrIntervalsMs![0], closeTo(833.0, 1.0));
+    });
   });
 }

@@ -120,6 +120,119 @@ void main() {
       },
     );
 
+    test('DiscoveredBleDevice displayName fallback rules', () {
+      const dev1 = DiscoveredBleDevice(id: '1', name: '', rssi: -60);
+      expect(dev1.displayName, 'Unnamed device');
+
+      const dev2 = DiscoveredBleDevice(id: '2', name: '   ', rssi: -60);
+      expect(dev2.displayName, 'Unnamed device');
+
+      const dev3 = DiscoveredBleDevice(
+        id: '3',
+        name: 'BLE Device ()',
+        rssi: -60,
+      );
+      expect(dev3.displayName, 'Unnamed device');
+
+      const dev4 = DiscoveredBleDevice(id: '4', name: '()', rssi: -60);
+      expect(dev4.displayName, 'Unnamed device');
+
+      const dev5 = DiscoveredBleDevice(id: '5', name: 'Polar H10', rssi: -60);
+      expect(dev5.displayName, 'Polar H10');
+    });
+
+    test('DiscoveredBleDevice detects Nordic UART and compatibility', () {
+      const dev = DiscoveredBleDevice(
+        id: 'AA:BB:CC:11:22:33',
+        name: 'ESP32_HR',
+        rssi: -65,
+        advertisedServices: ['6e400001-b5a3-f393-e0a9-e50e24dcca9e'],
+      );
+      expect(dev.hasNordicUart, isTrue);
+      expect(dev.isCompatible, isTrue);
+    });
+
+    test('Device sorting: compatible first, then descending RSSI', () {
+      final devices = [
+        const DiscoveredBleDevice(
+          id: 'A',
+          name: 'Buds',
+          rssi: -40, // strong RSSI but incompatible
+          advertisedServices: ['180f'],
+        ),
+        const DiscoveredBleDevice(
+          id: 'B',
+          name: 'Polar H10',
+          rssi: -75, // weak RSSI but compatible
+          advertisedServices: ['180d'],
+        ),
+        const DiscoveredBleDevice(
+          id: 'C',
+          name: 'PulsePatch-C3',
+          rssi: -50, // medium RSSI and compatible
+          advertisedServices: ['7243-4e64'],
+        ),
+      ];
+
+      devices.sort((a, b) {
+        if (a.isCompatible != b.isCompatible) {
+          return a.isCompatible ? -1 : 1;
+        }
+        return b.rssi.compareTo(a.rssi);
+      });
+
+      expect(devices[0].id, 'C'); // Compatible (-50 dBm)
+      expect(devices[1].id, 'B'); // Compatible (-75 dBm)
+      expect(devices[2].id, 'A'); // Incompatible (-40 dBm)
+    });
+
+    test('Device filtering: HR only filters out non-compatible devices', () {
+      final devices = [
+        const DiscoveredBleDevice(
+          id: 'A',
+          name: 'Buds',
+          rssi: -40,
+          advertisedServices: ['180f'],
+        ),
+        const DiscoveredBleDevice(
+          id: 'B',
+          name: 'Polar H10',
+          rssi: -75,
+          advertisedServices: ['180d'],
+        ),
+        const DiscoveredBleDevice(
+          id: 'C',
+          name: 'Nordic UART Sensor',
+          rssi: -60,
+          advertisedServices: ['6e400001-...'],
+        ),
+      ];
+
+      final filtered = devices.where((d) => d.isCompatible).toList();
+      expect(filtered.length, 2);
+      expect(filtered.map((d) => d.id).toList(), ['B', 'C']);
+    });
+
+    test('De-duplication by uppercase remote ID', () {
+      final map = <String, DiscoveredBleDevice>{};
+      final dev1 = const DiscoveredBleDevice(
+        id: 'aa:bb:cc:dd:ee:ff',
+        name: 'Dev',
+        rssi: -60,
+      );
+      final dev2 = const DiscoveredBleDevice(
+        id: 'AA:BB:CC:DD:EE:FF',
+        name: 'Dev Named',
+        rssi: -55,
+      );
+
+      map[dev1.id.toUpperCase()] = dev1;
+      map[dev2.id.toUpperCase()] = dev2;
+
+      expect(map.length, 1);
+      expect(map['AA:BB:CC:DD:EE:FF']?.name, 'Dev Named');
+    });
+
     test(
       'Connection state transition sequence emulates descriptor write refusal (blocked status)',
       () async {

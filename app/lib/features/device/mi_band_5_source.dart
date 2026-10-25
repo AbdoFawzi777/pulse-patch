@@ -6,12 +6,8 @@ import '../../domain/signal/ble_packet.dart';
 import '../../domain/signal/standard_ble_hr_parser.dart';
 import 'heart_rate_source.dart';
 
-/// Experimental source adapter for Xiaomi Mi Smart Band 5.
-/// Supports two operation modes:
-/// 1. Broadcast Mode (Recommended): When enabled in Zepp Life / Mi Fitness,
-///    the band broadcasts standard 0x180D and streams via 0x2A37.
-/// 2. Huami Direct Mode: Connects to proprietary service 0xFEE1 with user-provided
-///    16-byte auth key stored locally (never hardcoded or committed).
+/// Source adapter for Xiaomi Mi Smart Band 5 over standard Bluetooth Low Energy.
+/// Connects to standard 0x180D heart-rate service and 0x2A37 measurement characteristic.
 class MiBand5Source implements HeartRateSource {
   MiBand5Source({this.prefs}) {
     _initAdapterListener();
@@ -19,10 +15,6 @@ class MiBand5Source implements HeartRateSource {
 
   final SharedPreferences? prefs;
 
-  static const String huamiAuthServiceUuid =
-      '0000fee1-0000-1000-8000-00805f9b34fb';
-  static const String huamiAuthCharUuid =
-      '00000009-0000-3512-2118-0009af100700';
   static const String standardHrServiceUuid = '180d';
   static const String standardHrCharUuid = '2a37';
 
@@ -294,7 +286,7 @@ class MiBand5Source implements HeartRateSource {
           }
 
           if (!subscribed) {
-            // Firmware refuses subscription (GATT 3 / blocked)
+            // The device refused to enable heart-rate notifications (GATT status 3). Cause not confirmed.
             _setState(BleConnectionState.blocked);
             try {
               await device.disconnect();
@@ -302,33 +294,6 @@ class MiBand5Source implements HeartRateSource {
             return;
           }
         }
-      }
-
-      // Check Path 2: Huami Auth Service 0xFEE1
-      BluetoothCharacteristic? authChar;
-      for (final service in services) {
-        if (service.uuid.str.toLowerCase().contains('fee1')) {
-          for (final char in service.characteristics) {
-            if (char.uuid.str.toLowerCase().contains('00000009')) {
-              authChar = char;
-              break;
-            }
-          }
-        }
-      }
-
-      if (authChar != null) {
-        final authKey = prefs?.getString('mi_band_auth_key');
-        if (authKey == null || authKey.isEmpty) {
-          // Instruct user that broadcast mode or auth key is required
-          _setState(BleConnectionState.noSensorData);
-          return;
-        }
-
-        // Send challenge request to Huami auth characteristic
-        await authChar.setNotifyValue(true);
-        await authChar.write([0x01, 0x00], withoutResponse: false);
-        _resetTimeoutWatchdog();
       } else {
         _setState(BleConnectionState.noSensorData);
       }
@@ -431,7 +396,7 @@ class MiBand5Source implements HeartRateSource {
 
             if (!bondSuccess) {
               status =
-                  'Connected but heart rate is blocked by the device (GATT 3: WRITE_NOT_PERMITTED)';
+                  'The device refused to enable heart-rate notifications (GATT status 3). Cause not confirmed.';
             }
           }
         }

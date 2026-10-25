@@ -3,8 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/data/drift/app_database.dart';
+import 'package:app/data/repositories/preferences_repository.dart';
 import 'package:app/data/repositories/session_repository.dart';
 import 'package:app/domain/entities/ai_result_record.dart';
 import 'package:app/domain/entities/session_record.dart';
@@ -23,8 +25,11 @@ import 'package:app/features/measurement/live_measurement_screen.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  late SharedPreferences testPrefs;
 
   setUpAll(() async {
+    SharedPreferences.setMockInitialValues({});
+    testPrefs = await SharedPreferences.getInstance();
     final fontLoader = FontLoader('Outfit');
     final fontLight = File('assets/fonts/Outfit-Light.ttf');
     if (fontLight.existsSync()) {
@@ -300,6 +305,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
+          sharedPreferencesProvider.overrideWithValue(testPrefs),
           heartRateSourceProvider.overrideWithValue(SimulatedHeartRateSource()),
         ],
         child: MaterialApp(
