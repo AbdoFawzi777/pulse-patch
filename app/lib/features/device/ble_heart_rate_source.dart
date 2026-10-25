@@ -247,6 +247,46 @@ class BleHeartRateSource implements HeartRateSource {
   }
 
   @override
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId) async {
+    try {
+      final dev = BluetoothDevice.fromId(deviceId);
+      await dev.connect(
+        license: License.nonprofit,
+        timeout: const Duration(seconds: 8),
+      );
+      final services = await dev.discoverServices();
+      final hasPulsePatch = services.any(
+        (s) => s.uuid.str.toLowerCase().contains('7243-4e64'),
+      );
+      final hasHr = services.any(
+        (s) => s.uuid.str.toLowerCase().contains('180d'),
+      );
+      await dev.disconnect();
+      return DiscoveredBleDevice(
+        id: deviceId,
+        name: dev.platformName.isNotEmpty ? dev.platformName : 'PulsePatch-C3',
+        rssi: -50,
+        category: (hasPulsePatch || hasHr)
+            ? BleDeviceCategory.pulsePatch
+            : BleDeviceCategory.unknown,
+        discoveredServices: services
+            .map((s) => s.uuid.str.toLowerCase())
+            .toList(),
+        compatibilityStatus: (hasPulsePatch || hasHr)
+            ? 'Compatible: heart rate stream available'
+            : 'No heart-rate service',
+      );
+    } catch (e) {
+      return DiscoveredBleDevice(
+        id: deviceId,
+        name: 'PulsePatch Device',
+        rssi: -80,
+        compatibilityStatus: 'Connection check failed: $e',
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _isDisposed = true;
     _timeoutTimer?.cancel();

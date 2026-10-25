@@ -285,6 +285,76 @@ class StandardBleHeartRateSource implements HeartRateSource {
   }
 
   @override
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId) async {
+    try {
+      final dev = BluetoothDevice.fromId(deviceId);
+      await dev.connect(
+        license: License.nonprofit,
+        timeout: const Duration(seconds: 8),
+      );
+      final services = await dev.discoverServices();
+      final hasHr = services.any(
+        (s) => s.uuid.str.toLowerCase().contains('180d'),
+      );
+
+      String status;
+      int? gattError;
+      if (hasHr) {
+        BluetoothCharacteristic? hrChar;
+        for (final s in services) {
+          if (s.uuid.str.toLowerCase().contains('180d')) {
+            for (final c in s.characteristics) {
+              if (c.uuid.str.toLowerCase().contains('2a37')) {
+                hrChar = c;
+                break;
+              }
+            }
+          }
+        }
+        if (hrChar != null) {
+          try {
+            await hrChar.setNotifyValue(true);
+            await hrChar.setNotifyValue(false);
+            status = 'Compatible: heart rate stream available';
+          } catch (e) {
+            status = 'Connected but heart rate is blocked by the device ($e)';
+            if (e.toString().contains('3')) {
+              gattError = 3;
+            }
+          }
+        } else {
+          status = 'No heart-rate service';
+        }
+      } else {
+        status = 'No heart-rate service';
+      }
+      await dev.disconnect();
+      return DiscoveredBleDevice(
+        id: deviceId,
+        name: dev.platformName.isNotEmpty
+            ? dev.platformName
+            : (customDeviceName ?? 'Standard BLE Device'),
+        rssi: -50,
+        category: hasHr
+            ? BleDeviceCategory.standardBle
+            : BleDeviceCategory.unknown,
+        discoveredServices: services
+            .map((s) => s.uuid.str.toLowerCase())
+            .toList(),
+        compatibilityStatus: status,
+        gattErrorCode: gattError,
+      );
+    } catch (e) {
+      return DiscoveredBleDevice(
+        id: deviceId,
+        name: customDeviceName ?? 'BLE Device',
+        rssi: -80,
+        compatibilityStatus: 'Check failed: $e',
+      );
+    }
+  }
+
+  @override
   void dispose() {
     _isDisposed = true;
     _timeoutTimer?.cancel();

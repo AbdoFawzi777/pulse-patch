@@ -163,7 +163,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: MetricCard(
-                    height: 89.0,
+                    minHeight: 89.0,
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -195,7 +195,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
                 const SizedBox(width: 10.0),
                 Expanded(
                   child: MetricCard(
-                    height: 89.0,
+                    minHeight: 89.0,
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -233,7 +233,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
               children: [
                 Expanded(
                   child: MetricCard(
-                    height: 89.0,
+                    minHeight: 89.0,
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -265,7 +265,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
                 const SizedBox(width: 10.0),
                 Expanded(
                   child: MetricCard(
-                    height: 89.0,
+                    minHeight: 89.0,
                     padding: const EdgeInsets.all(16.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,7 +301,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
 
             // Full-Width Card 5 (flex: 1 1 100%)
             MetricCard(
-              height: 65.0,
+              minHeight: 65.0,
               padding: const EdgeInsets.symmetric(
                 horizontal: 16.0,
                 vertical: 14.0,

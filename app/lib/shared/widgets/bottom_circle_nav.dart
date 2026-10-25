@@ -25,8 +25,12 @@ class BottomCircleNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bottomInset = MediaQuery.paddingOf(context).bottom;
     return Padding(
-      padding: const EdgeInsets.only(top: 12.0),
+      padding: EdgeInsets.only(
+        top: 12.0,
+        bottom: bottomInset > 0 ? bottomInset + 8.0 : 12.0,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: List.generate(_navItems.length, (index) {

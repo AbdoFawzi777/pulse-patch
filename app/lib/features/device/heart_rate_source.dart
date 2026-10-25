@@ -11,7 +11,11 @@ enum BleConnectionState {
   idle,
   scanning,
   connecting,
+  discovering,
+  subscribing,
   connected,
+  streaming,
+  blocked,
   disconnected,
   reconnecting,
   noSensorData,
@@ -36,6 +40,9 @@ class DiscoveredBleDevice {
     required this.rssi,
     this.category = BleDeviceCategory.unknown,
     this.advertisedServices = const [],
+    this.discoveredServices = const [],
+    this.compatibilityStatus,
+    this.gattErrorCode,
   });
 
   final String id;
@@ -43,8 +50,69 @@ class DiscoveredBleDevice {
   final int rssi;
   final BleDeviceCategory category;
   final List<String> advertisedServices;
+  final List<String> discoveredServices;
+  final String? compatibilityStatus;
+  final int? gattErrorCode;
 
-  bool get isCompatible => category.isCompatible;
+  bool get hasHeartRate =>
+      advertisedServices.any((s) => s.toLowerCase().contains('180d')) ||
+      discoveredServices.any((s) => s.toLowerCase().contains('180d'));
+
+  bool get hasSpO2 =>
+      advertisedServices.any((s) => s.toLowerCase().contains('1822')) ||
+      discoveredServices.any((s) => s.toLowerCase().contains('1822'));
+
+  bool get hasPulsePatch =>
+      name.contains('PulsePatch') ||
+      advertisedServices.any((s) => s.toLowerCase().contains('7243-4e64')) ||
+      discoveredServices.any((s) => s.toLowerCase().contains('7243-4e64'));
+
+  bool get isMiBand =>
+      name.contains('Band 5') ||
+      name.contains('Mi Smart') ||
+      name.contains('Mi Band') ||
+      advertisedServices.any(
+        (s) =>
+            s.toLowerCase().contains('fee0') ||
+            s.toLowerCase().contains('fee1'),
+      );
+
+  bool get isCompatible =>
+      hasHeartRate || hasPulsePatch || isMiBand || category.isCompatible;
+
+  String get maskedId {
+    if (id.length >= 17 && id.contains(':')) {
+      final parts = id.split(':');
+      if (parts.length == 6) {
+        return '${parts[0]}:${parts[1]}:**:**:**:${parts[5]}';
+      }
+    }
+    return id.length > 8
+        ? '${id.substring(0, 4)}...${id.substring(id.length - 2)}'
+        : id;
+  }
+
+  DiscoveredBleDevice copyWith({
+    String? id,
+    String? name,
+    int? rssi,
+    BleDeviceCategory? category,
+    List<String>? advertisedServices,
+    List<String>? discoveredServices,
+    String? compatibilityStatus,
+    int? gattErrorCode,
+  }) {
+    return DiscoveredBleDevice(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      rssi: rssi ?? this.rssi,
+      category: category ?? this.category,
+      advertisedServices: advertisedServices ?? this.advertisedServices,
+      discoveredServices: discoveredServices ?? this.discoveredServices,
+      compatibilityStatus: compatibilityStatus ?? this.compatibilityStatus,
+      gattErrorCode: gattErrorCode ?? this.gattErrorCode,
+    );
+  }
 }
 
 class PacketDiagnostics {
@@ -94,6 +162,7 @@ abstract class HeartRateSource {
   Future<void> stopScan();
   Future<void> connect(String deviceId);
   Future<void> disconnect();
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId);
 
   bool get isSimulator;
   String get sourceLabel;

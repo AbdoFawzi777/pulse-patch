@@ -11,7 +11,7 @@ class DesignCanvasScaffold extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.fromLTRB(20.0, 28.0, 20.0, 20.0),
     this.bottomNavigationBar,
-    this.useSafeArea = false,
+    this.useSafeArea = true,
   });
 
   final Widget child;
@@ -21,6 +21,14 @@ class DesignCanvasScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final topInset = MediaQuery.paddingOf(context).top;
+    final effectivePadding =
+        (useSafeArea &&
+            topInset > 0 &&
+            padding == const EdgeInsets.fromLTRB(20.0, 28.0, 20.0, 20.0))
+        ? const EdgeInsets.fromLTRB(20.0, 12.0, 20.0, 12.0)
+        : padding;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -38,9 +46,9 @@ class DesignCanvasScaffold extends StatelessWidget {
             const CustomPaint(painter: _CanvasBackgroundPainter()),
             SafeArea(
               top: useSafeArea,
-              bottom: useSafeArea,
+              bottom: false,
               child: Padding(
-                padding: padding,
+                padding: effectivePadding,
                 child: Column(
                   children: [
                     Expanded(child: child),

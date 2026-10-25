@@ -6,6 +6,7 @@ import '../../data/repositories/preferences_repository.dart';
 import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/pill_button.dart';
+import 'application_settings_screen.dart';
 
 /// Screen managing user profile and UI display preferences.
 /// Derived screen #18 adhering strictly to design tokens.
@@ -328,6 +329,50 @@ class _ProfilePreferencesScreenState
                     label: 'Save Preferences',
                     style: PillButtonStyle.white,
                     onPressed: _savePreferences,
+                  ),
+
+                  const SizedBox(height: 12.0),
+
+                  // Open Application Settings
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const ApplicationSettingsScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14.0,
+                        horizontal: 16.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0B1840),
+                        borderRadius: BorderRadius.circular(14.0),
+                        border: Border.all(color: const Color(0xFF1B2A66)),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.settings_outlined,
+                            color: Color(0xFFC9D0F5),
+                            size: 18.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          Text(
+                            'Application Settings',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w400,
+                              color: Color(0xFFC9D0F5),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
 
                   const SizedBox(height: 24.0),

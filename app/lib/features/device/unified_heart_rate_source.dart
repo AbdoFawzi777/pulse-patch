@@ -20,7 +20,6 @@ class UnifiedHeartRateSource implements HeartRateSource {
   UnifiedHeartRateSource({required this.prefs}) {
     _activeSource = SimulatedHeartRateSource();
     _forwardActiveSourceStreams();
-    _initScanner();
   }
 
   final SharedPreferences prefs;
@@ -64,27 +63,6 @@ class UnifiedHeartRateSource implements HeartRateSource {
     });
   }
 
-  void _initScanner() {
-    // Populate default discovered devices for immediate preview matching design
-    _discoveredMap['sim-pulsepatch-1'] = const DiscoveredBleDevice(
-      id: 'sim-pulsepatch-1',
-      name: 'PulsePatch-C3',
-      rssi: -52,
-      category: BleDeviceCategory.pulsePatch,
-      advertisedServices: ['180d0000-7243-4e64-8843-50554c534531'],
-    );
-    _discoveredMap['sim-miband-1'] = const DiscoveredBleDevice(
-      id: 'sim-miband-1',
-      name: 'Mi Smart Band 5',
-      rssi: -64,
-      category: BleDeviceCategory.miBand,
-      advertisedServices: [
-        '0000180d-0000-1000-8000-00805f9b34fb',
-        '0000fee0-0000-1000-8000-00805f9b34fb',
-      ],
-    );
-  }
-
   @override
   Stream<BleConnectionState> get connectionStateStream =>
       _connectionStateController.stream;
@@ -122,9 +100,38 @@ class UnifiedHeartRateSource implements HeartRateSource {
   Future<void> startScan() async {
     _connectionStateController.add(BleConnectionState.scanning);
     try {
+      _discoveredMap.clear();
+
+      try {
+        final sysDevices = await FlutterBluePlus.systemDevices([]);
+        for (final d in sysDevices) {
+          final id = d.remoteId.str.toUpperCase();
+          final name = d.platformName.isNotEmpty ? d.platformName : d.advName;
+          BleDeviceCategory cat = BleDeviceCategory.unknown;
+          if (name.contains('PulsePatch')) {
+            cat = BleDeviceCategory.pulsePatch;
+          } else if (name.contains('Band 5') ||
+              name.contains('Mi Smart') ||
+              name.contains('Mi Band')) {
+            cat = BleDeviceCategory.miBand;
+          }
+          _discoveredMap[id] = DiscoveredBleDevice(
+            id: id,
+            name: name.isNotEmpty ? name : 'Connected BLE Device',
+            rssi: -50,
+            category: cat,
+            advertisedServices: const [],
+          );
+        }
+        if (!_isDisposed && sysDevices.isNotEmpty) {
+          _discoveredDevicesController.add(_discoveredMap.values.toList());
+        }
+      } catch (_) {}
+
       await _scanSubscription?.cancel();
       _scanSubscription = FlutterBluePlus.scanResults.listen((results) {
         for (final r in results) {
+          final id = r.device.remoteId.str.toUpperCase();
           final name = r.advertisementData.advName.isNotEmpty
               ? r.advertisementData.advName
               : r.device.platformName;
@@ -148,14 +155,28 @@ class UnifiedHeartRateSource implements HeartRateSource {
             cat = BleDeviceCategory.standardBle;
           }
 
-          _discoveredMap[r.device.remoteId.str] = DiscoveredBleDevice(
-            id: r.device.remoteId.str,
+          final existing = _discoveredMap[id];
+          final mergedServices = existing != null
+              ? {...existing.advertisedServices, ...serviceUuids}.toList()
+              : serviceUuids;
+
+          _discoveredMap[id] = DiscoveredBleDevice(
+            id: id,
             name: name.isNotEmpty
                 ? name
-                : 'BLE Device (${r.device.remoteId.str.length > 5 ? r.device.remoteId.str.substring(0, 5) : r.device.remoteId.str})',
+                : (existing != null &&
+                          existing.name.isNotEmpty &&
+                          !existing.name.startsWith('BLE Device')
+                      ? existing.name
+                      : 'BLE Device ()'),
             rssi: r.rssi,
-            category: cat,
-            advertisedServices: serviceUuids,
+            category: (cat != BleDeviceCategory.unknown)
+                ? cat
+                : (existing?.category ?? BleDeviceCategory.unknown),
+            advertisedServices: mergedServices,
+            discoveredServices: existing?.discoveredServices ?? const [],
+            compatibilityStatus: existing?.compatibilityStatus,
+            gattErrorCode: existing?.gattErrorCode,
           );
         }
         if (!_isDisposed) {
@@ -165,11 +186,44 @@ class UnifiedHeartRateSource implements HeartRateSource {
 
       await FlutterBluePlus.startScan(timeout: const Duration(seconds: 15));
     } catch (_) {
-      // In simulator or offline environment, emit initial list
       if (!_isDisposed) {
         _discoveredDevicesController.add(_discoveredMap.values.toList());
         _connectionStateController.add(BleConnectionState.idle);
       }
+    }
+  }
+
+  @override
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId) async {
+    final dev =
+        _discoveredMap[deviceId.toUpperCase()] ?? _discoveredMap[deviceId];
+    if (dev == null) return null;
+
+    HeartRateSource checker;
+    switch (dev.category) {
+      case BleDeviceCategory.pulsePatch:
+        checker = PulsePatchSource();
+        break;
+      case BleDeviceCategory.miBand:
+        checker = MiBand5Source(prefs: prefs);
+        break;
+      case BleDeviceCategory.standardBle:
+      case BleDeviceCategory.unknown:
+        checker = StandardBleHeartRateSource(customDeviceName: dev.name);
+        break;
+    }
+
+    try {
+      final res = await checker.checkCompatibility(dev.id);
+      if (res != null) {
+        _discoveredMap[dev.id] = res;
+        if (!_isDisposed) {
+          _discoveredDevicesController.add(_discoveredMap.values.toList());
+        }
+      }
+      return res;
+    } finally {
+      checker.dispose();
     }
   }
 
@@ -186,7 +240,8 @@ class UnifiedHeartRateSource implements HeartRateSource {
   Future<void> connect(String deviceId) async {
     await stopScan();
 
-    final device = _discoveredMap[deviceId];
+    final device =
+        _discoveredMap[deviceId.toUpperCase()] ?? _discoveredMap[deviceId];
     if (deviceId.startsWith('sim-') || device == null) {
       // Connecting to simulator
       if (_activeSource is! SimulatedHeartRateSource) {

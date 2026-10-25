@@ -7,17 +7,23 @@ import 'core/l10n/app_localizations.dart';
 import 'core/l10n/locale_provider.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
+import 'data/drift/app_database.dart';
 import 'data/repositories/preferences_repository.dart';
+import 'data/repositories/session_repository.dart';
 import 'features/home/app_shell.dart';
 import 'features/onboarding/onboarding_coordinator.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final prefs = await SharedPreferences.getInstance();
+  final appDb = await AppDatabase.onDisk();
 
   runApp(
     ProviderScope(
-      overrides: [sharedPreferencesProvider.overrideWithValue(prefs)],
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(prefs),
+        appDatabaseProvider.overrideWithValue(appDb),
+      ],
       child: const PulsePatchApp(),
     ),
   );

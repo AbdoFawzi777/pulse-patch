@@ -158,6 +158,44 @@ class MiBand5Source implements HeartRateSource {
     }
   }
 
+  static String maskMac(String mac) {
+    if (mac.length >= 17 && mac.contains(':')) {
+      final parts = mac.split(':');
+      if (parts.length == 6) {
+        return '${parts[0]}:${parts[1]}:**:**:**:${parts[5]}';
+      }
+    }
+    return mac.length > 8
+        ? '${mac.substring(0, 4)}...${mac.substring(mac.length - 2)}'
+        : mac;
+  }
+
+  void _logGattTable(String deviceId, List<BluetoothService> services) {
+    // ignore: avoid_print
+    print('=== [GATT TABLE START: ${maskMac(deviceId)}] ===');
+    for (final s in services) {
+      // ignore: avoid_print
+      print('Service: ${s.uuid.str}');
+      for (final c in s.characteristics) {
+        final props = [
+          if (c.properties.read) 'READ',
+          if (c.properties.write) 'WRITE',
+          if (c.properties.writeWithoutResponse) 'WRITE_NO_RESP',
+          if (c.properties.notify) 'NOTIFY',
+          if (c.properties.indicate) 'INDICATE',
+        ].join('|');
+        // ignore: avoid_print
+        print('  Char: ${c.uuid.str} [$props]');
+        for (final d in c.descriptors) {
+          // ignore: avoid_print
+          print('    Desc: ${d.uuid.str}');
+        }
+      }
+    }
+    // ignore: avoid_print
+    print('=== [GATT TABLE END: ${maskMac(deviceId)}] ===');
+  }
+
   @override
   Future<void> stopScan() async {
     await FlutterBluePlus.stopScan();
@@ -189,8 +227,10 @@ class MiBand5Source implements HeartRateSource {
         timeout: const Duration(seconds: 12),
       );
       _setState(BleConnectionState.connected);
+      _setState(BleConnectionState.discovering);
 
       final services = await device.discoverServices();
+      _logGattTable(deviceId, services);
 
       // Check Path 1: Standard 0x180D Heart Rate Service (Broadcast Mode)
       BluetoothCharacteristic? hrChar;
@@ -206,12 +246,62 @@ class MiBand5Source implements HeartRateSource {
       }
 
       if (hrChar != null) {
-        // Standard broadcast mode active!
-        await hrChar.setNotifyValue(true);
-        _charSubscription?.cancel();
-        _charSubscription = hrChar.onValueReceived.listen(_handlePacketData);
-        _resetTimeoutWatchdog();
-        return;
+        _setState(BleConnectionState.subscribing);
+        try {
+          await hrChar.setNotifyValue(true);
+          _setState(BleConnectionState.streaming);
+          _charSubscription?.cancel();
+          _charSubscription = hrChar.onValueReceived.listen(_handlePacketData);
+          _resetTimeoutWatchdog();
+          return;
+        } catch (e1) {
+          // ignore: avoid_print
+          print('[MiBand5 connect] setNotifyValue failed: $e1');
+
+          // Attempt retry with bonding
+          bool subscribed = false;
+          try {
+            await device.createBond();
+            await Future.delayed(const Duration(milliseconds: 1500));
+            await hrChar.setNotifyValue(true);
+            _setState(BleConnectionState.streaming);
+            _charSubscription?.cancel();
+            _charSubscription = hrChar.onValueReceived.listen(
+              _handlePacketData,
+            );
+            _resetTimeoutWatchdog();
+            subscribed = true;
+            return;
+          } catch (_) {}
+
+          // Attempt indicate descriptor write
+          if (!subscribed) {
+            try {
+              for (final d in hrChar.descriptors) {
+                if (d.uuid.str.toLowerCase().contains('2902')) {
+                  await d.write([0x02, 0x00]);
+                  _setState(BleConnectionState.streaming);
+                  _charSubscription?.cancel();
+                  _charSubscription = hrChar.onValueReceived.listen(
+                    _handlePacketData,
+                  );
+                  _resetTimeoutWatchdog();
+                  subscribed = true;
+                  return;
+                }
+              }
+            } catch (_) {}
+          }
+
+          if (!subscribed) {
+            // Firmware refuses subscription (GATT 3 / blocked)
+            _setState(BleConnectionState.blocked);
+            try {
+              await device.disconnect();
+            } catch (_) {}
+            return;
+          }
+        }
       }
 
       // Check Path 2: Huami Auth Service 0xFEE1
@@ -244,6 +334,134 @@ class MiBand5Source implements HeartRateSource {
       }
     } catch (_) {
       _handleDisconnect();
+    }
+  }
+
+  @override
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId) async {
+    try {
+      final dev = BluetoothDevice.fromId(deviceId);
+      await dev.connect(
+        license: License.nonprofit,
+        timeout: const Duration(seconds: 10),
+      );
+      final services = await dev.discoverServices();
+      _logGattTable(deviceId, services);
+
+      final hasHr = services.any(
+        (s) => s.uuid.str.toLowerCase().contains('180d'),
+      );
+
+      String status = 'No heart-rate service';
+      int? gattErrorCode;
+
+      if (hasHr) {
+        BluetoothCharacteristic? hrChar;
+        for (final s in services) {
+          if (s.uuid.str.toLowerCase().contains('180d')) {
+            for (final c in s.characteristics) {
+              if (c.uuid.str.toLowerCase().contains('2a37')) {
+                hrChar = c;
+                break;
+              }
+            }
+          }
+        }
+
+        if (hrChar != null) {
+          // Test 1: Is notify or indicate present on 0x2A37?
+          // ignore: avoid_print
+          print(
+            '[MiBand5 Test 1] 0x2A37 properties: notify=${hrChar.properties.notify}, indicate=${hrChar.properties.indicate}',
+          );
+
+          try {
+            await hrChar.setNotifyValue(true);
+            await hrChar.setNotifyValue(false);
+            status = 'Compatible: heart rate stream available';
+          } catch (e1) {
+            // ignore: avoid_print
+            print('[MiBand5 Test 1 Result] setNotifyValue failed: $e1');
+            if (e1.toString().contains('3')) {
+              gattErrorCode = 3;
+            }
+
+            // Test 2: Retry after Android bonding (createBond)
+            bool bondSuccess = false;
+            try {
+              // ignore: avoid_print
+              print('[MiBand5 Test 2] Attempting createBond()...');
+              await dev.createBond();
+              await Future.delayed(const Duration(milliseconds: 1500));
+              await hrChar.setNotifyValue(true);
+              await hrChar.setNotifyValue(false);
+              status = 'Compatible: heart rate stream available (bonded)';
+              bondSuccess = true;
+            } catch (e2) {
+              // ignore: avoid_print
+              print(
+                '[MiBand5 Test 2 Result] Post-bond subscription failed: $e2',
+              );
+            }
+
+            // Test 3: Try indicate if notify refused
+            if (!bondSuccess) {
+              try {
+                // ignore: avoid_print
+                print(
+                  '[MiBand5 Test 3] Attempting indicate descriptor write [0x02, 0x00]...',
+                );
+                for (final d in hrChar.descriptors) {
+                  if (d.uuid.str.toLowerCase().contains('2902')) {
+                    await d.write([0x02, 0x00]);
+                    await d.write([0x00, 0x00]);
+                    status =
+                        'Compatible: heart rate stream available (indicate)';
+                    bondSuccess = true;
+                    break;
+                  }
+                }
+              } catch (e3) {
+                // ignore: avoid_print
+                print(
+                  '[MiBand5 Test 3 Result] Indicate descriptor write failed: $e3',
+                );
+              }
+            }
+
+            if (!bondSuccess) {
+              status =
+                  'Connected but heart rate is blocked by the device (GATT 3: WRITE_NOT_PERMITTED)';
+            }
+          }
+        }
+      }
+
+      await dev.disconnect();
+
+      return DiscoveredBleDevice(
+        id: deviceId,
+        name: dev.platformName.isNotEmpty
+            ? dev.platformName
+            : 'Mi Smart Band 5',
+        rssi: -50,
+        category: BleDeviceCategory.miBand,
+        discoveredServices: services
+            .map((s) => s.uuid.str.toLowerCase())
+            .toList(),
+        compatibilityStatus: status,
+        gattErrorCode: gattErrorCode,
+      );
+    } catch (e) {
+      // ignore: avoid_print
+      print('[MiBand5 Compatibility Check Error] $e');
+      return DiscoveredBleDevice(
+        id: deviceId,
+        name: 'Mi Smart Band 5',
+        rssi: -80,
+        category: BleDeviceCategory.miBand,
+        compatibilityStatus: 'Check failed: $e',
+      );
     }
   }
 

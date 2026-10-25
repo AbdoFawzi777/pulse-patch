@@ -67,212 +67,217 @@ class HomeScreen extends ConsumerWidget {
               onTap: onSelectTab ?? (_) {},
             )
           : null,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // Header Row (.r)
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header Row (.r)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Hi, there!',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textPrimary,
+                          height: 1.0,
+                        ),
+                      ),
+                      SizedBox(height: 2.0),
+                      Text(
+                        'How are you today?',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 26.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textSubtitle,
+                          height: 1.0,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      'Hi, there!',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 26.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textPrimary,
-                        height: 1.0,
-                      ),
+                    CircleIconButton(
+                      type: CircleIconType.profile,
+                      semanticLabel: 'Profile',
+                      onPressed: onOpenProfile,
                     ),
-                    SizedBox(height: 2.0),
-                    Text(
-                      'How are you today?',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 26.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textSubtitle,
-                        height: 1.0,
-                      ),
+                    const SizedBox(width: 8.0),
+                    CircleIconButton(
+                      type: CircleIconType.notifications,
+                      semanticLabel: 'Notifications',
+                      onPressed: onOpenNotifications,
                     ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  CircleIconButton(
-                    type: CircleIconType.profile,
-                    semanticLabel: 'Profile',
-                    onPressed: onOpenProfile,
-                  ),
-                  const SizedBox(width: 8.0),
-                  CircleIconButton(
-                    type: CircleIconType.notifications,
-                    semanticLabel: 'Notifications',
-                    onPressed: onOpenNotifications,
-                  ),
-                ],
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 8.0),
-
-          // Status Chips Row (.tg)
-          Wrap(
-            spacing: 8.0,
-            runSpacing: 4.0,
-            children: [
-              GestureDetector(
-                onTap: onOpenDevice,
-                child: StatusChip(label: deviceChipText),
-              ),
-              StatusChip(
-                label: bleSource.isSimulator ? 'Sample data' : 'Hardware',
-              ),
-            ],
-          ),
-
-          // Heart Illustration (SVG: width=330, height=300)
-          Transform.translate(
-            offset: const Offset(0.0, -11.0),
-            child: const Center(
-              child: LayeredHeartWidget(width: 330.0, height: 300.0),
+              ],
             ),
-          ),
 
-          // Two-Card Metric Row with exact card overlap (-70px in CSS)
-          Transform.translate(
-            offset: const Offset(0.0, -82.0),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
+            const SizedBox(height: 8.0),
+
+            // Status Chips Row (.tg)
+            Wrap(
+              spacing: 8.0,
+              runSpacing: 4.0,
               children: [
-                // Card 1: Last session
-                Expanded(
-                  child: MetricCard(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Flexible(
-                              child: Text(
-                                'Last session',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w300,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: 4.0),
-                            StatusChip(label: 'Saved'),
-                          ],
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          sessionTimestamp,
-                          style: const TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w300,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                        const SizedBox(height: 6.0),
-                        FittedBox(
-                          fit: BoxFit.scaleDown,
-                          alignment: Alignment.centerLeft,
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.baseline,
-                            textBaseline: TextBaseline.alphabetic,
-                            children: [
-                              Text(
-                                '$bpmValue ',
-                                style: const TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 44.0,
-                                  fontWeight: FontWeight.w300,
-                                  color: AppColors.textPrimary,
-                                  height: 1.0,
-                                  fontFeatures: [FontFeature.tabularFigures()],
-                                ),
-                              ),
-                              const Text(
-                                'BPM',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 14.0,
-                                  fontWeight: FontWeight.w300,
-                                  color: AppColors.textMuted,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+                GestureDetector(
+                  onTap: onOpenDevice,
+                  child: StatusChip(label: deviceChipText),
                 ),
-
-                const SizedBox(width: 12.0),
-
-                // Card 2: AI Insights
-                Expanded(
-                  child: MetricCard(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Text(
-                          'AI Insights',
-                          style: TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 14.0,
-                            fontWeight: FontWeight.w300,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                        const SizedBox(height: 8.0),
-                        Text(
-                          aiPatternText,
-                          style: const TextStyle(
-                            fontFamily: 'Outfit',
-                            fontSize: 24.0,
-                            fontWeight: FontWeight.w300,
-                            color: AppColors.textPrimary,
-                            height: 1.2,
-                          ),
-                        ),
-                        const SizedBox(height: 12.0),
-                        PillButton(
-                          label: 'Measure',
-                          style: PillButtonStyle.white,
-                          width: double.infinity,
-                          height: 48.0,
-                          onPressed: onStartMeasure,
-                        ),
-                      ],
-                    ),
-                  ),
+                StatusChip(
+                  label: bleSource.isSimulator ? 'Sample data' : 'Hardware',
                 ),
               ],
             ),
-          ),
-        ],
+
+            // Heart Illustration (SVG: width=330, height=300)
+            Transform.translate(
+              offset: const Offset(0.0, -11.0),
+              child: const Center(
+                child: LayeredHeartWidget(width: 330.0, height: 300.0),
+              ),
+            ),
+
+            // Two-Card Metric Row with exact card overlap (-70px in CSS)
+            Transform.translate(
+              offset: const Offset(0.0, -82.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Card 1: Last session
+                  Expanded(
+                    child: MetricCard(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  'Last session',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 4.0),
+                              StatusChip(label: 'Saved'),
+                            ],
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            sessionTimestamp,
+                            style: const TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                          const SizedBox(height: 6.0),
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            alignment: Alignment.centerLeft,
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  '$bpmValue ',
+                                  style: const TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 44.0,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColors.textPrimary,
+                                    height: 1.0,
+                                    fontFeatures: [
+                                      FontFeature.tabularFigures(),
+                                    ],
+                                  ),
+                                ),
+                                const Text(
+                                  'BPM',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(width: 12.0),
+
+                  // Card 2: AI Insights
+                  Expanded(
+                    child: MetricCard(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'AI Insights',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textMuted,
+                            ),
+                          ),
+                          const SizedBox(height: 8.0),
+                          Text(
+                            aiPatternText,
+                            style: const TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textPrimary,
+                              height: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 12.0),
+                          PillButton(
+                            label: 'Measure',
+                            style: PillButtonStyle.white,
+                            width: double.infinity,
+                            height: 48.0,
+                            onPressed: onStartMeasure,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

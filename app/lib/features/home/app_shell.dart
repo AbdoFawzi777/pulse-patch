@@ -13,6 +13,8 @@ import '../insights/ai_insights_dashboard_screen.dart';
 import '../measurement/live_measurement_screen.dart';
 import '../measurement/measurement_complete_screen.dart';
 import '../measurement/measurement_preparation_screen.dart';
+import '../settings/notifications_center_screen.dart';
+import '../settings/profile_preferences_screen.dart';
 import 'home_screen.dart';
 
 enum AppView {
@@ -132,6 +134,21 @@ class _AppShellState extends ConsumerState<AppShell> {
         body = HomeScreen(
           onStartMeasure: _startMeasurementPrep,
           onOpenDevice: () => _navigateToTab(3),
+          showBottomNav: false,
+          onOpenProfile: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const ProfilePreferencesScreen(),
+              ),
+            );
+          },
+          onOpenNotifications: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => const NotificationsCenterScreen(),
+              ),
+            );
+          },
         );
         break;
 
@@ -168,6 +185,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       case AppView.history:
         body = MeasurementHistoryScreen(
           onBack: () => setState(() => _currentView = AppView.home),
+          showBottomNav: false,
           onSelectSession: (session) {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -183,7 +201,10 @@ class _AppShellState extends ConsumerState<AppShell> {
         break;
 
       case AppView.insights:
-        body = const AiInsightsDashboardScreen();
+        body = AiInsightsDashboardScreen(
+          onBack: () => setState(() => _currentView = AppView.home),
+          showBottomNav: false,
+        );
         break;
 
       case AppView.device:

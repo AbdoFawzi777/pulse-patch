@@ -121,6 +121,17 @@ class SimulatedHeartRateSource implements HeartRateSource {
     _setState(BleConnectionState.disconnected);
   }
 
+  @override
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId) async {
+    return DiscoveredBleDevice(
+      id: deviceId,
+      name: 'PulsePatch-C3 (Simulator)',
+      rssi: -50,
+      category: BleDeviceCategory.pulsePatch,
+      compatibilityStatus: 'Compatible: heart rate stream available',
+    );
+  }
+
   void _startSimulationStreams() {
     _stopSimulationStreams();
 

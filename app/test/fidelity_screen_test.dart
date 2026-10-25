@@ -109,6 +109,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(
@@ -157,6 +158,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(
@@ -211,6 +213,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(
@@ -278,6 +281,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(
@@ -309,6 +313,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(
@@ -342,6 +347,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(
@@ -365,6 +371,7 @@ void main() {
       ),
     );
 
+    await tester.pump(const Duration(milliseconds: 700));
     await tester.pumpAndSettle();
 
     await expectLater(

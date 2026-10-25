@@ -49,14 +49,20 @@ class MeasurementCompleteScreen extends StatelessWidget {
                 semanticLabel: 'Back',
                 onPressed: onBack,
               ),
-              const Text(
-                'Heart Rate Summary',
-                style: TextStyle(
-                  fontFamily: 'Outfit',
-                  fontSize: 22.0,
-                  fontWeight: FontWeight.w300,
-                  color: AppColors.textPrimary,
-                  height: 1.0,
+              const Expanded(
+                child: Center(
+                  child: Text(
+                    'Heart Rate Summary',
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 22.0,
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.textPrimary,
+                      height: 1.0,
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(width: 56.0),

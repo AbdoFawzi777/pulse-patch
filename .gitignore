@@ -43,3 +43,7 @@ ml/.venv/
 # PlatformIO
 firmware/.pio/
 firmware/.vscode/
+
+# Field Test Raw Logs & Temporary Traces
+docs/field_test/raw/
+
