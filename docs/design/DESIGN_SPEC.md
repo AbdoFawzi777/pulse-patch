@@ -130,7 +130,7 @@ The entire application standardizes on the **Outfit** Google Font family, explic
   3. `start_hr` -> `78 BPM`
   4. `end_hr` -> `70 BPM`
   5. `recovery_drop` -> `-8 BPM`
-- **Footer Text:** "Runs on this phone · TensorFlow Lite · 6 sessions available".
+- **Footer Text:** "Runs on this phone · small neural network running locally in the app · 6 sessions available".
 - **Bottom Navigation:** Circle 3 (Insights) is active.
 
 ### 3.5 `Connect device.png` (Screen 7: Device Connection)
@@ -172,7 +172,7 @@ Out of the 27 screens in Section 9 of the Master Build Plan, 6 are provided in t
 10. **AI Insights Dashboard Screen:** Aggregated pattern history: count of Typical vs Different sessions, consistency score, recovery trends.
 11. **Recovery Analysis Screen:** Post-activity recovery drop metric (`recovery_drop = start_hr - 60s_window_hr`), personal baseline comparison against user's prior sessions, recovery curve chart.
 12. **Historical Trends Screen:** Daily and weekly trend charts with explicit gap handling (missing days show gaps, never zeroed). Rest vs Post-activity filtering.
-13. **AI Model Information Screen:** Model transparency card: `PulsePatch AI Insights`, TensorFlow Lite engine, version, training date, input features, limitations, non-diagnostic disclaimer.
+13. **AI Model Information Screen:** Model transparency card: `PulsePatch AI Insights`, small neural network running locally in the app, version, training date, input features, limitations, non-diagnostic disclaimer.
 14. **Session Details Screen:** Drill-down view for an individual session: date/time, optical pulse trace playback, full statistics, AI classification, export to CSV/JSON, delete with confirmation.
 15. **Reports Screen:** Date range picker, session count, PDF generation preview with charts, share intent button, print action.
 16. **Notifications Center Screen:** Real event logs: Device connected/disconnected, measurement completed, quality warnings, scheduled reminders.

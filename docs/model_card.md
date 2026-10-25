@@ -1,7 +1,7 @@
 # PulsePatch Lite — AI Model Card
 
 **Model Name:** PulsePatch AI Insights  
-**Engine:** TensorFlow Lite / Pure Dart High-Performance Forward Pass  
+**Engine:** small neural network running locally in the app (pure Dart isolate, 233 floating-point weights)  
 **Version:** 1.0.0  
 **Date:** October 2026  
 **License:** Open Source (Educational Capstone Project)  
@@ -97,7 +97,7 @@ Actual Different            1                   26
 
 ## 6. Mathematical Parity & Test Vectors
 
-Inference forward pass parity was validated across Python (`scikit-learn`), TensorFlow Lite flatbuffer, and the Flutter/Dart background isolate runner on shared test vectors:
+Inference forward pass parity was validated across Python (`scikit-learn` training weights) and the Flutter/Dart background isolate runner on shared test vectors:
 - **Vector 1 (Standard Resting Typical):** $100\%$ agreement ($P_{typical} = 97.7\%$, Label 0).
 - **Vector 2 (Post-Activity Robust Drop):** $100\%$ agreement ($P_{typical} = 99.9\%$, Label 0).
 - **Vector 3 (Post-Activity Blunted Drop):** $100\%$ agreement ($P_{different} = 99.6\%$, Label 1).

@@ -177,7 +177,7 @@ class _PrivacyDataManagementScreenState
                           ),
                           SizedBox(height: 12.0),
                           Text(
-                            'PulsePatch Lite is strictly offline-first. There are no analytics trackers, no cloud sync servers, no advertising IDs, and no third-party telemetry collectors.\n\nAll optical pulse data and TFLite inferences remain in your encrypted local SQLite database.',
+                            'PulsePatch Lite is strictly offline-first. There are no analytics trackers, no cloud sync servers, no advertising IDs, and no third-party telemetry collectors.\n\nAll optical pulse data and local neural network inferences remain in your encrypted local SQLite database.',
                             style: TextStyle(
                               fontFamily: 'Outfit',
                               fontSize: 13.5,

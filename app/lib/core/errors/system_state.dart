@@ -101,7 +101,7 @@ class SystemStateInfo {
         return const SystemStateInfo(
           type: SystemStateType.disconnected,
           title: 'Sensor Disconnected',
-          message: 'BLE connection dropped. Verify sensor battery and range.',
+          message: 'BLE connection dropped. Verify sensor power and range.',
           actionLabel: 'Reconnect',
           icon: Icons.bluetooth_disabled_rounded,
         );
@@ -159,7 +159,8 @@ class SystemStateInfo {
         return const SystemStateInfo(
           type: SystemStateType.modelLoading,
           title: 'Loading Model',
-          message: 'Initializing local TensorFlow Lite inference isolate...',
+          message:
+              'Initializing local small neural network inference isolate...',
           actionLabel: 'Wait',
           icon: Icons.hourglass_top_rounded,
         );

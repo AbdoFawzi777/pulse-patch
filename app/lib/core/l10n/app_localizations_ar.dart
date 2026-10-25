@@ -115,12 +115,12 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String runsOnPhone(int count) {
-    return 'يعمل محلياً على هذا الهاتف · TensorFlow Lite · $count جلسات متوفرة';
+    return 'يعمل محلياً على هذا الهاتف · شبكة عصبية صغيرة تعمل محلياً داخل التطبيق · $count جلسات متوفرة';
   }
 
   @override
   String get sensorDisclaimer =>
-      'المستشعر: MAX30102 · تظهر البطارية والبرنامج الثابت عند توفرهما فقط';
+      'المستشعر: MAX30102 · تشغيل عبر USB-C (لا توجد دائرة بطارية)';
 
   @override
   String get sampleDataPeaksDisclaimer =>

@@ -28,11 +28,11 @@ All PulsePatch Lite GATT interactions are hosted under a custom 128-bit Primary 
 
 ### Binary Layout
 ```
-+---------------+---------------+--------------------+---------------+-------------------------+--------------------+
-| Offset: 0     | Offset: 1     | Offset: 2-3        | Offset: 4     | Offset: 5-8             | Offset: 9-10       |
-| uint8_t       | uint8_t       | uint16_t (LE)      | uint8_t       | uint32_t (LE)           | uint16_t (LE)      |
-| protocolVer   | flags         | bpmTimes10         | quality       | deviceTimestampMs       | sequenceNumber     |
-+---------------+---------------+--------------------+---------------+-------------------------+--------------------+
++---------------+---------------+--------------------+---------------+-------------------------+--------------------+---------------+
+| Offset: 0     | Offset: 1     | Offset: 2-3        | Offset: 4     | Offset: 5-8             | Offset: 9-10       | Offset: 11    |
+| uint8_t       | uint8_t       | uint16_t (LE)      | uint8_t       | uint32_t (LE)           | uint16_t (LE)      | uint8_t       |
+| protocolVer   | flags         | bpmTimes10         | quality       | deviceTimestampMs       | sequenceNumber     | reserved      |
++---------------+---------------+--------------------+---------------+-------------------------+--------------------+---------------+
 ```
 
 ### Field Definitions
@@ -53,6 +53,8 @@ All PulsePatch Lite GATT interactions are hosted under a custom 128-bit Primary 
    - Free-running millisecond timer on the ESP32-C3 microcontroller since boot.
 6. **`sequenceNumber` (uint16, Offset 9–10):**
    - Monotonically increasing packet counter (`0` to `65535`, wraps to `0`). Used by the client to calculate packet dropout and network latency.
+7. **`reserved` (uint8, Offset 11):**
+   - Padding byte, fixed to `0x00`. Hardware contains NO battery monitoring circuit and operates directly from 5V USB-C power. Battery percentage is neither tracked nor displayed.
 
 ---
 

@@ -122,14 +122,14 @@ void main() {
               GlobalErrorBoundary(child: widget ?? const SizedBox.shrink()),
           home: Builder(
             builder: (context) {
-              return const Scaffold(body: Text('Healthy App State'));
+              return const Scaffold(body: Text('Operational App State'));
             },
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Healthy App State'), findsOneWidget);
+      expect(find.text('Operational App State'), findsOneWidget);
     });
   });
 }

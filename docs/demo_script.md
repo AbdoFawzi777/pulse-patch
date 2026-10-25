@@ -5,7 +5,7 @@
 **Equipment Needed:**
 - Android Smartphone / Tablet with PulsePatch Lite installed
 - ESP32-C3 + MAX30102 Sensor Patch (or Simulator fallback)
-- USB-C Power cable / Battery
+- USB-C Power cable (5V USB-C, hardware has no battery circuit)
 - Printed or on-screen slide presentation
 
 ---
@@ -30,7 +30,7 @@
   > In the firmware, we implemented a custom GATT architecture operating under our dedicated 128-bit service UUID. Every second, the microcontroller evaluates finger contact, analyzes 1st-derivative motion artifacts, and transmits a tight 12-byte binary packet containing protocol version, flags, BPM scaled by 10, signal quality from 0 to 100, and sequence counter."
 - **Action:**
   - In app, tap **Scan for Devices** -> tap **Connect**.
-  - Show the Device Info card displaying firmware `1.0.0-esp32c3`, sensor `MAX30102_OK`, and battery status.
+  - Show the Device Info card displaying firmware `1.0.0-esp32c3`, sensor `MAX30102_OK`, and power source `USB-C` (no battery circuit).
   - *(Fallback if hardware absent: tap 'Start Simulator' to demonstrate the defensive BLE parser with identical packet structures).*
 
 ---

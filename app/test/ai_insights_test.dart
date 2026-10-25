@@ -17,7 +17,10 @@ void main() {
     test('AiModelMetadata parses defaults and JSON correctly', () {
       final meta = AiModelMetadata.fromJson(const {});
       expect(meta.modelName, equals('PulsePatch AI Insights'));
-      expect(meta.engine, equals('TensorFlow Lite'));
+      expect(
+        meta.engine,
+        equals('small neural network running locally in the app'),
+      );
       expect(meta.features.length, equals(5));
       expect(meta.labels, contains('Typical pattern'));
       expect(meta.labels, contains('Different pattern'));
@@ -197,7 +200,7 @@ void main() {
 
         // Footer
         expect(
-          find.textContaining('Runs on this phone · TensorFlow Lite'),
+          find.textContaining('Runs on this phone · small neural network'),
           findsOneWidget,
         );
       },

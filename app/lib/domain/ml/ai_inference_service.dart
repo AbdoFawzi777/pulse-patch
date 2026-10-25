@@ -99,7 +99,7 @@ class _InferencePayload {
   final double? priorStdHr;
 }
 
-/// Service managing on-device TFLite model lifecycle and isolate inference.
+/// Service managing on-device small neural network model lifecycle and isolate inference.
 class AiInferenceService {
   AiInferenceService({SessionRepository? repository})
     : _repository = repository;

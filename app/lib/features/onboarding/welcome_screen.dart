@@ -109,14 +109,14 @@ class WelcomeScreen extends StatelessWidget {
                           icon: Icons.show_chart_rounded,
                           title: 'Truthful Optical Trace',
                           description:
-                              'Renders smooth optical photoplethysmogram waveforms with quality-gated metrics. Never fake ECG spikes.',
+                              'Renders smooth optical photoplethysmogram waveforms with quality-gated metrics. Truthful optical pulse data.',
                         ),
                         SizedBox(height: 14.0),
                         _FeatureItem(
                           icon: Icons.psychology_outlined,
                           title: 'On-Device AI Patterns',
                           description:
-                              'TensorFlow Lite inference runs 100% locally on your phone to categorize session patterns.',
+                              'A small neural network runs 100% locally on your phone to categorize session patterns.',
                         ),
                       ],
                     ),

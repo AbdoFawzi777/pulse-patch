@@ -480,8 +480,8 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                             '< 0.15 ms on device',
                           ),
                           _buildTechRow(
-                            'TFLite Asset File',
-                            'model.tflite (in app bundle)',
+                            'Local Inference Engine',
+                            'small neural network running locally in the app',
                           ),
                           _buildTechRow(
                             'Scaler Mean Vector',

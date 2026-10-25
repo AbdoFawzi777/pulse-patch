@@ -1,6 +1,6 @@
 {
   "model_name": "PulsePatch AI Insights",
-  "engine": "TensorFlow Lite",
+  "engine": "small neural network running locally in the app",
   "version": "1.0.0",
   "training_date": "2026-10-24",
   "features": [

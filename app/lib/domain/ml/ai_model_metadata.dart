@@ -47,7 +47,9 @@ class AiModelMetadata {
 
     return AiModelMetadata(
       modelName: json['model_name'] as String? ?? 'PulsePatch AI Insights',
-      engine: json['engine'] as String? ?? 'TensorFlow Lite',
+      engine:
+          json['engine'] as String? ??
+          'small neural network running locally in the app',
       version: json['version'] as String? ?? '1.0.0',
       trainingDate: json['training_date'] as String? ?? '2026-10-24',
       features: featureList.isNotEmpty

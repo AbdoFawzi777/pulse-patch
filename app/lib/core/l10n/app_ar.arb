@@ -41,7 +41,7 @@
   "experimental": "تجريبي",
   "measuredValuesUsed": "القيم المقاسة المستخدمة",
   "patternExplanation": "مشابه لآخر 5 جلسات راحة لك. تصنيف نمط، وليس تقييماً صحياً.",
-  "runsOnPhone": "يعمل محلياً على هذا الهاتف · TensorFlow Lite · {count} جلسات متوفرة",
+  "runsOnPhone": "يعمل محلياً على هذا الهاتف · شبكة عصبية صغيرة تعمل محلياً داخل التطبيق · {count} جلسات متوفرة",
   "@runsOnPhone": {
     "placeholders": {
       "count": {
@@ -49,7 +49,7 @@
       }
     }
   },
-  "sensorDisclaimer": "المستشعر: MAX30102 · تظهر البطارية والبرنامج الثابت عند توفرهما فقط",
+  "sensorDisclaimer": "المستشعر: MAX30102 · تشغيل عبر USB-C (لا توجد دائرة بطارية)",
   "sampleDataPeaksDisclaimer": "بيانات تجريبية · تقديرية بناءً على قمم النبض الضوئي",
   "educationalDisclaimer": "تطبيق PulsePatch Lite نموذج تعليمي أولي ولا يقدم تشخيصاً طبياً."
 }

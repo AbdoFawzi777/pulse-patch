@@ -68,13 +68,16 @@ class StatusChip extends StatelessWidget {
             ),
             const SizedBox(width: 6.0),
           ],
-          Text(
-            label,
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 12.0,
-              fontWeight: FontWeight.w400,
-              color: text,
+          Flexible(
+            child: Text(
+              label,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                fontFamily: 'Outfit',
+                fontSize: 12.0,
+                fontWeight: FontWeight.w400,
+                color: text,
+              ),
             ),
           ),
         ],

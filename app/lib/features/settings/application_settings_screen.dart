@@ -364,7 +364,8 @@ class _ApplicationSettingsScreenState
                           _buildNavTile(
                             icon: Icons.psychology_rounded,
                             title: 'AI Model Information',
-                            subtitle: 'TensorFlow Lite model card & metrics',
+                            subtitle:
+                                'On-device neural network model card & metrics',
                             onTap: () {
                               Navigator.of(context).push(
                                 MaterialPageRoute(

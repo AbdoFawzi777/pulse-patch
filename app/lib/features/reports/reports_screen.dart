@@ -312,7 +312,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                               _OriginLine(
                                 category: 'Model output',
                                 description:
-                                    'On-device TFLite pattern label (Typical / Different).',
+                                    'On-device neural network pattern label (Typical / Different).',
                               ),
                             ],
                           ),

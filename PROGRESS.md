@@ -13,7 +13,7 @@
 | Phase 6 | Core Screens (Home, Measure, Live, Complete) | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 53/53 tests pass) | 14ae44b |
 | Phase 7 | History, Details, Trends, Reports | DONE | Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 58/58 tests pass) | c6e2b0e |
 | Phase 8 | Statistics & Recovery Analysis | DONE | Signal Engineer, QA | `scripts/ci.ps1` (format, analyze clean, 62/62 tests pass) | 5e79acb |
-| Phase 9 | AI Insights Integration (TFLite) | DONE | ML Engineer, Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 70/70 tests pass) | 44a047e |
+| Phase 9 | AI Insights Integration (Local NN) | DONE | ML Engineer, Flutter UI, QA | `scripts/ci.ps1` (format, analyze clean, 70/70 tests pass) | 44a047e |
 | Phase 10 | Notifications, Settings, Privacy, About | DONE | Flutter UI, QA, Architect | `scripts/ci.ps1` (format, analyze clean, 76/76 tests pass) | 06bc912 |
 | Phase 11 | System States & Hardening | DONE | Architect, QA, Flutter UI | `scripts/ci.ps1` (format, analyze clean, 81/81 tests pass) | 284be36 |
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | DONE | Firmware Engineer | PlatformIO config, C++ PPG filter & SQI, GATT notify, README wiring | 5d558e6 |

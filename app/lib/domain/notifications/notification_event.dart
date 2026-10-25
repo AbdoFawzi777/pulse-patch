@@ -64,7 +64,7 @@ class NotificationEvent {
   ) => NotificationEvent(
     id: 'ai-finish-$sessionId',
     title: 'Pattern Analysis Ready',
-    message: 'On-device TFLite classified session as "$label".',
+    message: 'On-device neural network classified session as "$label".',
     timestamp: DateTime.now(),
     category: NotificationCategory.system,
     sessionId: sessionId,

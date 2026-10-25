@@ -301,7 +301,7 @@ class _SessionDetailsScreenState extends ConsumerState<SessionDetailsScreen> {
                               : 'Typical pattern',
                           explanation:
                               'Compared against baseline recordings. Experimental pattern label, not a health or diagnostic rating.',
-                          badgeText: 'On-device TFLite',
+                          badgeText: 'On-device neural network',
                         ),
                         const SizedBox(height: 16.0),
 

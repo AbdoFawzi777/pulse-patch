@@ -21,7 +21,7 @@ PulsePatch Lite is an educational, 100% offline-first biomonitoring platform eng
 | **Offline Data Autonomy** | Zero internet data / telemetry | 100% offline local SQLite | `app/lib/data/`, privacy audit tests |
 | **Hardware & Simulation** | Real chip support + Simulator | Seamless fallback with labels | `firmware/src/main.cpp`, `ble_layer_test.dart` |
 | **Test Suite & CI** | All tests pass, analyze 0 warnings | 81/81 unit & widget tests pass, 0 analyze issues | `scripts/ci.ps1` clean pass |
-| **Release Build** | Functional Android Release APK | Built `app-release.apk` (74.9 MB) & installed on Android 15 | `flutter build apk --release` (Exit 0) |
+| **Release Build** | Functional Android Release APK | Built `app-release.apk` (74.9 MB); Phone install pending physical USB adb connection | `flutter build apk --release` (Exit 0) |
 | **Firmware Compilation** | Clean build for ESP32-C3 | PlatformIO `pio run` passed (Exit 0) | `firmware/.pio/build/esp32-c3-devkitm-1/firmware.bin` |
 | **Launcher Icon** | Configured from `App icon.png` | Applied to Android launcher | `flutter_launcher_icons` applied |
 | **Machine Learning** | Documented pipeline, parity verified | Tiny MLP forward pass in isolate (<0.15ms), 100% parity | `model_card.md`, `cv_metrics.json` |
@@ -36,14 +36,15 @@ To ensure complete engineering transparency and academic integrity, every layer 
 
 | Component / Subsystem | Verification State | Verification Evidence / Method | Scope & Limitations |
 |---|---|---|---|
-| **Design Canvas Matching (6 Screens)** | **Verified** | Pixel comparison against `docs/design/*.png` canvas assets; rendered in Flutter | Matches `Home`, `Measuring`, `Heart Rate`, `AI Insights`, `Connect device`, `History` |
-| **Derived Screens (21 Screens)** | **Verified** | 21 screens implemented strictly adhering to design tokens; screenshots captured in `docs/screenshots/` | Full inventory 01–27 rendered to PNG in `docs/screenshots/` |
+| **Design Canvas Matching (6 Screens)** | **Not verified** | Rendered in Flutter widget tests; side-by-side diff comparison images from design-fidelity task do not yet exist | Visual inspection pending side-by-side pixel overlay generation |
+| **Derived Screens (21 Screens)** | **Not verified** | Rendered to PNG in `docs/screenshots/`; design-fidelity side-by-side comparison images do not yet exist | Visual inspection pending side-by-side pixel overlay generation |
 | **Bilingual Localization** | **Verified** | 100% Arabic (RTL) & English (LTR) string coverage; dynamic language switching verified | No truncated text or broken alignments in Arabic |
 | **Local SQLite Database (FFI)** | **Verified** | Pure C / FFI SQLite engine; full CRUD operations, schema migrations, and transactions | Verified in `data_layer_test.dart` and real app session recording |
 | **Signal Validity Gate & State Machine** | **Verified** | 5-sample median filter, $SQI \ge 60$ gate, rate jump clamp, dropout detector | Verified with synthetic signal streams and edge-case test vectors |
 | **Feature Extraction & Math Parity** | **Verified** | Extraction of `mean_hr`, `std_hr`, `start_hr`, `end_hr`, `recovery_drop`; parity verified | $\Delta P < 0.0001$ between Python `scikit-learn` and Flutter Dart isolate |
-| **On-Device Model Execution** | **Verified** | 233 floating-point weights executed in a background Dart isolate (`Isolate.run()`) in $<0.15$ ms | Model `model.tflite` packaged in app assets; isolate forward pass used on phone |
-| **Android Release APK Build & Install** | **Verified** | Built `app-release.apk` (74.9 MB); installed and launched on real Android 15 phone (`NIC LX2`) | Successfully installed and launched on physical hardware |
+| **On-Device Model Execution** | **Verified** | 233 floating-point weights executed in a background Dart isolate (`Isolate.run()`) in $<0.15$ ms | Small neural network running locally in the app (pure Dart isolate, zero external dependencies) |
+| **Android Release APK Build** | **Verified** | Built `app-release.apk` (74.9 MB) with Flutter release pipeline | Compiled binary verified at `app/build/app/outputs/flutter-apk/app-release.apk` |
+| **Physical Phone Installation** | **Not verified** | `adb devices` command executed: returned empty device list | Physical installation requires user to enable USB debugging or install APK manually |
 | **ESP32-C3 Firmware Compilation** | **Verified** | PlatformIO `pio run` passed cleanly (Exit 0); RAM 7.3%, Flash 41.7% | Compiled binary `firmware/.pio/build/esp32-c3-devkitm-1/firmware.bin` generated |
 | **Defensive BLE Protocol Decoding** | **Simulated** | 12-byte binary packet parser tested against malformed packets, sequence drops, and duplicate packets | Tested extensively in software simulation; no physical ESP32-C3 hardware connected |
 | **Optical Pulse Waveform Trace** | **Simulated** | Rendered only when running in Simulator mode (`SimulatedHeartRateSource`) | On physical BLE device, trace is replaced with live BPM trend (no raw ADC samples in 12-byte packet) |
@@ -95,7 +96,7 @@ To ensure complete engineering transparency and academic integrity, every layer 
 - Authored `app/test/test_vectors.json`.
 
 ### Phase 9: On-Device AI Insights Integration (`44a047e`, `a8f2fe5`)
-- Integrated `model.tflite` flatbuffer and `model_meta.json`.
+- Integrated trained weights and `model_meta.json` for on-device inference using a small neural network in a background isolate.
 - Built `AiInferenceService` executing forward inference in a background isolate in $< 0.15\text{ ms}$.
 - Built Session Pattern Analysis screen matching `AI Insights.png`, AI Insights Dashboard, and AI Model Info screen.
 
@@ -126,7 +127,7 @@ To ensure complete engineering transparency and academic integrity, every layer 
 ### Phase 15: QA, Release Build & User Guides
 - Configured launcher icon from `docs/design/App icon.png` using `flutter_launcher_icons`.
 - Successfully built Android release APK: `app\build\app\outputs\flutter-apk\app-release.apk` (74.9 MB).
-- Installed and launched release APK on physical smartphone (`NIC LX2`, Android 15).
+- Phone installation status: marked Not verified because `adb devices` reports no attached devices; user instructions provided to enable USB debugging or install APK directly.
 - Authored comprehensive `docs/user_guide.md` and 5-minute presentation script `docs/demo_script.md`.
 - Generated 27 PNG screenshots in `docs/screenshots/` (covering all 6 canvas screens and 21 derived screens).
 - Executed full CI test suite: 81/81 tests passing cleanly.

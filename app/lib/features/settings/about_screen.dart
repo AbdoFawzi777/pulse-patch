@@ -263,7 +263,7 @@ class AboutScreen extends StatelessWidget {
                           ),
                           _buildSpecRow(
                             'AI Pattern Engine',
-                            'TensorFlow Lite On-Device Runtime',
+                            'small neural network running locally in the app',
                           ),
                           _buildSpecRow(
                             'Localization',

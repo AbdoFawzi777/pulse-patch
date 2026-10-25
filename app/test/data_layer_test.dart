@@ -86,7 +86,7 @@ void main() {
 
         final aiResult = AiResultRecord(
           sessionId: 'session-001',
-          modelVersion: '1.0.0-tflite',
+          modelVersion: '1.0.0-neural-net',
           label: 'typical',
           featuresJson: jsonEncode({'mean_hr': 73.0, 'recovery_drop': 2.0}),
           createdAt: now,

@@ -274,7 +274,7 @@ class SessionPatternAnalysisScreen extends ConsumerWidget {
           // Footer Text matching AI Insights.png
           const Center(
             child: Text(
-              'Runs on this phone · TensorFlow Lite · 6 sessions available',
+              'Runs on this phone · small neural network running locally in the app · 6 sessions available',
               style: TextStyle(
                 fontFamily: 'Outfit',
                 fontSize: 12.0,

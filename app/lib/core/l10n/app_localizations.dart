@@ -305,13 +305,13 @@ abstract class AppLocalizations {
   /// No description provided for @runsOnPhone.
   ///
   /// In en, this message translates to:
-  /// **'Runs on this phone · TensorFlow Lite · {count} sessions available'**
+  /// **'Runs on this phone · small neural network running locally in the app · {count} sessions available'**
   String runsOnPhone(int count);
 
   /// No description provided for @sensorDisclaimer.
   ///
   /// In en, this message translates to:
-  /// **'Sensor: MAX30102 · Battery and firmware shown only if reported'**
+  /// **'Sensor: MAX30102 · Powered via USB-C (no battery circuit)'**
   String get sensorDisclaimer;
 
   /// No description provided for @sampleDataPeaksDisclaimer.

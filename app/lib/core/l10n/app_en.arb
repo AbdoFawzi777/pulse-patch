@@ -41,7 +41,7 @@
   "experimental": "Experimental",
   "measuredValuesUsed": "Measured values used",
   "patternExplanation": "Similar to your last 5 rest sessions. A pattern label, not a health rating.",
-  "runsOnPhone": "Runs on this phone · TensorFlow Lite · {count} sessions available",
+  "runsOnPhone": "Runs on this phone · small neural network running locally in the app · {count} sessions available",
   "@runsOnPhone": {
     "placeholders": {
       "count": {
@@ -49,7 +49,7 @@
       }
     }
   },
-  "sensorDisclaimer": "Sensor: MAX30102 · Battery and firmware shown only if reported",
+  "sensorDisclaimer": "Sensor: MAX30102 · Powered via USB-C (no battery circuit)",
   "sampleDataPeaksDisclaimer": "Sample data · estimated from optical pulse peaks",
   "educationalDisclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis."
 }

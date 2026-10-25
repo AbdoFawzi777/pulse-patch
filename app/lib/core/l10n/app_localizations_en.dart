@@ -115,12 +115,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String runsOnPhone(int count) {
-    return 'Runs on this phone · TensorFlow Lite · $count sessions available';
+    return 'Runs on this phone · small neural network running locally in the app · $count sessions available';
   }
 
   @override
   String get sensorDisclaimer =>
-      'Sensor: MAX30102 · Battery and firmware shown only if reported';
+      'Sensor: MAX30102 · Powered via USB-C (no battery circuit)';
 
   @override
   String get sampleDataPeaksDisclaimer =>
