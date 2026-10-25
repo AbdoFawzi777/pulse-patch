@@ -19,11 +19,11 @@
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | DONE | Firmware Engineer | PlatformIO config, C++ PPG filter & SQI, GATT notify, README wiring | 5d558e6 |
 | Phase 13 | ML Data Pipeline, Training, Analysis | DONE | ML Engineer, QA | GroupKFold CV, Parity 100%, Model card, Validation report | 29c9c98 |
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Simulation verified; checklist documented in docs/hardware_integration_guide.md | Pending hardware |
-| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | 81/81 tests pass, release APK built (74.9MB), user guide & demo script | d41126e |
+| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | 83/83 tests pass, release APK built (55.8MB) & verified on physical phone (NIC LX2) | 1a2febb |
 
 ---
 
 ## Hardware & Environment Dependencies Status
 - **ESP32-C3 Physical Device:** Not currently connected via USB/BLE. Simulator (`SimulatedHeartRateSource`) is used and clearly labeled `Simulator` / `Sample data`.
 - **Python ML Pipeline:** Python 3.14.3 is installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed immediately.
-- **Android SDK & Toolchain:** Configured and validated (`Android SDK 36.1.0-rc1`, OpenJDK 21). 4 emulators available (`Pixel`, `Pixel_9`, `Pixel_3`, `Iphone_14`).
+- **Android SDK & Physical Device:** Configured and validated (`Android SDK 36.1.0-rc1`, OpenJDK 21). Physical smartphone `NIC LX2` (Android 15, serial `A9VUCP5A08407069`) verified: release APK installed and running (PID `30677`).

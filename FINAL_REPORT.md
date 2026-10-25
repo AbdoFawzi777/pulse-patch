@@ -21,7 +21,7 @@ PulsePatch Lite is an educational, 100% offline-first biomonitoring platform eng
 | **Offline Data Autonomy** | Zero internet data / telemetry | 100% offline local SQLite | `app/lib/data/`, privacy audit tests |
 | **Hardware & Simulation** | Real chip support + Simulator | Seamless fallback with labels | `firmware/src/main.cpp`, `ble_layer_test.dart` |
 | **Test Suite & CI** | All tests pass, analyze 0 warnings | 81/81 unit & widget tests pass, 0 analyze issues | `scripts/ci.ps1` clean pass |
-| **Release Build** | Functional Android Release APK | Built `app-release.apk` (74.9 MB); Phone install pending physical USB adb connection | `flutter build apk --release` (Exit 0) |
+| **Release Build & Install** | Functional Android Release APK | Built fresh release APK (55.8 MB) and installed/launched on physical phone (`NIC LX2`, Android 15) | `flutter build apk --release` & `adb install` (Success) |
 | **Firmware Compilation** | Clean build for ESP32-C3 | PlatformIO `pio run` passed (Exit 0) | `firmware/.pio/build/esp32-c3-devkitm-1/firmware.bin` |
 | **Launcher Icon** | Configured from `App icon.png` | Applied to Android launcher | `flutter_launcher_icons` applied |
 | **Machine Learning** | Documented pipeline, parity verified | Tiny MLP forward pass in isolate (<0.15ms), 100% parity | `model_card.md`, `cv_metrics.json` |
@@ -43,8 +43,8 @@ To ensure complete engineering transparency and academic integrity, every layer 
 | **Signal Validity Gate & State Machine** | **Verified** | 5-sample median filter, $SQI \ge 60$ gate, rate jump clamp, dropout detector | Verified with synthetic signal streams and edge-case test vectors |
 | **Feature Extraction & Math Parity** | **Verified** | Extraction of `mean_hr`, `std_hr`, `start_hr`, `end_hr`, `recovery_drop`; parity verified | $\Delta P < 0.0001$ between Python `scikit-learn` and Flutter Dart isolate |
 | **On-Device Model Execution** | **Verified** | 233 floating-point weights executed in a background Dart isolate (`Isolate.run()`) in $<0.15$ ms | Small neural network running locally in the app (pure Dart isolate, zero external dependencies) |
-| **Android Release APK Build** | **Verified** | Built `app-release.apk` (74.9 MB) with Flutter release pipeline | Compiled binary verified at `app/build/app/outputs/flutter-apk/app-release.apk` |
-| **Physical Phone Installation** | **Not verified** | `adb devices` command executed: returned empty device list | Physical installation requires user to enable USB debugging or install APK manually |
+| **Android Release APK Build** | **Verified** | Built `app-release.apk` (55.8 MB) with Flutter release pipeline | Compiled binary verified at `app/build/app/outputs/flutter-apk/app-release.apk` |
+| **Physical Phone Installation & Launch** | **Verified** | `adb install -r` succeeded (Performing Streamed Install -> Success); launched via `am start` (PID 30677) | Installed and verified running on physical smartphone (`NIC LX2`, Android 15, API 35) |
 | **ESP32-C3 Firmware Compilation** | **Verified** | PlatformIO `pio run` passed cleanly (Exit 0); RAM 7.3%, Flash 41.7% | Compiled binary `firmware/.pio/build/esp32-c3-devkitm-1/firmware.bin` generated |
 | **Defensive BLE Protocol Decoding** | **Simulated** | 12-byte binary packet parser tested against malformed packets, sequence drops, and duplicate packets | Tested extensively in software simulation; no physical ESP32-C3 hardware connected |
 | **Optical Pulse Waveform Trace** | **Simulated** | Rendered only when running in Simulator mode (`SimulatedHeartRateSource`) | On physical BLE device, trace is replaced with live BPM trend (no raw ADC samples in 12-byte packet) |
@@ -127,8 +127,8 @@ To ensure complete engineering transparency and academic integrity, every layer 
 
 ### Phase 15: QA, Release Build & User Guides
 - Configured launcher icon from `docs/design/App icon.png` using `flutter_launcher_icons`.
-- Successfully built Android release APK: `app\build\app\outputs\flutter-apk\app-release.apk` (74.9 MB).
-- Phone installation status: marked Not verified because `adb devices` reports no attached devices; user instructions provided to enable USB debugging or install APK directly.
+- Successfully built Android release APK: `app\build\app\outputs\flutter-apk\app-release.apk` (55.8 MB, optimized without native C++ TFLite binaries).
+- Physical phone installation verified: installed on `NIC LX2` (Android 15, serial `A9VUCP5A08407069`) via `adb install -r` (Success), and launched into foreground activity (`com.pulsepatch.lite.app/.MainActivity`, PID 30677).
 - Authored comprehensive `docs/user_guide.md` and 5-minute presentation script `docs/demo_script.md`.
 - Generated 27 PNG screenshots in `docs/screenshots/` (covering all 6 canvas screens and 21 derived screens).
 - Executed full CI test suite: 81/81 tests passing cleanly.
