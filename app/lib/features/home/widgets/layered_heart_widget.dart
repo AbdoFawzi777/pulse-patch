@@ -64,10 +64,7 @@ class _HeartSvgPainter extends CustomPainter {
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          Color(0xB33A2A8F),
-          Color(0x990B2A7A),
-        ],
+        colors: [Color(0xB33A2A8F), Color(0x990B2A7A)],
       ).createShader(const Rect.fromLTWH(0, 0, 200, 180));
 
     canvas.drawPath(basePath, outerPaint);
@@ -85,11 +82,7 @@ class _HeartSvgPainter extends CustomPainter {
       ..shader = const LinearGradient(
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
-        colors: [
-          Color(0xFFC0148F),
-          Color(0xFF4B1E9E),
-          Color(0xFF1D4ED8),
-        ],
+        colors: [Color(0xFFC0148F), Color(0xFF4B1E9E), Color(0xFF1D4ED8)],
         stops: [0.0, 0.5, 1.0],
       ).createShader(const Rect.fromLTWH(0, 0, 200, 180));
 

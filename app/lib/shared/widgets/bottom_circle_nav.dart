@@ -73,10 +73,7 @@ class BottomCircleNav extends StatelessWidget {
 }
 
 class _NavIconPainter extends CustomPainter {
-  const _NavIconPainter({
-    required this.destination,
-    required this.color,
-  });
+  const _NavIconPainter({required this.destination, required this.color});
 
   final NavDestination destination;
   final Color color;

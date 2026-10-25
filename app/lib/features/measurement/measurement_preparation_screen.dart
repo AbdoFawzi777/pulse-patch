@@ -166,13 +166,82 @@ class _MeasurementPreparationScreenState
                                 style: isSelected
                                     ? PillButtonStyle.white
                                     : PillButtonStyle.dark,
-                                onPressed: () => setState(
-                                  () => _selectedDurationSec = sec,
-                                ),
+                                onPressed: () =>
+                                    setState(() => _selectedDurationSec = sec),
                               ),
                             ),
                           );
                         }).toList(),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 14.0),
+                // Guided Collection Mode Card
+                MetricCard(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Row(
+                        children: [
+                          Icon(
+                            Icons.directions_run_rounded,
+                            color: AppColors.accentCyan,
+                            size: 20.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          Text(
+                            'Guided Training Protocol',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.w400,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 6.0),
+                      Text(
+                        _selectedType == SessionType.rest
+                            ? 'Rest Protocol: Sit relaxed, arm resting flat. Breathe naturally for the full duration to capture baseline resting pulse.'
+                            : 'Recovery Protocol: Do 1 min brisk stairs or stepping, then sit down immediately and record for 70-120s to capture pulse recovery deceleration.',
+                        style: const TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textMuted,
+                          height: 1.35,
+                        ),
+                      ),
+                      const SizedBox(height: 12.0),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: PillButton(
+                              label: 'Rest Preset (60s)',
+                              style: PillButtonStyle.dark,
+                              height: 38.0,
+                              onPressed: () => setState(() {
+                                _selectedType = SessionType.rest;
+                                _selectedDurationSec = 60;
+                              }),
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          Expanded(
+                            child: PillButton(
+                              label: 'Post-Activity (90s)',
+                              style: PillButtonStyle.dark,
+                              height: 38.0,
+                              onPressed: () => setState(() {
+                                _selectedType = SessionType.postActivity;
+                                _selectedDurationSec = 90;
+                              }),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),

@@ -27,12 +27,34 @@ enum QualitySummary {
 }
 
 enum SessionSource {
-  device,
-  simulator;
+  pulsepatch('pulsepatch', 'PulsePatch-C3'),
+  standardBle('standard_hr', 'Standard BLE'),
+  miBand5('miband5', 'Mi Smart Band 5'),
+  importSource('import', 'Imported Data'),
+  simulator('simulator', 'Simulator');
+
+  const SessionSource(this.code, this.label);
+  final String code;
+  final String label;
 
   static SessionSource fromString(String val) {
-    if (val == 'simulator') return SessionSource.simulator;
-    return SessionSource.device;
+    switch (val) {
+      case 'pulsepatch':
+      case 'device': // legacy fallback
+        return SessionSource.pulsepatch;
+      case 'standard_hr':
+      case 'standardBle':
+        return SessionSource.standardBle;
+      case 'miband5':
+      case 'miBand5':
+        return SessionSource.miBand5;
+      case 'import':
+      case 'importSource':
+        return SessionSource.importSource;
+      case 'simulator':
+      default:
+        return SessionSource.simulator;
+    }
   }
 }
 
@@ -68,7 +90,7 @@ class SessionRecord {
     'type': type.name,
     'qualitySummary': qualitySummary.name,
     'appVersion': appVersion,
-    'source': source.name,
+    'source': source.code,
   };
 
   factory SessionRecord.fromJson(Map<String, dynamic> json) => SessionRecord(

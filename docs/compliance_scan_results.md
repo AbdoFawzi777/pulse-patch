@@ -1,6 +1,6 @@
 # PulsePatch Lite — Compliance & Forbidden Wording Audit Scan
 
-**Total Forbidden Word Occurrences Found:** 37
+**Total Forbidden Word Occurrences Found:** 23
 **Total TensorFlow / TFLite References Found:** 3
 
 ## 1. Forbidden Wording Matches
@@ -12,11 +12,11 @@
 | 3 | `\bdiagnosis\b` | `app/lib/core/l10n/app_en.arb:54` | `"educationalDisclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis."` |
 | 4 | `\bdiagnosis\b` | `app/lib/core/l10n/app_localizations.dart:326` | `/// **'PulsePatch Lite is an educational prototype and does not provide medical diagnosis.'**` |
 | 5 | `\bdiagnosis\b` | `app/lib/core/l10n/app_localizations_en.dart:131` | `'PulsePatch Lite is an educational prototype and does not provide medical diagnosis.';` |
-| 6 | `\bdiagnosis\b` | `app/lib/domain/ml/ai_model_metadata.dart:70` | `'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations.',` |
-| 7 | `\bdiagnosis\b` | `app/lib/features/reports/pdf_report_generator.dart:135` | `'It does NOT constitute a medical diagnosis or health evaluation.',` |
-| 8 | `\bdiagnosis\b` | `app/lib/features/reports/recovery_analysis_screen.dart:416` | `'It does not constitute a cardiovascular fitness diagnosis.',` |
-| 9 | `\bdiagnosis\b` | `app/lib/features/settings/about_screen.dart:315` | `'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations. Never use this software for diagnostic monitoring, treatment decisions, or emergency cardiac detection.',` |
-| 10 | `\bNormal\b` | `app/lib/shared/widgets/pulse_trace_chart.dart:83` | `..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4.0);` |
+| 6 | `\bdiagnosis\b` | `app/lib/domain/ml/ai_model_metadata.dart:72` | `'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations.',` |
+| 7 | `\bdiagnosis\b` | `app/lib/features/onboarding/welcome_screen.dart:82` | `'PulsePatch Lite is an open-source educational biomonitoring application designed for physiological learning. It is not a medical device and provides no medical diagnosis.',` |
+| 8 | `\bdiagnosis\b` | `app/lib/features/reports/pdf_report_generator.dart:135` | `'It does NOT constitute a medical diagnosis or health evaluation.',` |
+| 9 | `\bdiagnosis\b` | `app/lib/features/reports/recovery_analysis_screen.dart:373` | `'It does not constitute a cardiovascular fitness diagnosis.',` |
+| 10 | `\bdiagnosis\b` | `app/lib/features/settings/about_screen.dart:292` | `'PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations. Never use this software for diagnostic monitoring, treatment decisions, or emergency cardiac detection.',` |
 | 11 | `\bNormal\b` | `app/test/ai_insights_test.dart:107` | `expect(state.result?.label.toLowerCase(), isNot(contains('normal')));` |
 | 12 | `\bHealthy\b` | `app/test/ai_insights_test.dart:108` | `expect(state.result?.label.toLowerCase(), isNot(contains('healthy')));` |
 | 13 | `\bAbnormal\b` | `app/test/ai_insights_test.dart:134` | `expect(state.result?.label.toLowerCase(), isNot(contains('abnormal')));` |
@@ -28,27 +28,13 @@
 | 19 | `\bAbnormal\b` | `docs/model_card.md:20` | `> PulsePatch Lite does not diagnose, treat, or screen for medical conditions. It does not output diagnostic categories such as "Normal / Abnormal", "Healthy / Unhealthy", or "Sinus Rhythm". The labels are statistical pattern indicators intended solely for educational feedback.` |
 | 20 | `\bHealthy\b` | `docs/model_card.md:20` | `> PulsePatch Lite does not diagnose, treat, or screen for medical conditions. It does not output diagnostic categories such as "Normal / Abnormal", "Healthy / Unhealthy", or "Sinus Rhythm". The labels are statistical pattern indicators intended solely for educational feedback.` |
 | 21 | `\bUnhealthy\b` | `docs/model_card.md:20` | `> PulsePatch Lite does not diagnose, treat, or screen for medical conditions. It does not output diagnostic categories such as "Normal / Abnormal", "Healthy / Unhealthy", or "Sinus Rhythm". The labels are statistical pattern indicators intended solely for educational feedback.` |
-| 22 | `\bECG\b` | `docs/user_guide.md:7` | `> PulsePatch Lite is an educational research and engineering demonstration platform. It does not provide medical-grade ECG diagnostics, medical screening, or disease detection. Never make medical decisions based on readings from this prototype.` |
-| 23 | `\bECG\b` | `docs/design/DESIGN_SPEC.md:19` | `- **Truthful Waveforms:** Optical pulse traces represented as smooth, continuous flowing waves. Never ECG spikes, never fabricated waveforms, and never diagnostic labels (no "Sinus Rhythm", "Normal/Abnormal", or ECG claims).` |
-| 24 | `\bSinus\b` | `docs/design/DESIGN_SPEC.md:19` | `- **Truthful Waveforms:** Optical pulse traces represented as smooth, continuous flowing waves. Never ECG spikes, never fabricated waveforms, and never diagnostic labels (no "Sinus Rhythm", "Normal/Abnormal", or ECG claims).` |
-| 25 | `\bNormal\b` | `docs/design/DESIGN_SPEC.md:19` | `- **Truthful Waveforms:** Optical pulse traces represented as smooth, continuous flowing waves. Never ECG spikes, never fabricated waveforms, and never diagnostic labels (no "Sinus Rhythm", "Normal/Abnormal", or ECG claims).` |
-| 26 | `\bAbnormal\b` | `docs/design/DESIGN_SPEC.md:19` | `- **Truthful Waveforms:** Optical pulse traces represented as smooth, continuous flowing waves. Never ECG spikes, never fabricated waveforms, and never diagnostic labels (no "Sinus Rhythm", "Normal/Abnormal", or ECG claims).` |
-| 27 | `\bECG\b` | `docs/design/DESIGN_SPEC.md:155` | `- 1024x1024 master squircle, layered heart with magenta-to-purple gradient, smooth white optical pulse line with cyan glow border. Non-ECG single smooth wave. Palette tokens: `#04030C`, `#6D28D9`, `#E11D9B`, `#2563EB`, `#22D3EE`.` |
-| 28 | `\bECG\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 29 | `\bEKG\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 30 | `\bSinus\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 31 | `\bNormal\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 32 | `\bAbnormal\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 33 | `\bHealthy\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 34 | `\bUnhealthy\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 35 | `\bdiagnosis\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 36 | `\barrhythmia\b` | `docs/design/DESIGN_SPEC.md:191` | `- Never write: `ECG`, `EKG`, `Sinus Rhythm`, `Arrhythmia`, `Normal/Abnormal heart health`, `Diagnosis`, `Healthy/Unhealthy`.` |
-| 37 | `\bdiagnosis\b` | `docs/design/DESIGN_SPEC.md:197` | `- Every report and AI screen includes the explicit disclaimer: *"PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations."*` |
+| 22 | `\bclinical\b` | `docs/model_card.md:76` | `- **Crucial boundary:** The Mi Smart Band 5 is an educational input source, NOT a clinical gold standard. It is never used to validate MAX30102 sensor accuracy (MAE/Bland-Altman).` |
+| 23 | `\bECG\b` | `docs/user_guide.md:7` | `> PulsePatch Lite is an educational research and engineering demonstration platform. It does not provide medical-grade ECG diagnostics, medical screening, or disease detection. Never make medical decisions based on readings from this prototype.` |
 
 ## 2. TensorFlow / TFLite References (to replace with 'small neural network running locally in the app')
 
 | # | Term | File:Line | Context Snippet |
 |---|---|---|---|
-| 1 | `\btflite\b` | `FINAL_REPORT.md:45` | `\| **On-Device Model Execution** \| **Verified** \| 233 floating-point weights executed in a background Dart isolate (`Isolate.run()`) in $<0.15$ ms \| Small neural network running locally in the app (pure Dart isolate, no native TFLite dependency) \|` |
-| 2 | `\bTFLite\b` | `FINAL_REPORT.md:45` | `\| **On-Device Model Execution** \| **Verified** \| 233 floating-point weights executed in a background Dart isolate (`Isolate.run()`) in $<0.15$ ms \| Small neural network running locally in the app (pure Dart isolate, no native TFLite dependency) \|` |
-| 3 | `\bTensorFlow\b` | `PROGRESS.md:28` | `- **Python ML Pipeline:** Python 3.14.3 is installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed immediately.` |
+| 1 | `\btflite\b` | `FINAL_REPORT.md:134` | `- Successfully built Android release APK: `app\build\app\outputs\flutter-apk\app-release.apk` (55.8 MB, optimized without native C++ TFLite binaries).` |
+| 2 | `\bTFLite\b` | `FINAL_REPORT.md:134` | `- Successfully built Android release APK: `app\build\app\outputs\flutter-apk\app-release.apk` (55.8 MB, optimized without native C++ TFLite binaries).` |
+| 3 | `\bTensorFlow\b` | `PROGRESS.md:29` | `- **Python ML Pipeline:** Python 3.14.3 is installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed immediately.` |

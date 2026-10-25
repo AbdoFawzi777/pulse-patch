@@ -47,463 +47,546 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
           ),
           const SizedBox(height: 12.0),
 
-            // Main Content
-            Expanded(
-              child: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 20.0,
-                  vertical: 8.0,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    // Model Hero Card
-                    Container(
-                      padding: const EdgeInsets.all(20.0),
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF451A8B), Color(0xFF112061)],
-                        ),
-                        borderRadius: BorderRadius.circular(22.0),
+          // Main Content
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 20.0,
+                vertical: 8.0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  // Model Hero Card
+                  Container(
+                    padding: const EdgeInsets.all(20.0),
+                    decoration: BoxDecoration(
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [Color(0xFF451A8B), Color(0xFF112061)],
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(10.0),
-                                decoration: BoxDecoration(
-                                  color: AppColors.accentPurple.withValues(
-                                    alpha: 0.3,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.0),
+                      borderRadius: BorderRadius.circular(22.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(10.0),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentPurple.withValues(
+                                  alpha: 0.3,
                                 ),
-                                child: const Icon(
-                                  Icons.psychology_rounded,
-                                  color: AppColors.accentCyan,
-                                  size: 28.0,
-                                ),
+                                borderRadius: BorderRadius.circular(12.0),
                               ),
-                              const SizedBox(width: 14.0),
-                              const Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'PulsePatch AI Insights',
-                                      style: TextStyle(
-                                        fontFamily: 'Outfit',
-                                        fontSize: 20.0,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textPrimary,
-                                      ),
+                              child: const Icon(
+                                Icons.psychology_rounded,
+                                color: AppColors.accentCyan,
+                                size: 28.0,
+                              ),
+                            ),
+                            const SizedBox(width: 14.0),
+                            const Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'PulsePatch AI Insights',
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 20.0,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.textPrimary,
                                     ),
-                                    SizedBox(height: 2.0),
-                                    Text(
-                                      'On-device Dart Background Isolate Engine',
-                                      style: TextStyle(
-                                        fontFamily: 'Outfit',
-                                        fontSize: 13.0,
-                                        color: Color(0xFFCBD5E1),
-                                      ),
+                                  ),
+                                  SizedBox(height: 2.0),
+                                  Text(
+                                    'On-device Dart Background Isolate Engine',
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 13.0,
+                                      color: Color(0xFFCBD5E1),
                                     ),
-                                  ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16.0),
+                        const Divider(color: Color(0xFF26336D), height: 1.0),
+                        const SizedBox(height: 12.0),
+                        const Wrap(
+                          spacing: 12.0,
+                          runSpacing: 6.0,
+                          alignment: WrapAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              'Version 1.0.0',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                            Text(
+                              'Trained: Oct 2026',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                color: Color(0xFF94A3B8),
+                              ),
+                            ),
+                            Text(
+                              '233 Parameters (<0.15ms)',
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 13.0,
+                                color: AppColors.accentCyan,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16.0),
+
+                  // Privacy & Offline Guarantee Card
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBgNavy,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: const Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(
+                          Icons.shield_outlined,
+                          color: AppColors.accentCyan,
+                          size: 22.0,
+                        ),
+                        SizedBox(width: 12.0),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                '100% Offline & Private',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                              SizedBox(height: 4.0),
+                              Text(
+                                'The model runs entirely inside a background isolate on your phone. No pulse samples, features, or inferences are transmitted off this device.',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 13.0,
+                                  color: AppColors.textSecondary,
+                                  height: 1.35,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(height: 16.0),
-                          const Divider(color: Color(0xFF26336D), height: 1.0),
-                          const SizedBox(height: 12.0),
-                          const Wrap(
-                            spacing: 12.0,
-                            runSpacing: 6.0,
-                            alignment: WrapAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Version 1.0.0',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 13.0,
-                                  color: Color(0xFF94A3B8),
-                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16.0),
+
+                  // Validation Status & Synthetic Metrics Card
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBgNavy,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(
+                        color: AppColors.accentCyan.withValues(alpha: 0.25),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                                vertical: 3.0,
                               ),
-                              Text(
-                                'Trained: Oct 2026',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 13.0,
-                                  color: Color(0xFF94A3B8),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentCyan.withValues(
+                                  alpha: 0.15,
                                 ),
+                                borderRadius: BorderRadius.circular(6.0),
                               ),
-                              Text(
-                                '233 Parameters (<0.15ms)',
+                              child: const Text(
+                                'SYNTHETIC PIPELINE TEST',
                                 style: TextStyle(
                                   fontFamily: 'Outfit',
-                                  fontSize: 13.0,
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w700,
                                   color: AppColors.accentCyan,
+                                  letterSpacing: 0.5,
                                 ),
                               ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16.0),
-
-                    // Privacy & Offline Guarantee Card
-                    Container(
-                      padding: const EdgeInsets.all(18.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBgNavy,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: const Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(
-                            Icons.shield_outlined,
-                            color: AppColors.accentCyan,
-                            size: 22.0,
-                          ),
-                          SizedBox(width: 12.0),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  '100% Offline & Private',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                SizedBox(height: 4.0),
-                                Text(
-                                  'The model runs entirely inside a background isolate on your phone. No pulse samples, features, or inferences are transmitted off this device.',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 13.0,
-                                    color: AppColors.textSecondary,
-                                    height: 1.35,
-                                  ),
-                                ),
-                              ],
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16.0),
-
-                    // Validation Status & Synthetic Metrics Card
-                    Container(
-                      padding: const EdgeInsets.all(18.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBgNavy,
-                        borderRadius: BorderRadius.circular(20.0),
-                        border: Border.all(
-                          color: AppColors.accentCyan.withValues(alpha: 0.25),
-                          width: 1.0,
+                            const SizedBox(width: 8.0),
+                            const Expanded(
+                              child: Text(
+                                'Not real validation',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 12.0,
+                                  color: Color(0xFF94A3B8),
+                                  fontStyle: FontStyle.italic,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8.0,
-                                  vertical: 3.0,
-                                ),
-                                decoration: BoxDecoration(
-                                  color: AppColors.accentCyan.withValues(
-                                    alpha: 0.15,
-                                  ),
-                                  borderRadius: BorderRadius.circular(6.0),
-                                ),
-                                child: const Text(
-                                  'SYNTHETIC PIPELINE TEST',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 11.0,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColors.accentCyan,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 8.0),
-                              const Expanded(
-                                child: Text(
-                                  'Not real validation',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 12.0,
-                                    color: Color(0xFF94A3B8),
-                                    fontStyle: FontStyle.italic,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12.0),
-                          const Text(
-                            'Pipeline Simulation Metrics',
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 6.0),
-                          const Text(
-                            'Evaluated across 160 modeled synthetic volunteer sessions to verify numerical pipeline stability. Not measured on physical human subjects.',
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 13.0,
-                              color: AppColors.textSecondary,
-                              height: 1.35,
-                            ),
-                          ),
-                          const SizedBox(height: 12.0),
-                          _buildMetricRow(
-                            'Cross-Validation Accuracy',
-                            '99.38% (±0.9%)',
-                            'Synthetic test',
-                          ),
-                          _buildMetricRow(
-                            'ROC-AUC Score',
-                            '1.0000',
-                            'Synthetic test',
-                          ),
-                          _buildMetricRow(
-                            'Synthetic Cohort Size',
-                            '160 sessions (10 profiles)',
-                            'Synthetic test',
-                          ),
-                          _buildMetricRow(
-                            'Resting MAE',
-                            '1.21 BPM (MAPE 1.77%)',
-                            'Synthetic test',
-                          ),
-                          _buildMetricRow(
-                            'Mean Recovery Drop',
-                            '21.6 ± 10.3 BPM',
-                            'Synthetic test',
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16.0),
-
-                    // Input Features Transparency Card
-                    Container(
-                      padding: const EdgeInsets.all(18.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBgNavy,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Text(
-                            'Model Input Features',
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 16.0,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 4.0),
-                          const Text(
-                            'Computed over valid pulse samples (30–220 BPM, quality >= 60).',
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 13.0,
-                              color: AppColors.textSecondary,
-                            ),
-                          ),
-                          const SizedBox(height: 12.0),
-                          _buildFeatureRow(
-                            'mean_hr',
-                            'Mean heart rate across valid samples.',
-                          ),
-                          _buildFeatureRow(
-                            'std_hr',
-                            'Sample standard deviation (N-1) of heart rate.',
-                          ),
-                          _buildFeatureRow(
-                            'start_hr',
-                            'Median heart rate in the first 10 valid seconds.',
-                          ),
-                          _buildFeatureRow(
-                            'end_hr',
-                            'Median heart rate in the last 10 valid seconds.',
-                          ),
-                          _buildFeatureRow(
-                            'recovery_drop',
-                            'Drop from initial 10s to 60s recovery window.',
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16.0),
-
-                    // Educational Compliance & Non-Diagnostic Disclaimer
-                    Container(
-                      padding: const EdgeInsets.all(18.0),
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBgNavy,
-                        borderRadius: BorderRadius.circular(20.0),
-                        border: Border.all(
-                          color: AppColors.accentPurple.withValues(alpha: 0.4),
-                          width: 1.0,
-                        ),
-                      ),
-                      child: const Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Icon(
-                                Icons.warning_amber_rounded,
-                                color: AppColors.accentPurple,
-                                size: 22.0,
-                              ),
-                              SizedBox(width: 8.0),
-                              Expanded(
-                                child: Text(
-                                  'Non-Diagnostic Educational Scope',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 8.0),
-                          Text(
-                            'PulsePatch Lite is an educational prototype. The labels "Typical pattern" and "Different pattern" denote statistical clusters derived from synthetic training protocols. They do not constitute an evaluation of cardiovascular health, normalcy, or pathology.',
-                            style: TextStyle(
-                              fontFamily: 'Outfit',
-                              fontSize: 13.0,
-                              color: AppColors.textSecondary,
-                              height: 1.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 16.0),
-
-                    // Technical Evaluators Panel (Expandable)
-                    Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.cardBgNavy,
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: ExpansionTile(
-                        shape: const Border(),
-                        collapsedShape: const Border(),
-                        title: const Text(
-                          'Technical Evaluator Panel',
+                        const SizedBox(height: 12.0),
+                        const Text(
+                          'Pipeline Simulation Metrics',
                           style: TextStyle(
                             fontFamily: 'Outfit',
-                            fontSize: 15.0,
+                            fontSize: 16.0,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textPrimary,
                           ),
                         ),
-                        subtitle: const Text(
-                          'Architecture, execution mode & parameters',
+                        const SizedBox(height: 6.0),
+                        const Text(
+                          'Evaluated across 160 modeled synthetic volunteer sessions to verify numerical pipeline stability. Not measured on physical human subjects.',
                           style: TextStyle(
                             fontFamily: 'Outfit',
-                            fontSize: 12.0,
+                            fontSize: 13.0,
+                            color: AppColors.textSecondary,
+                            height: 1.35,
+                          ),
+                        ),
+                        const SizedBox(height: 12.0),
+                        _buildMetricRow(
+                          'Cross-Validation Accuracy',
+                          '99.38% (±0.9%)',
+                          'Synthetic test',
+                        ),
+                        _buildMetricRow(
+                          'ROC-AUC Score',
+                          '1.0000',
+                          'Synthetic test',
+                        ),
+                        _buildMetricRow(
+                          'Synthetic Cohort Size',
+                          '160 sessions (10 profiles)',
+                          'Synthetic test',
+                        ),
+                        _buildMetricRow(
+                          'Resting MAE',
+                          '1.21 BPM (MAPE 1.77%)',
+                          'Synthetic test',
+                        ),
+                        _buildMetricRow(
+                          'Mean Recovery Drop',
+                          '21.6 ± 10.3 BPM',
+                          'Synthetic test',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16.0),
+
+                  // Real Data & Sensor Transparency Card
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBgNavy,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(
+                        color: AppColors.accentCyan.withValues(alpha: 0.25),
+                        width: 1.0,
+                      ),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                                vertical: 3.0,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.accentCyan.withValues(
+                                  alpha: 0.15,
+                                ),
+                                borderRadius: BorderRadius.circular(6.0),
+                              ),
+                              child: const Text(
+                                'REAL WRIST SENSOR TRAINING',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 11.0,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColors.accentCyan,
+                                  letterSpacing: 0.5,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12.0),
+                        const Text(
+                          'Mi Smart Band 5 Training Dataset',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 6.0),
+                        const Text(
+                          'Model trained on Mi Band 5 wrist data (wrist optical sensor, not MAX30102). Evaluated on single-subject time-ordered split (earlier sessions train, later sessions test). Demonstrates pipeline execution on real user data; does not generalize to other individuals. The wrist band is an educational input device, not a reference device for sensor accuracy or Bland-Altman claims.',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13.0,
+                            color: AppColors.textSecondary,
+                            height: 1.35,
+                          ),
+                        ),
+                        const SizedBox(height: 12.0),
+                        _buildMetricRow(
+                          'Sensor Source',
+                          'Wrist optical sensor (not MAX30102)',
+                          'Mi Band 5',
+                        ),
+                        _buildMetricRow(
+                          'Evaluation Split',
+                          'Time-ordered session split',
+                          'No GroupKFold (1 subject)',
+                        ),
+                        _buildMetricRow(
+                          'Generalization Scope',
+                          'Single individual only',
+                          'Does not generalize',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16.0),
+
+                  // Input Features Transparency Card
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBgNavy,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Model Input Features',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        const Text(
+                          'Computed over valid pulse samples (30–220 BPM, quality >= 60).',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13.0,
                             color: AppColors.textSecondary,
                           ),
                         ),
-                        initiallyExpanded: _isTechnicalPanelExpanded,
-                        onExpansionChanged: (val) {
-                          setState(() {
-                            _isTechnicalPanelExpanded = val;
-                          });
-                        },
-                        childrenPadding: const EdgeInsets.symmetric(
-                          horizontal: 18.0,
-                          vertical: 10.0,
+                        const SizedBox(height: 12.0),
+                        _buildFeatureRow(
+                          'mean_hr',
+                          'Mean heart rate across valid samples.',
                         ),
-                        children: [
-                          _buildTechRow(
-                            'Network Architecture',
-                            'MLP (5 -> 16 -> 8 -> 1)',
-                          ),
-                          _buildTechRow(
-                            'Input Tensor Shape',
-                            '[1, 5] (Float32)',
-                          ),
-                          _buildTechRow(
-                            'Output Tensor Shape',
-                            '[1, 1] (Sigmoid Logits)',
-                          ),
-                          _buildTechRow(
-                            'On-Device Execution',
-                            'Dart Isolate (Isolate.run)',
-                          ),
-                          _buildTechRow(
-                            'Model Parameter Count',
-                            '233 weights & biases',
-                          ),
-                          _buildTechRow(
-                            'Inference Latency',
-                            '< 0.15 ms on device',
-                          ),
-                          _buildTechRow(
-                            'Local Inference Engine',
-                            'small neural network running locally in the app',
-                          ),
-                          _buildTechRow(
-                            'Scaler Mean Vector',
-                            '[88.38, 7.18, 95.26, 81.47, 10.85]',
-                          ),
-                          _buildTechRow(
-                            'Scaler Scale Vector',
-                            '[21.27, 3.90, 27.64, 17.07, 13.07]',
-                          ),
-                          _buildTechRow(
-                            'Validation Status',
-                            'Synthetic pipeline test, not real validation',
-                          ),
-                          const SizedBox(height: 8.0),
-                        ],
+                        _buildFeatureRow(
+                          'std_hr',
+                          'Sample standard deviation (N-1) of heart rate.',
+                        ),
+                        _buildFeatureRow(
+                          'start_hr',
+                          'Median heart rate in the first 10 valid seconds.',
+                        ),
+                        _buildFeatureRow(
+                          'end_hr',
+                          'Median heart rate in the last 10 valid seconds.',
+                        ),
+                        _buildFeatureRow(
+                          'recovery_drop',
+                          'Drop from initial 10s to 60s recovery window.',
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 16.0),
+
+                  // Educational Compliance & Non-Diagnostic Disclaimer
+                  Container(
+                    padding: const EdgeInsets.all(18.0),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBgNavy,
+                      borderRadius: BorderRadius.circular(20.0),
+                      border: Border.all(
+                        color: AppColors.accentPurple.withValues(alpha: 0.4),
+                        width: 1.0,
                       ),
                     ),
+                    child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.warning_amber_rounded,
+                              color: AppColors.accentPurple,
+                              size: 22.0,
+                            ),
+                            SizedBox(width: 8.0),
+                            Expanded(
+                              child: Text(
+                                'Non-Diagnostic Educational Scope',
+                                style: TextStyle(
+                                  fontFamily: 'Outfit',
+                                  fontSize: 15.0,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8.0),
+                        Text(
+                          'PulsePatch Lite is an educational prototype. The labels "Typical pattern" and "Different pattern" denote statistical clusters derived from synthetic training protocols. They do not constitute an evaluation of cardiovascular health, normalcy, or pathology.',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13.0,
+                            color: AppColors.textSecondary,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
 
-                    const SizedBox(height: 24.0),
-                  ],
-                ),
+                  const SizedBox(height: 16.0),
+
+                  // Technical Evaluators Panel (Expandable)
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.cardBgNavy,
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    child: ExpansionTile(
+                      shape: const Border(),
+                      collapsedShape: const Border(),
+                      title: const Text(
+                        'Technical Evaluator Panel',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 15.0,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      subtitle: const Text(
+                        'Architecture, execution mode & parameters',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 12.0,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      initiallyExpanded: _isTechnicalPanelExpanded,
+                      onExpansionChanged: (val) {
+                        setState(() {
+                          _isTechnicalPanelExpanded = val;
+                        });
+                      },
+                      childrenPadding: const EdgeInsets.symmetric(
+                        horizontal: 18.0,
+                        vertical: 10.0,
+                      ),
+                      children: [
+                        _buildTechRow(
+                          'Network Architecture',
+                          'MLP (5 -> 16 -> 8 -> 1)',
+                        ),
+                        _buildTechRow('Input Tensor Shape', '[1, 5] (Float32)'),
+                        _buildTechRow(
+                          'Output Tensor Shape',
+                          '[1, 1] (Sigmoid Logits)',
+                        ),
+                        _buildTechRow(
+                          'On-Device Execution',
+                          'Dart Isolate (Isolate.run)',
+                        ),
+                        _buildTechRow(
+                          'Model Parameter Count',
+                          '233 weights & biases',
+                        ),
+                        _buildTechRow(
+                          'Inference Latency',
+                          '< 0.15 ms on device',
+                        ),
+                        _buildTechRow(
+                          'Local Inference Engine',
+                          'small neural network running locally in the app',
+                        ),
+                        _buildTechRow(
+                          'Scaler Mean Vector',
+                          '[88.38, 7.18, 95.26, 81.47, 10.85]',
+                        ),
+                        _buildTechRow(
+                          'Scaler Scale Vector',
+                          '[21.27, 3.90, 27.64, 17.07, 13.07]',
+                        ),
+                        _buildTechRow(
+                          'Training Dataset',
+                          'trained on Mi Band 5 wrist data (wrist optical sensor, not MAX30102)',
+                        ),
+                        _buildTechRow(
+                          'Validation Status',
+                          'Real wrist optical: single-subject time-ordered split; Synthetic baseline: pipeline simulation only',
+                        ),
+                        const SizedBox(height: 8.0),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24.0),
+                ],
               ),
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildMetricRow(String label, String value, String note) {

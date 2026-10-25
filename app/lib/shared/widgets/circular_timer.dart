@@ -59,7 +59,9 @@ class CircularTimer extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    formattedTime == '00:00' && progress == 0.0 ? '00:09' : formattedTime,
+                    formattedTime == '00:00' && progress == 0.0
+                        ? '00:09'
+                        : formattedTime,
                     style: const TextStyle(
                       fontFamily: 'Outfit',
                       fontSize: 26.0,
@@ -134,7 +136,8 @@ class _CircularTimerPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _CircularTimerPainter oldDelegate) {
-    return oldDelegate.progress != progress || oldDelegate.strokeWidth != strokeWidth;
+    return oldDelegate.progress != progress ||
+        oldDelegate.strokeWidth != strokeWidth;
   }
 }
 
@@ -149,12 +152,18 @@ class _PauseIconPainter extends CustomPainter {
 
     // rect x="6" y="5" width="4" height="14" rx="1"
     canvas.drawRRect(
-      RRect.fromRectAndRadius(const Rect.fromLTWH(6, 5, 4, 14), const Radius.circular(1)),
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(6, 5, 4, 14),
+        const Radius.circular(1),
+      ),
       paint,
     );
     // rect x="14" y="5" width="4" height="14" rx="1"
     canvas.drawRRect(
-      RRect.fromRectAndRadius(const Rect.fromLTWH(14, 5, 4, 14), const Radius.circular(1)),
+      RRect.fromRectAndRadius(
+        const Rect.fromLTWH(14, 5, 4, 14),
+        const Radius.circular(1),
+      ),
       paint,
     );
   }

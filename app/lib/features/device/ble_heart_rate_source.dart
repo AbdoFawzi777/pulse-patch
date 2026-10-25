@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
 import 'heart_rate_source.dart';
 
@@ -65,6 +66,9 @@ class BleHeartRateSource implements HeartRateSource {
 
   @override
   String get sourceLabel => 'ESP32-C3 BLE';
+
+  @override
+  SessionSource get source => SessionSource.pulsepatch;
 
   void _setState(BleConnectionState state) {
     if (_isDisposed) return;

@@ -231,12 +231,60 @@ class SessionDetailsScreen extends ConsumerWidget {
 
           const SizedBox(height: 10.0),
 
-          // Footer disclaimer
-          const Text(
-            'Sample data · estimated from optical pulse peaks',
-            style: TextStyle(
+          // SpO2 if reported
+          if (stats?.avgSpo2 != null) ...[
+            MetricCard(
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16.0,
+                vertical: 12.0,
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'Blood Oxygen (SpO2)',
+                    style: TextStyle(
+                      fontFamily: 'Outfit',
+                      fontSize: 15.0,
+                      fontWeight: FontWeight.w300,
+                      color: AppColors.textPrimary,
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Text(
+                        '${stats!.avgSpo2!.toStringAsFixed(1)}%',
+                        style: const TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 18.0,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.accentCyan,
+                        ),
+                      ),
+                      const SizedBox(width: 6.0),
+                      const Text(
+                        'reported by device, not validated',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 11.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 8.0),
+          ],
+
+          // Footer disclaimer & Source badge
+          Text(
+            'Source: ${session.source.label} · ${session.source == SessionSource.simulator ? "Sample data" : (session.source == SessionSource.importSource ? "Imported data" : "Live peripheral")} · estimated from optical pulse peaks',
+            style: const TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 14.0,
+              fontSize: 13.0,
               fontWeight: FontWeight.w300,
               color: AppColors.textMuted,
             ),

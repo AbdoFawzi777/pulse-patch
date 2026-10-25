@@ -206,71 +206,70 @@ void main() {
       },
     );
 
-    testWidgets(
-      'AiInsightsDashboardScreen renders summary and lists sessions',
-      (tester) async {
-        final inMemoryDb = AppDatabase.inMemory();
-        final repo = SessionRepository(inMemoryDb);
+    testWidgets('AiInsightsDashboardScreen renders summary and lists sessions', (
+      tester,
+    ) async {
+      final inMemoryDb = AppDatabase.inMemory();
+      final repo = SessionRepository(inMemoryDb);
 
-        // Seed 2 sessions
-        repo.insertSession(
-          session: SessionRecord(
-            id: 'sess-dash-1',
-            startedAt: DateTime.now().subtract(const Duration(hours: 1)),
-            endedAt: DateTime.now().subtract(const Duration(minutes: 58)),
-            type: SessionType.rest,
-            qualitySummary: QualitySummary.good,
-            appVersion: '1.0.0',
-            source: SessionSource.device,
-          ),
-          samples: [],
-          stats: const SessionStatsRecord(
-            sessionId: 'sess-dash-1',
-            meanHr: 72.0,
-            stdHr: 3.0,
-            minHr: 68.0,
-            maxHr: 76.0,
-            startHr: 74.0,
-            endHr: 70.0,
-            recoveryDrop: -4.0,
-            pulseIntervalMs: 833.0,
-            variabilityEstMs: 35.0,
-            validSampleCount: 60,
-            totalDurationSeconds: 60,
-          ),
-          aiResult: AiResultRecord(
-            sessionId: 'sess-dash-1',
-            modelVersion: '1.0.0',
-            label: 'Typical pattern',
-            featuresJson: '{}',
-            createdAt: DateTime.now(),
-          ),
-        );
+      // Seed 2 sessions
+      repo.insertSession(
+        session: SessionRecord(
+          id: 'sess-dash-1',
+          startedAt: DateTime.now().subtract(const Duration(hours: 1)),
+          endedAt: DateTime.now().subtract(const Duration(minutes: 58)),
+          type: SessionType.rest,
+          qualitySummary: QualitySummary.good,
+          appVersion: '1.0.0',
+          source: SessionSource.pulsepatch,
+        ),
+        samples: [],
+        stats: const SessionStatsRecord(
+          sessionId: 'sess-dash-1',
+          meanHr: 72.0,
+          stdHr: 3.0,
+          minHr: 68.0,
+          maxHr: 76.0,
+          startHr: 74.0,
+          endHr: 70.0,
+          recoveryDrop: -4.0,
+          pulseIntervalMs: 833.0,
+          variabilityEstMs: 35.0,
+          validSampleCount: 60,
+          totalDurationSeconds: 60,
+        ),
+        aiResult: AiResultRecord(
+          sessionId: 'sess-dash-1',
+          modelVersion: '1.0.0',
+          label: 'Typical pattern',
+          featuresJson: '{}',
+          createdAt: DateTime.now(),
+        ),
+      );
 
-        await tester.pumpWidget(
-          ProviderScope(
-            overrides: [sessionRepositoryProvider.overrideWithValue(repo)],
-            child: const MaterialApp(home: AiInsightsDashboardScreen()),
-          ),
-        );
-        await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [sessionRepositoryProvider.overrideWithValue(repo)],
+          child: const MaterialApp(home: AiInsightsDashboardScreen()),
+        ),
+      );
+      await tester.pumpAndSettle();
 
-        // Header and model result card
-        expect(find.text('AI Insights'), findsOneWidget);
-        expect(find.text('Model result'), findsOneWidget);
-        expect(find.text('Experimental'), findsOneWidget);
-        expect(find.text('Typical pattern'), findsWidgets);
-        expect(
-          find.text(
-            'Similar to your last 5 rest sessions. A pattern label, not a health rating.',
-          ),
-          findsOneWidget,
-        );
+      // Header and model result card
+      expect(find.text('AI Insights'), findsOneWidget);
+      expect(find.text('Model result'), findsOneWidget);
+      expect(find.text('Experimental'), findsOneWidget);
+      expect(find.text('Typical pattern'), findsWidgets);
+      expect(
+        find.text(
+          'Similar to your last 5 rest sessions. A pattern label, not a health rating.',
+        ),
+        findsOneWidget,
+      );
 
-        // Section header and values
-        expect(find.text('Measured values used'), findsOneWidget);
-      },
-    );
+      // Section header and values
+      expect(find.text('Measured values used'), findsOneWidget);
+    });
 
     testWidgets(
       'AiModelInfoScreen displays model architecture and technical panel',

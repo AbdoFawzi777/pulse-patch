@@ -172,6 +172,7 @@ class SessionRecorder {
         bpm: gated.bpm,
         quality: packet.quality,
         isValid: gated.isValid,
+        spo2: packet.spo2,
       ),
     );
 
@@ -286,6 +287,14 @@ class SessionRecorder {
       variabilityEst = math.sqrt(varianceDiff);
     }
 
+    final spo2Samples = validSamples
+        .where((s) => s.spo2 != null)
+        .map((s) => s.spo2!)
+        .toList();
+    final avgSpo2 = spo2Samples.isNotEmpty
+        ? spo2Samples.reduce((a, b) => a + b) / spo2Samples.length
+        : null;
+
     return SessionStatsRecord(
       sessionId: sessionId,
       meanHr: mean,
@@ -299,6 +308,7 @@ class SessionRecorder {
       variabilityEstMs: variabilityEst,
       validSampleCount: validSamples.length,
       totalDurationSeconds: _elapsed.inSeconds,
+      avgSpo2: avgSpo2,
     );
   }
 

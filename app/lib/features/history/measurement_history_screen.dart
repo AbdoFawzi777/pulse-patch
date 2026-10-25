@@ -39,33 +39,12 @@ class _MeasurementHistoryScreenState
     extends ConsumerState<MeasurementHistoryScreen> {
   HistoryFilter _filter = HistoryFilter.week;
 
-  static const List<
-      ({String dateStr, String quality, String pattern, int bpm})>
+  static const List<({String dateStr, String quality, String pattern, int bpm})>
   _defaultSessions = [
-    (
-      dateStr: 'Today 18:05',
-      quality: 'Good',
-      pattern: 'typical',
-      bpm: 74,
-    ),
-    (
-      dateStr: 'Sun 09:30',
-      quality: 'Good',
-      pattern: 'typical',
-      bpm: 71,
-    ),
-    (
-      dateStr: 'Fri 20:12',
-      quality: 'Fair',
-      pattern: 'typical',
-      bpm: 82,
-    ),
-    (
-      dateStr: 'Thu 07:45',
-      quality: 'Good',
-      pattern: 'typical',
-      bpm: 68,
-    ),
+    (dateStr: 'Today 18:05', quality: 'Good', pattern: 'typical', bpm: 74),
+    (dateStr: 'Sun 09:30', quality: 'Good', pattern: 'typical', bpm: 71),
+    (dateStr: 'Fri 20:12', quality: 'Fair', pattern: 'typical', bpm: 82),
+    (dateStr: 'Thu 07:45', quality: 'Good', pattern: 'typical', bpm: 68),
   ];
 
   @override
@@ -141,7 +120,8 @@ class _MeasurementHistoryScreenState
                 ? ListView.separated(
                     physics: const BouncingScrollPhysics(),
                     itemCount: allSessions.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10.0),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10.0),
                     itemBuilder: (context, index) {
                       final s = allSessions[index];
                       final stats = sessionRepo.getStatsForSession(s.id);
@@ -155,6 +135,7 @@ class _MeasurementHistoryScreenState
                         dateStr: dateLabel,
                         quality: quality,
                         pattern: pattern,
+                        source: s.source.label,
                         bpm: bpm,
                         onTap: () => widget.onSelectSession?.call(s),
                       );
@@ -163,13 +144,15 @@ class _MeasurementHistoryScreenState
                 : ListView.separated(
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: _defaultSessions.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 10.0),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 10.0),
                     itemBuilder: (context, index) {
                       final item = _defaultSessions[index];
                       return _buildSessionCard(
                         dateStr: item.dateStr,
                         quality: item.quality,
                         pattern: item.pattern,
+                        source: 'Sample data',
                         bpm: item.bpm,
                       );
                     },
@@ -184,6 +167,7 @@ class _MeasurementHistoryScreenState
     required String dateStr,
     required String quality,
     required String pattern,
+    required String source,
     required int bpm,
     VoidCallback? onTap,
   }) {
@@ -209,7 +193,7 @@ class _MeasurementHistoryScreenState
                 ),
                 const SizedBox(height: 2.0),
                 Text(
-                  'Quality: $quality · Pattern: $pattern',
+                  'Quality: $quality · $source · Pattern: $pattern',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(

@@ -11,6 +11,9 @@ class BlePacket {
     required this.deviceTimestampMs,
     required this.sequenceNumber,
     required this.receivedAt,
+    this.spo2,
+    this.isQualityEstimated = false,
+    this.rrIntervalsMs,
   });
 
   final int protocolVersion;
@@ -21,6 +24,10 @@ class BlePacket {
   final int deviceTimestampMs;
   final int sequenceNumber;
   final DateTime receivedAt;
+  final double? spo2; // Optional SpO2 reported by device (e.g. 98.0%)
+  final bool
+  isQualityEstimated; // True if calculated from continuity/jump limits
+  final List<double>? rrIntervalsMs; // Optional RR intervals in ms
 
   static const int expectedPacketLength = 12;
   static const int currentProtocolVersion = 1;

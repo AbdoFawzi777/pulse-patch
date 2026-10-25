@@ -66,85 +66,83 @@ class SessionPatternAnalysisScreen extends ConsumerWidget {
           ),
           const SizedBox(height: 12.0),
 
-            // Content Area
-            Expanded(
-              child: initialResult != null
-                  ? _buildSuccessView(context, initialResult!)
-                  : aiStateAsync.when(
-                      loading: () => const LoadingState(
-                        message: 'Analyzing pulse patterns locally...',
-                      ),
-                      error: (err, _) => Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(24.0),
-                          child: ErrorBanner(
-                            message: 'Could not complete analysis: $err',
-                          ),
+          // Content Area
+          Expanded(
+            child: initialResult != null
+                ? _buildSuccessView(context, initialResult!)
+                : aiStateAsync.when(
+                    loading: () => const LoadingState(
+                      message: 'Analyzing pulse patterns locally...',
+                    ),
+                    error: (err, _) => Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24.0),
+                        child: ErrorBanner(
+                          message: 'Could not complete analysis: $err',
                         ),
                       ),
-                      data: (state) {
-                        switch (state.status) {
-                          case AiInferenceStatus.loading:
-                          case AiInferenceStatus.analyzing:
-                            return const LoadingState(
-                              message: 'Analyzing pulse patterns locally...',
-                            );
-                          case AiInferenceStatus.insufficientData:
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: EmptyState(
-                                  title: 'Insufficient Data for AI',
-                                  description:
-                                      state.insufficientReason ??
-                                      'Requires at least 30 seconds of valid pulse data to analyze patterns.',
-                                  icon: Icons.analytics_outlined,
-                                ),
-                              ),
-                            );
-                          case AiInferenceStatus.invalidInput:
-                          case AiInferenceStatus.modelUnavailable:
-                            return Center(
-                              child: Padding(
-                                padding: const EdgeInsets.all(24.0),
-                                child: ErrorBanner(
-                                  message:
-                                      state.errorMessage ??
-                                      'AI model is unavailable.',
-                                ),
-                              ),
-                            );
-                          case AiInferenceStatus.success:
-                            if (state.result != null) {
-                              return _buildSuccessView(context, state.result!);
-                            }
-                            return const Center(
-                              child: EmptyState(
-                                title: 'No Result',
-                                description:
-                                    'Analysis did not return an output.',
-                              ),
-                            );
-                          case AiInferenceStatus.idle:
-                            return const SizedBox.shrink();
-                        }
-                      },
                     ),
-            ),
+                    data: (state) {
+                      switch (state.status) {
+                        case AiInferenceStatus.loading:
+                        case AiInferenceStatus.analyzing:
+                          return const LoadingState(
+                            message: 'Analyzing pulse patterns locally...',
+                          );
+                        case AiInferenceStatus.insufficientData:
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: EmptyState(
+                                title: 'Insufficient Data for AI',
+                                description:
+                                    state.insufficientReason ??
+                                    'Requires at least 30 seconds of valid pulse data to analyze patterns.',
+                                icon: Icons.analytics_outlined,
+                              ),
+                            ),
+                          );
+                        case AiInferenceStatus.invalidInput:
+                        case AiInferenceStatus.modelUnavailable:
+                          return Center(
+                            child: Padding(
+                              padding: const EdgeInsets.all(24.0),
+                              child: ErrorBanner(
+                                message:
+                                    state.errorMessage ??
+                                    'AI model is unavailable.',
+                              ),
+                            ),
+                          );
+                        case AiInferenceStatus.success:
+                          if (state.result != null) {
+                            return _buildSuccessView(context, state.result!);
+                          }
+                          return const Center(
+                            child: EmptyState(
+                              title: 'No Result',
+                              description: 'Analysis did not return an output.',
+                            ),
+                          );
+                        case AiInferenceStatus.idle:
+                          return const SizedBox.shrink();
+                      }
+                    },
+                  ),
+          ),
 
-            // Bottom Navigation with Circle 3 (Insights) active
-            BottomCircleNav(
-              currentIndex:
-                  2, // 0: Home, 1: History, 2: AI Insights, 3: Settings
-              onTap: (index) {
-                if (index != 2) {
-                  Navigator.of(context).maybePop();
-                }
-              },
-            ),
-          ],
-        ),
-      );
+          // Bottom Navigation with Circle 3 (Insights) active
+          BottomCircleNav(
+            currentIndex: 2, // 0: Home, 1: History, 2: AI Insights, 3: Settings
+            onTap: (index) {
+              if (index != 2) {
+                Navigator.of(context).maybePop();
+              }
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildSuccessView(BuildContext context, AiInferenceResult result) {

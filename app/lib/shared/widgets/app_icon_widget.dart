@@ -87,11 +87,7 @@ class _AppIconPainter extends CustomPainter {
       ..shader = RadialGradient(
         center: const Alignment(0.0, -0.24), // cx=.5, cy=.38
         radius: 0.85,
-        colors: const [
-          Color(0xFF2A1A7A),
-          Color(0xFF0B0A2A),
-          Color(0xFF04030C),
-        ],
+        colors: const [Color(0xFF2A1A7A), Color(0xFF0B0A2A), Color(0xFF04030C)],
         stops: const [0.0, 0.6, 1.0],
       ).createShader(const Rect.fromLTWH(0, 0, 100, 100));
     canvas.drawRect(const Rect.fromLTWH(0, 0, 100, 100), bgPaint);
@@ -135,12 +131,8 @@ class _AppIconPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..shader = const LinearGradient(
         begin: Alignment(-0.6, -1.0), // x1=.2 y1=0
-        end: Alignment(0.6, 1.0),    // x2=.8 y2=1
-        colors: [
-          Color(0xFFE11D9B),
-          Color(0xFF6D28D9),
-          Color(0xFF2563EB),
-        ],
+        end: Alignment(0.6, 1.0), // x2=.8 y2=1
+        colors: [Color(0xFFE11D9B), Color(0xFF6D28D9), Color(0xFF2563EB)],
         stops: [0.0, 0.55, 1.0],
       ).createShader(const Rect.fromLTWH(0, 0, 100, 100));
     canvas.drawPath(heartPath, h1Paint);

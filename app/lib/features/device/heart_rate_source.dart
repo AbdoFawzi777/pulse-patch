@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../data/repositories/preferences_repository.dart';
+import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
 import 'simulated_heart_rate_source.dart';
+import 'unified_heart_rate_source.dart';
 
 enum BleConnectionState {
   bluetoothOff,
@@ -15,16 +18,33 @@ enum BleConnectionState {
   timeout,
 }
 
+enum BleDeviceCategory {
+  pulsePatch('PulsePatch-C3', true),
+  standardBle('Standard Heart Rate', true),
+  miBand('Mi Smart Band 5', true),
+  unknown('Other Bluetooth Device', false);
+
+  const BleDeviceCategory(this.label, this.isCompatible);
+  final String label;
+  final bool isCompatible;
+}
+
 class DiscoveredBleDevice {
   const DiscoveredBleDevice({
     required this.id,
     required this.name,
     required this.rssi,
+    this.category = BleDeviceCategory.unknown,
+    this.advertisedServices = const [],
   });
 
   final String id;
   final String name;
   final int rssi;
+  final BleDeviceCategory category;
+  final List<String> advertisedServices;
+
+  bool get isCompatible => category.isCompatible;
 }
 
 class PacketDiagnostics {
@@ -77,14 +97,20 @@ abstract class HeartRateSource {
 
   bool get isSimulator;
   String get sourceLabel;
+  SessionSource get source;
 
   void dispose();
 }
 
 final heartRateSourceProvider = Provider<HeartRateSource>((ref) {
-  // Default to SimulatedHeartRateSource for offline development & tests.
-  // Switchable to BleHeartRateSource when connecting to hardware.
-  final source = SimulatedHeartRateSource();
-  ref.onDispose(source.dispose);
-  return source;
+  try {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    final source = UnifiedHeartRateSource(prefs: prefs);
+    ref.onDispose(source.dispose);
+    return source;
+  } catch (_) {
+    final source = SimulatedHeartRateSource();
+    ref.onDispose(source.dispose);
+    return source;
+  }
 });

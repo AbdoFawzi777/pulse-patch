@@ -1,62 +1,71 @@
 {
   "Logistic Regression": {
-    "mean_accuracy": 0.9375,
-    "std_accuracy": 0.05229125165837972,
-    "mean_precision": 0.85,
-    "mean_recall": 0.7828571428571429,
-    "mean_f1": 0.7971861471861472,
-    "mean_roc_auc": 0.9781164021164022,
-    "mean_brier_calibration": 0.038325212512274894,
-    "confusion_matrix": [
-      [
-        129,
-        4
-      ],
-      [
-        6,
-        21
-      ]
-    ],
-    "n_samples": 160
-  },
-  "Random Forest": {
+    "evaluation_type": "single_subject_time_ordered_split",
+    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
     "mean_accuracy": 1.0,
     "std_accuracy": 0.0,
     "mean_precision": 1.0,
     "mean_recall": 1.0,
     "mean_f1": 1.0,
     "mean_roc_auc": 1.0,
-    "mean_brier_calibration": 0.002983063960793233,
+    "mean_brier_calibration": 0.018735391744905957,
     "confusion_matrix": [
       [
-        133,
+        4,
         0
       ],
       [
         0,
-        27
+        1
       ]
     ],
-    "n_samples": 160
+    "train_samples": 15,
+    "test_samples": 5
   },
-  "Tiny MLP (5->16->8->2)": {
-    "mean_accuracy": 0.99375,
-    "std_accuracy": 0.012499999999999999,
+  "Random Forest": {
+    "evaluation_type": "single_subject_time_ordered_split",
+    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "mean_accuracy": 1.0,
+    "std_accuracy": 0.0,
     "mean_precision": 1.0,
-    "mean_recall": 0.9714285714285715,
-    "mean_f1": 0.9846153846153847,
+    "mean_recall": 1.0,
+    "mean_f1": 1.0,
     "mean_roc_auc": 1.0,
-    "mean_brier_calibration": 0.003411782531643308,
+    "mean_brier_calibration": 0.0116,
     "confusion_matrix": [
       [
-        133,
+        4,
         0
       ],
       [
-        1,
-        26
+        0,
+        1
       ]
     ],
-    "n_samples": 160
+    "train_samples": 15,
+    "test_samples": 5
+  },
+  "Tiny MLP (5->16->8->2)": {
+    "evaluation_type": "single_subject_time_ordered_split",
+    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "mean_accuracy": 1.0,
+    "std_accuracy": 0.0,
+    "mean_precision": 1.0,
+    "mean_recall": 1.0,
+    "mean_f1": 1.0,
+    "mean_roc_auc": 1.0,
+    "mean_brier_calibration": 7.957143819114875e-06,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "train_samples": 15,
+    "test_samples": 5
   }
 }

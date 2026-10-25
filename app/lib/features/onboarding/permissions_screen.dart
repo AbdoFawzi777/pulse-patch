@@ -236,8 +236,7 @@ class _PermissionsScreenState extends ConsumerState<PermissionsScreen> {
                         style: isNotifGranted
                             ? PillButtonStyle.dark
                             : PillButtonStyle.white,
-                        onPressed:
-                            isNotifGranted ? null : _requestNotification,
+                        onPressed: isNotifGranted ? null : _requestNotification,
                       ),
                     ],
                   ),

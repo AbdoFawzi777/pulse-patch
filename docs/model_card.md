@@ -68,6 +68,23 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
 
 ---
 
+### 4.2 Real-Data Protocol (Xiaomi Mi Smart Band 5 Extension)
+1. **Device & Sensor Scope:**
+   - Device: Xiaomi Mi Smart Band 5 connected via standard BLE Heart Rate Service (0x180D/0x2A37) or Huami protocol.
+   - Sensor type: Wrist optical photoplethysmography (wrist optical sensor, not MAX30102).
+   - Label: source=miband5.
+   - **Crucial boundary:** The Mi Smart Band 5 is an educational input source, NOT a clinical gold standard. It is never used to validate MAX30102 sensor accuracy (MAE/Bland-Altman).
+2. **Collection & Evaluation Protocol:**
+   - Single-subject guided collection mode: Repeated short resting sessions (60s) and post-activity recovery sessions (stairs 1 min + seated recovery 90s) recorded over multiple days.
+   - Evaluation Method: Strictly time-ordered chronological session split (75% train earlier, 25% test later).
+   - **Zero Generalization Claim:** When evaluating single-subject data, GroupKFold across subjects is prohibited. The evaluation shows pipeline stability on one person's data and does NOT generalize to the wider population.
+3. **Execution Command:**
+   `ash
+   py ml/src/train.py --data <exported_sessions.csv> --export_production
+   `
+
+---
+
 ## 5. Quantitative Evaluation Metrics
 
 > [!NOTE]

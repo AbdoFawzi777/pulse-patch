@@ -43,7 +43,9 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
     final startHr = stats?.startHr.round() ?? 78;
     final endHr = stats?.endHr.round() ?? 70;
     final recoveryDrop = stats?.recoveryDrop?.round() ?? -8;
-    final dropSign = recoveryDrop <= 0 ? '−${recoveryDrop.abs()}' : '+$recoveryDrop';
+    final dropSign = recoveryDrop <= 0
+        ? '−${recoveryDrop.abs()}'
+        : '+$recoveryDrop';
 
     return DesignCanvasScaffold(
       child: ClipRect(
@@ -311,7 +313,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
 
               // Footnote
               Text(
-                'Runs on this phone · TensorFlow Lite · $sessionCount sessions available',
+                'Runs on this phone · small neural network running locally in the app · $sessionCount sessions available',
                 style: const TextStyle(
                   fontFamily: 'Outfit',
                   fontSize: 14.0,

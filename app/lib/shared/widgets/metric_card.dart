@@ -57,9 +57,6 @@ class MetricCard extends StatelessWidget {
       return cardContent;
     }
 
-    return GestureDetector(
-      onTap: onTap,
-      child: cardContent,
-    );
+    return GestureDetector(onTap: onTap, child: cardContent);
   }
 }

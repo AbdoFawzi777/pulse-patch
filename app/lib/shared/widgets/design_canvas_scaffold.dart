@@ -33,9 +33,7 @@ class DesignCanvasScaffold extends StatelessWidget {
           fit: StackFit.expand,
           children: [
             // Exact canvas background with dual radial glows
-            const CustomPaint(
-              painter: _CanvasBackgroundPainter(),
-            ),
+            const CustomPaint(painter: _CanvasBackgroundPainter()),
             SafeArea(
               top: true,
               bottom: true,
@@ -62,13 +60,15 @@ class _CanvasBackgroundPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     // Base background: #04030C
-    canvas.drawRect(
-      Offset.zero & size,
-      Paint()..color = AppColors.bgBase,
-    );
+    canvas.drawRect(Offset.zero & size, Paint()..color = AppColors.bgBase);
 
     // Glow 1: Top-Left radial-gradient(80% 35% at 0% 0%, #1A0F44 0%, transparent 70%)
-    final rectTL = Rect.fromLTWH(-size.width * 0.2, -size.height * 0.1, size.width * 1.0, size.height * 0.7);
+    final rectTL = Rect.fromLTWH(
+      -size.width * 0.2,
+      -size.height * 0.1,
+      size.width * 1.0,
+      size.height * 0.7,
+    );
     final paintTL = Paint()
       ..shader = RadialGradient(
         center: Alignment.topLeft,
@@ -82,7 +82,12 @@ class _CanvasBackgroundPainter extends CustomPainter {
     canvas.drawRect(Offset.zero & size, paintTL);
 
     // Glow 2: Bottom-Right radial-gradient(90% 45% at 100% 100%, #3A1566 0%, transparent 70%)
-    final rectBR = Rect.fromLTWH(size.width * 0.1, size.height * 0.4, size.width * 1.0, size.height * 0.7);
+    final rectBR = Rect.fromLTWH(
+      size.width * 0.1,
+      size.height * 0.4,
+      size.width * 1.0,
+      size.height * 0.7,
+    );
     final paintBR = Paint()
       ..shader = RadialGradient(
         center: Alignment.bottomRight,

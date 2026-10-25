@@ -20,15 +20,21 @@ void main() {
     final fontLoader = FontLoader('Outfit');
     final fontLight = File('assets/fonts/Outfit-Light.ttf');
     if (fontLight.existsSync()) {
-      fontLoader.addFont(Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)));
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)),
+      );
     }
     final fontReg = File('assets/fonts/Outfit-Regular.ttf');
     if (fontReg.existsSync()) {
-      fontLoader.addFont(Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)));
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)),
+      );
     }
     final fontMed = File('assets/fonts/Outfit-Medium.ttf');
     if (fontMed.existsSync()) {
-      fontLoader.addFont(Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)));
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)),
+      );
     }
     await fontLoader.load();
   });

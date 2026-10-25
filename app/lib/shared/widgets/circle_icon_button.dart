@@ -57,10 +57,7 @@ class CircleIconButton extends StatelessWidget {
 }
 
 class _HeaderIconPainter extends CustomPainter {
-  const _HeaderIconPainter({
-    required this.type,
-    required this.color,
-  });
+  const _HeaderIconPainter({required this.type, required this.color});
 
   final CircleIconType type;
   final Color color;

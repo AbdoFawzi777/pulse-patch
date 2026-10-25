@@ -58,6 +58,14 @@ class _PrivacyDataManagementScreenState
     );
   }
 
+  Future<void> _exportTrainingCsv() async {
+    final repo = ref.read(sessionRepositoryProvider);
+    final csvStr = repo.exportTrainingCsv(anonymousSubjectId: 'VOL_01');
+    await SharePlus.instance.share(
+      ShareParams(text: csvStr, subject: 'PulsePatch_Training_Export.csv'),
+    );
+  }
+
   Future<void> _confirmDeleteAll() async {
     final confirmed = await showDialog<bool>(
       context: context,
@@ -345,6 +353,14 @@ class _PrivacyDataManagementScreenState
                               ),
                             ),
                           ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        PillButton(
+                          label: 'Export for Training (ML CSV)',
+                          style: PillButtonStyle.dark,
+                          width: double.infinity,
+                          icon: Icons.model_training_rounded,
+                          onPressed: _exportTrainingCsv,
                         ),
                       ],
                     ),

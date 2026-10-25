@@ -20,6 +20,7 @@
 | Phase 13 | ML Data Pipeline, Training, Analysis | DONE | ML Engineer, QA | GroupKFold CV, Parity 100%, Model card, Validation report | 29c9c98 |
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Simulation verified; checklist documented in docs/hardware_integration_guide.md | Pending hardware |
 | Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | 83/83 tests pass, release APK built (55.8MB) & verified on physical phone (NIC LX2) | 1a2febb |
+| Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation; 107/107 tests pass | In Progress |
 
 ---
 

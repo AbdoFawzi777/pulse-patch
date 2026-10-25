@@ -20,10 +20,7 @@ class WelcomeScreen extends StatelessWidget {
           // App Emblem
           const Align(
             alignment: Alignment.centerLeft,
-            child: AppIconWidget(
-              size: 64.0,
-              borderRadius: 16.0,
-            ),
+            child: AppIconWidget(size: 64.0, borderRadius: 16.0),
           ),
 
           const SizedBox(height: 24.0),

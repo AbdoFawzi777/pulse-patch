@@ -7,6 +7,7 @@ class PulseSample {
     this.bpm,
     required this.quality,
     required this.isValid,
+    this.spo2,
   });
 
   final int? id;
@@ -15,6 +16,7 @@ class PulseSample {
   final double? bpm;
   final int quality;
   final bool isValid;
+  final double? spo2;
 
   Map<String, dynamic> toJson() => {
     'id': id,
@@ -23,6 +25,7 @@ class PulseSample {
     'bpm': bpm,
     'quality': quality,
     'isValid': isValid,
+    'spo2': spo2,
   };
 
   factory PulseSample.fromJson(Map<String, dynamic> json) => PulseSample(
@@ -32,5 +35,6 @@ class PulseSample {
     bpm: (json['bpm'] as num?)?.toDouble(),
     quality: json['quality'] as int,
     isValid: json['isValid'] as bool,
+    spo2: (json['spo2'] as num?)?.toDouble(),
   );
 }

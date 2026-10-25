@@ -26,10 +26,10 @@ void main() {
 
   group('Phase 3 Data Layer - Database & Migrations', () {
     test(
-      'Database initializes in-memory with user_version 1 and foreign keys',
+      'Database initializes in-memory with user_version 2 and foreign keys',
       () {
         final versionResult = db.rawDb.select('PRAGMA user_version;');
-        expect(versionResult.first.values.first, 1);
+        expect(versionResult.first.values.first, 2);
 
         final fkResult = db.rawDb.select('PRAGMA foreign_keys;');
         expect(fkResult.first.values.first, 1);
@@ -49,7 +49,7 @@ void main() {
           type: SessionType.rest,
           qualitySummary: QualitySummary.good,
           appVersion: '1.0.0',
-          source: SessionSource.device,
+          source: SessionSource.pulsepatch,
         );
 
         final samples = [
@@ -105,9 +105,63 @@ void main() {
 
         final details = sessionRepo.getSessionDetails('session-001');
         expect(details, isNotNull);
-        expect(details!.samples.length, 2);
+        expect(details!.session.source, SessionSource.pulsepatch);
+        expect(details.samples.length, 2);
         expect(details.stats?.meanHr, 73.0);
         expect(details.aiResult?.label, 'typical');
+      },
+    );
+
+    test(
+      'SessionSource supports multi-source codes and SpO2 persistence',
+      () async {
+        final now = DateTime.now();
+        for (final src in [
+          SessionSource.pulsepatch,
+          SessionSource.standardBle,
+          SessionSource.miBand5,
+          SessionSource.importSource,
+          SessionSource.simulator,
+        ]) {
+          final id = 'src-test-${src.code}';
+          await sessionRepo.insertSession(
+            session: SessionRecord(
+              id: id,
+              startedAt: now,
+              type: SessionType.rest,
+              qualitySummary: QualitySummary.good,
+              appVersion: '1.0.0',
+              source: src,
+            ),
+            samples: [
+              PulseSample(
+                sessionId: id,
+                tMs: 0,
+                bpm: 70.0,
+                quality: 95,
+                isValid: true,
+                spo2: 98.0,
+              ),
+            ],
+            stats: SessionStatsRecord(
+              sessionId: id,
+              meanHr: 70.0,
+              stdHr: 0.0,
+              minHr: 70.0,
+              maxHr: 70.0,
+              startHr: 70.0,
+              endHr: 70.0,
+              validSampleCount: 1,
+              totalDurationSeconds: 10,
+              avgSpo2: 98.0,
+            ),
+          );
+
+          final loaded = sessionRepo.getSessionDetails(id);
+          expect(loaded?.session.source, src);
+          expect(loaded?.samples.first.spo2, 98.0);
+          expect(loaded?.stats?.avgSpo2, 98.0);
+        }
       },
     );
 
@@ -172,7 +226,7 @@ void main() {
             type: SessionType.rest,
             qualitySummary: QualitySummary.good,
             appVersion: '1.0.0',
-            source: SessionSource.device,
+            source: SessionSource.pulsepatch,
           ),
           samples: const [],
         );
@@ -192,7 +246,7 @@ void main() {
         type: SessionType.postActivity,
         qualitySummary: QualitySummary.good,
         appVersion: '1.0.0',
-        source: SessionSource.device,
+        source: SessionSource.pulsepatch,
       );
 
       final stats = const SessionStatsRecord(
@@ -240,12 +294,14 @@ void main() {
         anonymousSubjectId: 'sub-vol-01',
       );
       expect(
-        trainingCsv.contains('subject_id,session_id,session_type,mean_hr'),
+        trainingCsv.contains(
+          'subject_code,session_id,session_type,source,mean_hr,std_hr,start_hr,end_hr,recovery_drop,valid_sample_count,quality,created_at',
+        ),
         isTrue,
       );
       expect(
         trainingCsv.contains(
-          'sub-vol-01,session-exp,postActivity,75.50,3.20,84.00,70.00,14.00,good,device,typical',
+          'sub-vol-01,session-exp,postActivity,pulsepatch,75.50,3.20,84.00,70.00,14.00,85,good,',
         ),
         isTrue,
       );

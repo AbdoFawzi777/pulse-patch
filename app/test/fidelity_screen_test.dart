@@ -28,15 +28,21 @@ void main() {
     final fontLoader = FontLoader('Outfit');
     final fontLight = File('assets/fonts/Outfit-Light.ttf');
     if (fontLight.existsSync()) {
-      fontLoader.addFont(Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)));
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontLight.readAsBytesSync().buffer)),
+      );
     }
     final fontReg = File('assets/fonts/Outfit-Regular.ttf');
     if (fontReg.existsSync()) {
-      fontLoader.addFont(Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)));
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontReg.readAsBytesSync().buffer)),
+      );
     }
     final fontMed = File('assets/fonts/Outfit-Medium.ttf');
     if (fontMed.existsSync()) {
-      fontLoader.addFont(Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)));
+      fontLoader.addFont(
+        Future.value(ByteData.view(fontMed.readAsBytesSync().buffer)),
+      );
     }
     await fontLoader.load();
   });
@@ -199,16 +205,11 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          appDatabaseProvider.overrideWithValue(inMemDb),
-        ],
+        overrides: [appDatabaseProvider.overrideWithValue(inMemDb)],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: AppTheme.darkTheme,
-          home: SessionDetailsScreen(
-            session: session,
-            onBack: () {},
-          ),
+          home: SessionDetailsScreen(session: session, onBack: () {}),
         ),
       ),
     );
@@ -268,9 +269,7 @@ void main() {
 
     await tester.pumpWidget(
       ProviderScope(
-        overrides: [
-          appDatabaseProvider.overrideWithValue(inMemDb),
-        ],
+        overrides: [appDatabaseProvider.overrideWithValue(inMemDb)],
         child: MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: AppTheme.darkTheme,
@@ -290,7 +289,9 @@ void main() {
     );
   });
 
-  testWidgets('Render Connect Device Screen for Design Fidelity', (tester) async {
+  testWidgets('Render Connect Device Screen for Design Fidelity', (
+    tester,
+  ) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(() => tester.view.resetPhysicalSize());
@@ -362,12 +363,7 @@ void main() {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           backgroundColor: Colors.transparent,
-          body: Center(
-            child: AppIconWidget(
-              size: 360.0,
-              clipToSquircle: true,
-            ),
-          ),
+          body: Center(child: AppIconWidget(size: 360.0, clipToSquircle: true)),
         ),
       ),
     );

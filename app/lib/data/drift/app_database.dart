@@ -119,6 +119,16 @@ class AppDatabase {
         PRAGMA user_version = 1;
       ''');
     }
+
+    if (currentVersion < 2) {
+      try {
+        _db.execute('ALTER TABLE samples ADD COLUMN spo2 REAL;');
+      } catch (_) {}
+      try {
+        _db.execute('ALTER TABLE session_stats ADD COLUMN avg_spo2 REAL;');
+      } catch (_) {}
+      _db.execute('PRAGMA user_version = 2;');
+    }
   }
 
   void close() {

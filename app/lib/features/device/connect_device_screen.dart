@@ -1,15 +1,21 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
+import '../../data/repositories/session_repository.dart';
+import '../../domain/signal/import_file_parser.dart';
 import '../../shared/widgets/bottom_circle_nav.dart';
 import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/pill_button.dart';
 import 'heart_rate_source.dart';
+import 'widgets/mi_band_settings_dialog.dart';
 
-/// Connect Device screen matching Device.dc.html and Connect device.png exactly.
-class ConnectDeviceScreen extends ConsumerWidget {
+/// Connect Device screen matching Device.dc.html and Connect device.png.
+/// Supports multi-protocol BLE discovery (PulsePatch-C3, Mi Smart Band 5, Standard BLE 0x180D)
+/// and file imports (CSV, JSON, Gadgetbridge exports).
+class ConnectDeviceScreen extends ConsumerStatefulWidget {
   const ConnectDeviceScreen({
     super.key,
     this.onBack,
@@ -24,14 +30,71 @@ class ConnectDeviceScreen extends ConsumerWidget {
   final bool showBottomNav;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ConnectDeviceScreen> createState() =>
+      _ConnectDeviceScreenState();
+}
+
+class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
+  String? _connectingDeviceId;
+
+  Future<void> _handleImportFile() async {
+    try {
+      final files = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['csv', 'json', 'txt'],
+      );
+
+      if (files.isEmpty) return;
+
+      final file = files.first;
+      final content = await file.xFile.readAsString();
+      final parsed = ImportFileParser.parseFileContent(
+        content,
+        fileName: file.name,
+      );
+      final repo = ref.read(sessionRepositoryProvider);
+      await repo.insertSession(
+        session: parsed.session,
+        samples: parsed.samples,
+        stats: parsed.stats,
+      );
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'Imported session successfully (${parsed.samples.length} samples, ${parsed.stats.meanHr} BPM avg)',
+          ),
+          backgroundColor: AppColors.cardBgNavy,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Import failed: $e'),
+          backgroundColor: Colors.red.shade900,
+        ),
+      );
+    }
+  }
+
+  void _showMiBandSettings() {
+    showDialog(
+      context: context,
+      builder: (context) => const MiBandSettingsDialog(),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final bleSource = ref.watch(heartRateSourceProvider);
 
     return DesignCanvasScaffold(
-      bottomNavigationBar: showBottomNav
+      bottomNavigationBar: widget.showBottomNav
           ? BottomCircleNav(
-              currentIndex: currentNavIndex,
-              onTap: onSelectTab ?? (_) {},
+              currentIndex: widget.currentNavIndex,
+              onTap: widget.onSelectTab ?? (_) {},
             )
           : null,
       child: Column(
@@ -44,7 +107,8 @@ class ConnectDeviceScreen extends ConsumerWidget {
               CircleIconButton(
                 type: CircleIconType.back,
                 semanticLabel: 'Back',
-                onPressed: onBack ?? () => Navigator.of(context).maybePop(),
+                onPressed:
+                    widget.onBack ?? () => Navigator.of(context).maybePop(),
               ),
               const Text(
                 'Connect device',
@@ -73,109 +137,178 @@ class ConnectDeviceScreen extends ConsumerWidget {
           ),
 
           // Scanning Subtitle
-          const Text(
-            'Scanning · keep the patch within 1 m',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontFamily: 'Outfit',
-              fontSize: 14.0,
-              fontWeight: FontWeight.w300,
-              color: AppColors.textMuted,
-            ),
+          StreamBuilder<BleConnectionState>(
+            stream: bleSource.connectionStateStream,
+            initialData: bleSource.currentState,
+            builder: (context, snapshot) {
+              final state = snapshot.data ?? BleConnectionState.idle;
+              final String label;
+              if (state == BleConnectionState.scanning) {
+                label = 'Scanning · keep patch or band within 1 m';
+              } else if (state == BleConnectionState.connected) {
+                label = 'Connected to ${bleSource.sourceLabel}';
+              } else if (state == BleConnectionState.connecting) {
+                label = 'Connecting to peripheral...';
+              } else {
+                label = 'Keep the patch or band within 1 m';
+              }
+              return Text(
+                label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontFamily: 'Outfit',
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w300,
+                  color: AppColors.textMuted,
+                ),
+              );
+            },
           ),
 
           const SizedBox(height: 12.0),
 
-          // Device Card 1: PulsePatch-C3
-          MetricCard(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'PulsePatch-C3',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textPrimary,
+          // Dynamic Device List or Default Canvas Devices
+          StreamBuilder<List<DiscoveredBleDevice>>(
+            stream: bleSource.discoveredDevicesStream,
+            builder: (context, snapshot) {
+              final devices =
+                  snapshot.data ??
+                  [
+                    const DiscoveredBleDevice(
+                      id: 'sim-pulsepatch-1',
+                      name: 'PulsePatch-C3',
+                      rssi: -52,
+                      category: BleDeviceCategory.pulsePatch,
+                    ),
+                    const DiscoveredBleDevice(
+                      id: 'sim-miband-1',
+                      name: 'Mi Smart Band 5',
+                      rssi: -64,
+                      category: BleDeviceCategory.miBand,
+                    ),
+                  ];
+
+              return Column(
+                children: devices.take(2).map((dev) {
+                  final isConnected =
+                      bleSource.currentState == BleConnectionState.connected;
+                  final isConnecting =
+                      _connectingDeviceId == dev.id &&
+                      bleSource.currentState == BleConnectionState.connecting;
+
+                  final String signalText;
+                  if (dev.rssi > -60) {
+                    signalText = 'Signal strong · ${dev.rssi} dBm';
+                  } else if (dev.rssi > -75) {
+                    signalText = 'Signal good · ${dev.rssi} dBm';
+                  } else {
+                    signalText = 'Signal weak · ${dev.rssi} dBm';
+                  }
+
+                  final String statusText = dev.isCompatible
+                      ? 'Compatible · $signalText'
+                      : 'Unsupported · $signalText';
+
+                  return Padding(
+                    padding: const EdgeInsets.only(bottom: 10.0),
+                    child: MetricCard(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  dev.name,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 2.0),
+                                Text(
+                                  statusText,
+                                  style: const TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 14.0,
+                                    fontWeight: FontWeight.w300,
+                                    color: AppColors.textMuted,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 8.0),
+                          PillButton(
+                            label: isConnecting
+                                ? 'Connecting'
+                                : (isConnected
+                                      ? 'Disconnect'
+                                      : (dev.isCompatible
+                                            ? 'Connect'
+                                            : 'Unavailable')),
+                            style: isConnected
+                                ? PillButtonStyle.dark
+                                : (dev.isCompatible
+                                      ? PillButtonStyle.white
+                                      : PillButtonStyle.dark),
+                            onPressed: () async {
+                              if (isConnected) {
+                                await bleSource.disconnect();
+                              } else if (dev.isCompatible) {
+                                setState(() => _connectingDeviceId = dev.id);
+                                await bleSource.connect(dev.id);
+                              }
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 2.0),
-                    Text(
-                      'Signal strong · −52 dBm',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-                PillButton(
-                  label: 'Connect',
-                  style: PillButtonStyle.white,
-                  onPressed: () {
-                    bleSource.startScan();
-                  },
-                ),
-              ],
-            ),
+                  );
+                }).toList(),
+              );
+            },
           ),
 
-          const SizedBox(height: 10.0),
+          const SizedBox(height: 8.0),
 
-          // Device Card 2: PulsePatch-C3 (2)
-          MetricCard(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'PulsePatch-C3 (2)',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 18.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                    SizedBox(height: 2.0),
-                    Text(
-                      'Signal weak · −85 dBm',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 14.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textMuted,
-                      ),
-                    ),
-                  ],
-                ),
-                PillButton(
-                  label: 'Connect',
+          // Action row for File Import & Mi Band 5 Setup
+          Row(
+            children: [
+              Expanded(
+                child: PillButton(
+                  label: 'Import Data File',
                   style: PillButtonStyle.dark,
-                  onPressed: () {},
+                  height: 44.0,
+                  onPressed: _handleImportFile,
                 ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 10.0),
+              Expanded(
+                child: PillButton(
+                  label: 'Mi Band 5 Setup',
+                  style: PillButtonStyle.dark,
+                  height: 44.0,
+                  onPressed: _showMiBandSettings,
+                ),
+              ),
+            ],
           ),
 
           const SizedBox(height: 12.0),
 
           // Hardware Footnote
           const Text(
-            'Sensor: MAX30102 · Battery and firmware shown only if reported',
+            'Sensor: MAX30102, Standard 0x180D, or Mi Smart Band 5 · SpO2 shown only if reported',
             style: TextStyle(
               fontFamily: 'Outfit',
-              fontSize: 14.0,
+              fontSize: 13.0,
               fontWeight: FontWeight.w300,
               color: AppColors.textMuted,
             ),

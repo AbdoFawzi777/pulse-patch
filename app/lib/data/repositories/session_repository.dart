@@ -58,13 +58,13 @@ class SessionRepository {
           session.type.name,
           session.qualitySummary.name,
           session.appVersion,
-          session.source.name,
+          session.source.code,
         ],
       );
 
       final sampleStmt = db.prepare('''
-        INSERT INTO samples (session_id, t_ms, bpm, quality, is_valid)
-        VALUES (?, ?, ?, ?, ?);
+        INSERT INTO samples (session_id, t_ms, bpm, quality, is_valid, spo2)
+        VALUES (?, ?, ?, ?, ?, ?);
       ''');
 
       for (final s in samples) {
@@ -74,6 +74,7 @@ class SessionRepository {
           s.bpm,
           s.quality,
           s.isValid ? 1 : 0,
+          s.spo2,
         ]);
       }
       sampleStmt.dispose();
@@ -83,8 +84,8 @@ class SessionRepository {
           '''
           INSERT INTO session_stats (
             session_id, mean_hr, std_hr, min_hr, max_hr, start_hr, end_hr,
-            recovery_drop, pulse_interval_ms, variability_est_ms, valid_sample_count, total_duration_seconds
-          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+            recovery_drop, pulse_interval_ms, variability_est_ms, valid_sample_count, total_duration_seconds, avg_spo2
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         ''',
           [
             stats.sessionId,
@@ -99,6 +100,7 @@ class SessionRepository {
             stats.variabilityEstMs,
             stats.validSampleCount,
             stats.totalDurationSeconds,
+            stats.avgSpo2,
           ],
         );
       }
@@ -185,6 +187,7 @@ class SessionRepository {
           bpm: (r['bpm'] as num?)?.toDouble(),
           quality: r['quality'] as int,
           isValid: (r['is_valid'] as int) == 1,
+          spo2: (r['spo2'] as num?)?.toDouble(),
         );
       }).toList();
     } catch (e) {
@@ -217,6 +220,7 @@ class SessionRepository {
         variabilityEstMs: (r['variability_est_ms'] as num?)?.toDouble(),
         validSampleCount: r['valid_sample_count'] as int,
         totalDurationSeconds: r['total_duration_seconds'] as int,
+        avgSpo2: (r['avg_spo2'] as num?)?.toDouble(),
       );
     } catch (e) {
       throw StorageException(
@@ -364,26 +368,26 @@ class SessionRepository {
     final sessions = getAllSessions();
     final buffer = StringBuffer();
     buffer.writeln(
-      'subject_id,session_id,session_type,mean_hr,std_hr,start_hr,end_hr,recovery_drop,quality,source,label',
+      'subject_code,session_id,session_type,source,mean_hr,std_hr,start_hr,end_hr,recovery_drop,valid_sample_count,quality,created_at',
     );
 
     for (final s in sessions) {
       final stats = getStatsForSession(s.id);
-      final ai = getAiResultForSession(s.id);
       if (stats == null) continue;
 
       final row = [
         anonymousSubjectId,
         s.id,
         s.type.name,
+        s.source.code,
         stats.meanHr.toStringAsFixed(2),
         stats.stdHr.toStringAsFixed(2),
         stats.startHr.toStringAsFixed(2),
         stats.endHr.toStringAsFixed(2),
         stats.recoveryDrop?.toStringAsFixed(2) ?? '',
+        stats.validSampleCount.toString(),
         s.qualitySummary.name,
-        s.source.name,
-        ai?.label ?? 'typical',
+        s.startedAt.toIso8601String(),
       ];
       buffer.writeln(row.join(','));
     }

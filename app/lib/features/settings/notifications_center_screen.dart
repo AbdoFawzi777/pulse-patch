@@ -82,10 +82,7 @@ class _NotificationsCenterScreenState
                 const SizedBox(width: 8.0),
                 _buildCategoryChip('System', NotificationCategory.system),
                 const SizedBox(width: 8.0),
-                _buildCategoryChip(
-                  'Reminders',
-                  NotificationCategory.reminder,
-                ),
+                _buildCategoryChip('Reminders', NotificationCategory.reminder),
               ],
             ),
           ),

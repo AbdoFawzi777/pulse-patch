@@ -16,7 +16,8 @@ class HowItWorksScreen extends StatelessWidget {
   final VoidCallback onBack;
 
   static const List<
-      ({String step, String title, String description, IconData icon})>
+    ({String step, String title, String description, IconData icon})
+  >
   _steps = [
     (
       step: '1',

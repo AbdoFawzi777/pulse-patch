@@ -1,0 +1,71 @@
+{
+  "Logistic Regression": {
+    "evaluation_type": "single_subject_time_ordered_split",
+    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "mean_accuracy": 1.0,
+    "std_accuracy": 0.0,
+    "mean_precision": 1.0,
+    "mean_recall": 1.0,
+    "mean_f1": 1.0,
+    "mean_roc_auc": 1.0,
+    "mean_brier_calibration": 0.018735391744905957,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "train_samples": 15,
+    "test_samples": 5
+  },
+  "Random Forest": {
+    "evaluation_type": "single_subject_time_ordered_split",
+    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "mean_accuracy": 1.0,
+    "std_accuracy": 0.0,
+    "mean_precision": 1.0,
+    "mean_recall": 1.0,
+    "mean_f1": 1.0,
+    "mean_roc_auc": 1.0,
+    "mean_brier_calibration": 0.0116,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "train_samples": 15,
+    "test_samples": 5
+  },
+  "Tiny MLP (5->16->8->2)": {
+    "evaluation_type": "single_subject_time_ordered_split",
+    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "mean_accuracy": 1.0,
+    "std_accuracy": 0.0,
+    "mean_precision": 1.0,
+    "mean_recall": 1.0,
+    "mean_f1": 1.0,
+    "mean_roc_auc": 1.0,
+    "mean_brier_calibration": 7.957143819114875e-06,
+    "confusion_matrix": [
+      [
+        4,
+        0
+      ],
+      [
+        0,
+        1
+      ]
+    ],
+    "train_samples": 15,
+    "test_samples": 5
+  }
+}

@@ -49,11 +49,7 @@ class AboutScreen extends StatelessWidget {
                 children: [
                   const SizedBox(height: 8.0),
                   // App Hero Emblem using Master Vector App Icon
-                  const Center(
-                    child: AppIconWidget(
-                      size: 84.0,
-                    ),
-                  ),
+                  const Center(child: AppIconWidget(size: 84.0)),
                   const SizedBox(height: 14.0),
                   const Center(
                     child: Text(

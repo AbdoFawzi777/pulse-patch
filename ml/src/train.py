@@ -1,16 +1,18 @@
 """
 PulsePatch Lite — ML Training & Model Evaluation Pipeline
-Conforming to Master Build Plan Section 7.3.
+Conforming to Master Build Plan Section 7.3 & Multi-Source Real Data Extension.
 
-- GroupKFold split by subject_id (zero inter-subject leakage)
-- Baselines: Logistic Regression, Random Forest
-- Primary model: Tiny MLP (5 -> 16 -> 8 -> 2)
-- Metrics: Accuracy, Precision, Recall, F1, ROC-AUC, Confusion Matrix, Calibration
-- Exports: model_meta.json with fitted StandardScaler vectors and float32 TFLite flatbuffer
+Supports:
+- Real-world single-subject datasets (time-ordered chronological split, no GroupKFold)
+- Multi-subject cohorts (GroupKFold grouped by subject_id, zero inter-subject leakage)
+- Source-isolated evaluation reports (e.g. real Mi Band 5 wrist data vs synthetic baseline)
+- Pure-Dart float32 weights export with fitted StandardScaler vectors
 """
 
 import os
+import sys
 import json
+import argparse
 import numpy as np
 import pandas as pd
 from typing import Dict, Any, List, Tuple
@@ -29,16 +31,144 @@ FEATURE_NAMES = ["mean_hr", "std_hr", "start_hr", "end_hr", "recovery_drop"]
 LABEL_NAMES = ["Typical pattern", "Different pattern"]
 
 
+def derive_educational_labels_if_missing(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    If 'label' column is not in exported CSV, derives educational classification
+    labels based on the standard resting & post-activity recovery protocol heuristics.
+    """
+    df = df.copy()
+    if "label" not in df.columns:
+        labels = []
+        for _, row in df.iterrows():
+            stype = str(row.get("session_type", "rest")).lower()
+            mean_hr = float(row.get("mean_hr", 70.0))
+            std_hr = float(row.get("std_hr", 3.0))
+            recovery_drop = float(row.get("recovery_drop", 0.0))
+            
+            if "post" in stype or "activity" in stype:
+                # Post-activity recovery: typical recovery shows >= 12 BPM drop in 60s
+                if recovery_drop >= 12.0:
+                    labels.append(0)  # Typical pattern
+                else:
+                    labels.append(1)  # Different pattern (blunted recovery)
+            else:
+                # Resting stability: typical resting is within 45-95 BPM with std < 8.0 BPM
+                if mean_hr < 45.0 or mean_hr > 95.0 or std_hr > 8.0:
+                    labels.append(1)  # Different pattern (elevated or erratic)
+                else:
+                    labels.append(0)  # Typical pattern
+        df["label"] = labels
+        df["label_name"] = [LABEL_NAMES[l] for l in labels]
+    return df
+
+
+def evaluate_models_single_subject_time_split(df: pd.DataFrame, test_ratio: float = 0.25) -> Dict[str, Any]:
+    """
+    Evaluates models on a single-subject dataset using a strictly time-ordered
+    chronological split (no GroupKFold, no shuffling).
+    Guarantees no temporal leakage from future sessions into past training.
+    """
+    print("\n" + "=" * 80)
+    print("SINGLE-SUBJECT DATASET DETECTED (1 unique subject)")
+    print("Evaluation method: Time-ordered chronological session split (75% train, 25% test).")
+    print("CRITICAL NOTE: Results show pipeline stability on one person's data and do NOT generalize.")
+    print("=" * 80)
+
+    # Sort chronologically if timestamps exist
+    if "created_at" in df.columns:
+        df = df.sort_values(by="created_at").reset_index(drop=True)
+    elif "session_id" in df.columns:
+        df = df.sort_values(by="session_id").reset_index(drop=True)
+
+    X = df[FEATURE_NAMES].values
+    y = df["label"].values
+
+    n_total = len(df)
+    n_train = max(2, int(n_total * (1.0 - test_ratio)))
+    n_test = n_total - n_train
+
+    print(f"Time-Ordered Split: {n_train} training sessions (earlier), {n_test} test sessions (later)")
+
+    X_train, X_test = X[:n_train], X[n_train:]
+    y_train, y_test = y[:n_train], y[n_train:]
+
+    scaler = StandardScaler()
+    X_train_scaled = scaler.fit_transform(X_train)
+    X_test_scaled = scaler.transform(X_test)
+
+    models = {
+        "Logistic Regression": LogisticRegression(random_state=42, max_iter=1000),
+        "Random Forest": RandomForestClassifier(n_estimators=50, max_depth=4, random_state=42),
+        "Tiny MLP (5->16->8->2)": MLPClassifier(hidden_layer_sizes=(16, 8), activation="relu", max_iter=1500, random_state=42)
+    }
+
+    results = {}
+    print("\n" + "-" * 80)
+    print(f"{'Model Architecture':<25} | {'Accuracy':<10} | {'Precision':<10} | {'Recall':<10} | {'F1 Score':<10} | {'ROC-AUC':<10}")
+    print("-" * 80)
+
+    for name, clf in models.items():
+        # Handle cases where training set might have only 1 class
+        unique_classes = np.unique(y_train)
+        if len(unique_classes) < 2:
+            print(f"Warning: Training partition contains only class {unique_classes[0]}. Using class priors.")
+            acc = 1.0 if np.all(y_test == unique_classes[0]) else 0.0
+            prec = 1.0 if acc == 1.0 else 0.0
+            rec = 1.0 if acc == 1.0 else 0.0
+            f1 = 1.0 if acc == 1.0 else 0.0
+            roc = 0.5
+            brier = 0.0 if acc == 1.0 else 1.0
+            cm = [[len(y_test), 0], [0, 0]] if unique_classes[0] == 0 else [[0, 0], [0, len(y_test)]]
+        else:
+            clf.fit(X_train_scaled, y_train)
+            preds = clf.predict(X_test_scaled)
+            probs = clf.predict_proba(X_test_scaled)[:, 1] if hasattr(clf, "predict_proba") else preds
+
+            acc = float(accuracy_score(y_test, preds))
+            prec = float(precision_score(y_test, preds, zero_division=0))
+            rec = float(recall_score(y_test, preds, zero_division=0))
+            f1 = float(f1_score(y_test, preds, zero_division=0))
+            try:
+                roc = float(roc_auc_score(y_test, probs))
+            except ValueError:
+                roc = 0.5
+            brier = float(brier_score_loss(y_test, probs))
+            cm = confusion_matrix(y_test, preds, labels=[0, 1]).tolist()
+
+        print(f"{name:<25} | {acc*100:6.2f}%    | {prec*100:6.2f}%    | {rec*100:6.2f}%    | {f1*100:6.2f}%    | {roc:6.4f}")
+
+        results[name] = {
+            "evaluation_type": "single_subject_time_ordered_split",
+            "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+            "mean_accuracy": acc,
+            "std_accuracy": 0.0,
+            "mean_precision": prec,
+            "mean_recall": rec,
+            "mean_f1": f1,
+            "mean_roc_auc": roc,
+            "mean_brier_calibration": brier,
+            "confusion_matrix": cm,
+            "train_samples": n_train,
+            "test_samples": n_test
+        }
+
+    print("-" * 80)
+    return results
+
+
 def evaluate_models_group_kfold(df: pd.DataFrame, n_splits: int = 5) -> Dict[str, Any]:
     """
     Executes GroupKFold cross-validation grouped by subject_id to guarantee zero data leakage.
-    Evaluates Logistic Regression, Random Forest, and MLP.
+    Evaluates Logistic Regression, Random Forest, and MLP across multiple subjects.
     """
     X = df[FEATURE_NAMES].values
     y = df["label"].values
     groups = df["subject_id"].values
 
-    gkf = GroupKFold(n_splits=n_splits)
+    unique_groups = len(np.unique(groups))
+    actual_splits = min(n_splits, unique_groups)
+
+    gkf = GroupKFold(n_splits=actual_splits)
 
     models = {
         "Logistic Regression": LogisticRegression(random_state=42, max_iter=1000),
@@ -58,7 +188,7 @@ def evaluate_models_group_kfold(df: pd.DataFrame, n_splits: int = 5) -> Dict[str
         "y_prob": []
     } for name in models}
 
-    print(f"\n--- Starting {n_splits}-Fold GroupKFold Cross-Validation (Grouped by Subject ID) ---")
+    print(f"\n--- Starting {actual_splits}-Fold GroupKFold Cross-Validation (Grouped by Subject ID) ---")
 
     for fold, (train_idx, test_idx) in enumerate(gkf.split(X, y, groups), 1):
         test_subjects = np.unique(groups[test_idx])
@@ -67,7 +197,6 @@ def evaluate_models_group_kfold(df: pd.DataFrame, n_splits: int = 5) -> Dict[str
         X_train, X_test = X[train_idx], X[test_idx]
         y_train, y_test = y[train_idx], y[test_idx]
 
-        # Standard scaler fitted on training fold only
         scaler = StandardScaler()
         X_train_scaled = scaler.fit_transform(X_train)
         X_test_scaled = scaler.transform(X_test)
@@ -118,6 +247,7 @@ def evaluate_models_group_kfold(df: pd.DataFrame, n_splits: int = 5) -> Dict[str
         print(f"{name:<25} | {mean_acc*100:6.2f}%    | {mean_prec*100:6.2f}%    | {mean_rec*100:6.2f}%    | {mean_f1*100:6.2f}%    | {mean_roc:6.4f}")
 
         summary[name] = {
+            "evaluation_type": "multi_subject_group_kfold",
             "mean_accuracy": mean_acc,
             "std_accuracy": std_acc,
             "mean_precision": mean_prec,
@@ -133,7 +263,12 @@ def evaluate_models_group_kfold(df: pd.DataFrame, n_splits: int = 5) -> Dict[str
     return summary
 
 
-def train_and_export_production_model(df: pd.DataFrame, out_meta_path: str, out_weights_path: str) -> Dict[str, Any]:
+def train_and_export_production_model(
+    df: pd.DataFrame,
+    out_meta_path: str,
+    out_weights_path: str,
+    dominant_source: str = "synthetic"
+) -> Dict[str, Any]:
     """
     Fits final production scaler and MLP on the complete dataset.
     Exports model metadata JSON with fitted mean and scale vectors.
@@ -150,17 +285,29 @@ def train_and_export_production_model(df: pd.DataFrame, out_meta_path: str, out_
     scaler_mean = [round(float(m), 4) for m in scaler.mean_]
     scaler_scale = [round(float(s), 4) for s in scaler.scale_]
 
-    # Save weights
     weights = {
         "coefs": [c.tolist() for c in mlp.coefs_],
         "intercepts": [i.tolist() for i in mlp.intercepts_]
     }
 
+    if dominant_source in ["miband5", "real_miband5"]:
+        cohort_desc = "Educational volunteer protocol with Mi Smart Band 5 (wrist optical sensor, not MAX30102; 1 subject, time-ordered split)"
+        sensor_note = "trained on Mi Band 5 wrist data (wrist optical sensor, not MAX30102)"
+        gen_disclaimer = "Evaluated on single-subject time-ordered split. Demonstrates pipeline execution on real wrist data; does not generalize."
+    elif dominant_source in ["pulsepatch", "real_pulsepatch"]:
+        cohort_desc = "Educational volunteer protocol with PulsePatch optical sensor (1 subject, time-ordered split)"
+        sensor_note = "trained on PulsePatch fingertip optical sensor"
+        gen_disclaimer = "Single-subject protocol. Educational demonstration only."
+    else:
+        cohort_desc = "Educational volunteer resting and post-activity recovery protocol (synthetic pipeline test, not real validation; 10 modeled volunteers, 160 sessions)"
+        sensor_note = "modeled optical sensor simulation (synthetic pipeline test, not real validation)"
+        gen_disclaimer = "Synthetic pipeline test, not real validation."
+
     meta = {
         "model_name": "PulsePatch AI Insights",
-        "engine": "TensorFlow Lite",
+        "engine": "small neural network running locally in the app",
         "version": "1.0.0",
-        "training_date": "2026-10-24",
+        "training_date": "2026-10-25",
         "features": FEATURE_NAMES,
         "scaler": {
             "mean": scaler_mean,
@@ -169,8 +316,10 @@ def train_and_export_production_model(df: pd.DataFrame, out_meta_path: str, out_
         "labels": LABEL_NAMES,
         "architecture": "MLP (5 -> 16 -> 8 -> 2)",
         "weights": weights,
-        "non_diagnostic_disclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations.",
-        "training_cohort": "Educational volunteer resting and post-activity recovery protocol (synthetic bootstrap; 10 volunteers, 160 sessions)"
+        "training_cohort": cohort_desc,
+        "sensor_note": sensor_note,
+        "generalization_note": gen_disclaimer,
+        "non_diagnostic_disclaimer": "PulsePatch Lite is an educational prototype and does not provide medical diagnosis or health evaluations. Do not use wrist band as reference for sensor accuracy claims."
     }
 
     os.makedirs(os.path.dirname(out_meta_path), exist_ok=True)
@@ -183,6 +332,7 @@ def train_and_export_production_model(df: pd.DataFrame, out_meta_path: str, out_
 
     print(f"\nExported model metadata to: {out_meta_path}")
     print(f"Exported model weights to: {out_weights_path}")
+    print(f"Sensor Note: {sensor_note}")
     print(f"Fitted Scaler Mean: {scaler_mean}")
     print(f"Fitted Scaler Scale: {scaler_scale}")
 
@@ -190,32 +340,77 @@ def train_and_export_production_model(df: pd.DataFrame, out_meta_path: str, out_
 
 
 if __name__ == "__main__":
-    csv_path = "ml/data/training_cohort.csv"
+    parser = argparse.ArgumentParser(description="PulsePatch Lite ML Training Pipeline")
+    parser.add_argument("--data", type=str, default=None, help="Path to training CSV file (synthetic or real exported data)")
+    parser.add_argument("--export_production", action="store_true", default=False, help="Update production app model weights and metadata")
+    args = parser.parse_args()
+
+    csv_path = args.data
+    if csv_path is None:
+        csv_path = "ml/data/training_cohort.csv"
+        if not os.path.exists(csv_path):
+            from dataset import generate_synthetic_cohort, save_dataset_csv
+            cohort = generate_synthetic_cohort()
+            save_dataset_csv(cohort, csv_path)
+
     if not os.path.exists(csv_path):
-        from dataset import generate_synthetic_cohort, save_dataset_csv
-        cohort = generate_synthetic_cohort()
-        save_dataset_csv(cohort, csv_path)
+        print(f"Error: Training file not found at: {csv_path}")
+        sys.exit(1)
 
     df = pd.read_csv(csv_path)
-    print(f"Loaded training cohort: {len(df)} sessions across {df['subject_id'].nunique()} subjects.")
 
-    # 1. Run GroupKFold Evaluation across all baselines and MLP
-    cv_summary = evaluate_models_group_kfold(df, n_splits=5)
+    # Normalize column names if exported from app
+    if "subject_code" in df.columns and "subject_id" not in df.columns:
+        df["subject_id"] = df["subject_code"]
+    if "source" not in df.columns:
+        df["source"] = "synthetic"
 
-    # Save CV metrics report
+    # Derive labels if missing
+    df = derive_educational_labels_if_missing(df)
+
+    num_subjects = df["subject_id"].nunique()
+    sources = df["source"].unique().tolist()
+    print(f"\nLoaded dataset: {len(df)} sessions across {num_subjects} subject(s). Sources: {sources}")
+
     os.makedirs("ml/reports", exist_ok=True)
-    with open("ml/reports/cv_metrics.json", "w", encoding="utf-8") as f:
-        json.dump(cv_summary, f, indent=2)
-    print("Saved CV metrics report to ml/reports/cv_metrics.json")
 
-    # 2. Train and export production model metadata
+    # Separate evaluation per source
+    for src in sources:
+        df_src = df[df["source"] == src].copy()
+        print(f"\n>>> Evaluating Source: '{src}' ({len(df_src)} sessions) <<<")
+        src_subjects = df_src["subject_id"].nunique()
+
+        if src_subjects == 1:
+            report = evaluate_models_single_subject_time_split(df_src, test_ratio=0.25)
+        else:
+            report = evaluate_models_group_kfold(df_src, n_splits=5)
+
+        clean_src_name = src.replace("/", "_").replace(" ", "_")
+        report_path = f"ml/reports/metrics_{clean_src_name}.json"
+        with open(report_path, "w", encoding="utf-8") as f:
+            json.dump(report, f, indent=2)
+        print(f"Saved evaluation report for source '{src}' to: {report_path}")
+
+    # Primary overall evaluation
+    if num_subjects == 1:
+        overall_report = evaluate_models_single_subject_time_split(df, test_ratio=0.25)
+    else:
+        overall_report = evaluate_models_group_kfold(df, n_splits=5)
+
+    with open("ml/reports/cv_metrics.json", "w", encoding="utf-8") as f:
+        json.dump(overall_report, f, indent=2)
+    print("Saved primary metrics report to ml/reports/cv_metrics.json")
+
+    # Production Model Export
+    dominant_src = sources[0] if len(sources) > 0 else "synthetic"
     out_meta = "app/assets/ml/model_meta.json"
     out_weights = "ml/models/weights.json"
-    train_and_export_production_model(df, out_meta, out_weights)
 
-    # Also mirror into ml/models/
-    with open("ml/models/model_meta.json", "w", encoding="utf-8") as f:
-        with open(out_meta, "r", encoding="utf-8") as src:
-            f.write(src.read())
+    # If --export_production is passed OR it's the standard synthetic cohort, export production weights
+    if args.export_production or "synthetic" in sources:
+        train_and_export_production_model(df, out_meta, out_weights, dominant_source=dominant_src)
+        with open("ml/models/model_meta.json", "w", encoding="utf-8") as f:
+            with open(out_meta, "r", encoding="utf-8") as src_file:
+                f.write(src_file.read())
 
-    print("\nPhase 13 Training & Model Evaluation completed successfully.")
+    print("\nML Training & Evaluation pipeline completed successfully.")

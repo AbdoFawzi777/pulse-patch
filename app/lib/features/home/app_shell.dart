@@ -71,7 +71,7 @@ class _AppShellState extends ConsumerState<AppShell> {
       targetDuration: duration,
       source: bleSource.isSimulator
           ? SessionSource.simulator
-          : SessionSource.device,
+          : bleSource.source,
     );
 
     setState(() => _currentView = AppView.measureLive);

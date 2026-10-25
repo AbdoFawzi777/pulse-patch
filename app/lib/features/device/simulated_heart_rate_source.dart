@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math' as math;
+import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
 import 'heart_rate_source.dart';
 
@@ -63,6 +64,9 @@ class SimulatedHeartRateSource implements HeartRateSource {
 
   @override
   String get sourceLabel => 'Simulator';
+
+  @override
+  SessionSource get source => SessionSource.simulator;
 
   void _setState(BleConnectionState state) {
     if (_isDisposed) return;

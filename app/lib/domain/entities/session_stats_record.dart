@@ -13,6 +13,7 @@ class SessionStatsRecord {
     this.variabilityEstMs,
     required this.validSampleCount,
     required this.totalDurationSeconds,
+    this.avgSpo2,
   });
 
   final String sessionId;
@@ -27,6 +28,7 @@ class SessionStatsRecord {
   final double? variabilityEstMs;
   final int validSampleCount;
   final int totalDurationSeconds;
+  final double? avgSpo2;
 
   Map<String, dynamic> toJson() => {
     'sessionId': sessionId,
@@ -41,6 +43,7 @@ class SessionStatsRecord {
     'variabilityEstMs': variabilityEstMs,
     'validSampleCount': validSampleCount,
     'totalDurationSeconds': totalDurationSeconds,
+    'avgSpo2': avgSpo2,
   };
 
   factory SessionStatsRecord.fromJson(Map<String, dynamic> json) =>
@@ -57,5 +60,6 @@ class SessionStatsRecord {
         variabilityEstMs: (json['variabilityEstMs'] as num?)?.toDouble(),
         validSampleCount: json['validSampleCount'] as int,
         totalDurationSeconds: json['totalDurationSeconds'] as int,
+        avgSpo2: (json['avgSpo2'] as num?)?.toDouble(),
       );
 }

@@ -20,7 +20,7 @@ PulsePatch Lite is an educational, 100% offline-first biomonitoring platform eng
 | **Bilingual Localization** | English (LTR) & Arabic (RTL) | 100% localized, instant toggle | `app/lib/core/l10n/`, RTL widget tests |
 | **Offline Data Autonomy** | Zero internet data / telemetry | 100% offline local SQLite | `app/lib/data/`, privacy audit tests |
 | **Hardware & Simulation** | Real chip support + Simulator | Seamless fallback with labels | `firmware/src/main.cpp`, `ble_layer_test.dart` |
-| **Test Suite & CI** | All tests pass, analyze 0 warnings | 81/81 unit & widget tests pass, 0 analyze issues | `scripts/ci.ps1` clean pass |
+| **Test Suite & CI** | All tests pass, analyze 0 warnings | 107/107 unit, widget & fidelity tests pass, 0 analyze issues | `scripts/ci.ps1` clean pass |
 | **Release Build & Install** | Functional Android Release APK | Built fresh release APK (55.8 MB) and installed/launched on physical phone (`NIC LX2`, Android 15) | `flutter build apk --release` & `adb install` (Success) |
 | **Firmware Compilation** | Clean build for ESP32-C3 | PlatformIO `pio run` passed (Exit 0) | `firmware/.pio/build/esp32-c3-devkitm-1/firmware.bin` |
 | **Launcher Icon** | Configured from `App icon.png` | Applied to Android launcher | `flutter_launcher_icons` applied |
@@ -54,6 +54,10 @@ To ensure complete engineering transparency and academic integrity, every layer 
 | **MAX30102 Sensor I2C Perfusion & SNR** | **Not yet tested** | Physical fingertip photoplethysmography with real IR/Red LEDs and ambient light cancellation | Awaits physical sensor wiring (GPIO4 SDA, GPIO5 SCL, 3.3V) and real human fingers |
 | **Physical BLE Radio Range & Packet Loss** | **Not yet tested** | 2.4 GHz RF propagation, 12-byte notify latency, and attenuation through physical obstacles | Verified with simulated packet drops, pending physical BLE over-the-air pairing |
 | **Sensor Power & Battery Telemetry** | **Verified (Design & Spec)** | Hardware is powered by a small rechargeable battery (or USB-C while charging); lacks level telemetry (no fuel gauge or voltage divider) | Mobile app never displays battery percentage; packet byte 11 remains reserved |
+| **Standard BLE HR Service (0x180D/0x2A37)** | **Verified (Protocol & Parser)** | `StandardBleHeartRateSource` + `standard_ble_parser_test.dart` (7/7 unit tests) | 8-bit & 16-bit BPM, contact flags, RR intervals (1/1024s), and continuity-derived estimated quality |
+| **Xiaomi Mi Smart Band 5 Integration** | **Verified (Architecture & Logic)** | `MiBand5Source` with dual-mode support (Standard broadcast via Zepp Life + Huami protocol auth dialog) | Direct pairing standby pending physical over-the-air test on phone |
+| **File Import Adapter (CSV/JSON/Gadgetbridge)** | **Verified** | `ImportFileParser` + `import_parser_test.dart` (5/5 unit tests) | Automatically parses timestamps, HR, optional SpO2, and derives session stats |
+| **Real-Data ML Workflow & Training Export** | **Verified** | `exportTrainingCsv` in `session_repository.dart` + `train.py` single-subject time-ordered split | Verified on real Mi Band 5 exported format; 100% parity verified with Dart isolate runner |
 
 ---
 
@@ -253,7 +257,48 @@ Every screen in the application adheres strictly to the tokens extracted in `doc
 
 ---
 
-## 7. Real Hardware Owner Next Steps
+## 7. Real Hardware Owner Next Steps & Multi-Device Instructions
+
+### 7.1 Physical ESP32-C3 Firmware & Sensor Setup
+1. **Physical Sensor Flashing:**
+   Connect the ESP32-C3 via USB and run `pio run --target upload` in `firmware/`.
+2. **Physical Wire & Power Verification:**
+   Ensure MAX30102 `VIN` is connected to the ESP32-C3 board's **3.3V pin (NEVER 5V)**, common ground, and SDA=GPIO4, SCL=GPIO5 with 4.7kΩ pullups. The patch is powered by its small rechargeable battery (or USB-C while charging); no battery percentage is reported since the board lacks fuel gauge/divider telemetry.
+
+### 7.2 Xiaomi Mi Smart Band 5 Real-World Setup (Physical Band Testing)
+The app natively supports your Xiaomi Mi Smart Band 5 through two modes:
+
+#### Method A: Standard Heart Rate Sharing / Broadcast (Recommended — Zero Unpairing)
+1. Open the **Zepp Life** app on your phone.
+2. Navigate to **Profile -> Mi Smart Band 5 -> Heart rate monitoring**.
+3. Set Monitoring method to *Automatic heart rate monitoring* (e.g. 1 min interval) or continuous.
+4. Scroll down to **Heart rate sharing** (or *Heart rate broadcast* in some versions) and toggle it **ON**.
+5. Open **PulsePatch Lite** -> Tap **Connect Device** -> Tap **Scan**.
+6. Your Mi Smart Band 5 will be detected under **Compatible Heart Rate Monitors** exposing standard BLE Heart Rate Service `0x180D`.
+7. Tap **Connect**. Heart rate samples will stream directly into the live measurement screen without needing an auth key or unpairing from Zepp Life!
+
+#### Method B: Direct Huami Proprietary BLE Mode (Advanced)
+1. In Zepp Life, ensure the band is paired.
+2. To get the 16-byte authentication key:
+   - **Option 1 (Freemyband):** Obtain the auth key using [freemyband.com](https://www.freemyband.com) or modified Zepp Life APK logcat.
+   - **Option 2 (Root/ADB):** Query the Zepp Life SQLite database at `/data/data/com.xiaomi.hm.health/databases/origin_db_*` and read the `AUTH_KEY` column from table `DEVICE`.
+3. In PulsePatch Lite, open **Connect Device** -> tap the **gear icon (Advanced Mi Band Setup)** -> paste your 32-character hexadecimal key (16 bytes).
+4. Unpair or disconnect the band from Zepp Life (as Huami BLE mode requires an exclusive Bluetooth link).
+5. Connect directly to the band in PulsePatch Lite.
+
+### 7.3 Guided Training Data Collection & Model Training
+1. Put on your Mi Smart Band 5 and open PulsePatch Lite.
+2. Tap **Measure** -> Select **Guided Training Protocol**:
+   - **Resting Preset (60s):** Sit still in a quiet environment for 1 minute.
+   - **Post-Activity Recovery Preset (90s):** Walk briskly or climb stairs for 1 minute, then sit down immediately and start the 90s recovery recording.
+3. Repeat across multiple days to record real sessions with the band.
+4. Go to **Settings -> Privacy & Data Management** (or **Reports**) -> tap **Export for Training (CSV)**.
+5. Transfer the CSV to `ml/data/` on your computer and run:
+   ```bash
+   py ml/src/train.py --data ml/data/my_exported_sessions.csv --export_production
+   ```
+   The training pipeline will automatically detect your single-subject dataset, apply a time-ordered session split (no GroupKFold), train baseline models, and update the on-device model weights.
+
 
 Because physical ESP32-C3 hardware and human recordings were not physically connected during development, the following real-world tasks remain for the hardware owner:
 
@@ -276,7 +321,7 @@ cd app
 flutter run
 ```
 
-### Run the Full CI Test Suite (Formatting, Analyze, 81 Tests)
+### Run the Full CI Test Suite (Formatting, Analyze, 107 Tests)
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts/ci.ps1
 ```

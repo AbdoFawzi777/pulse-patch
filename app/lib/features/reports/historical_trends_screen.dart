@@ -147,178 +147,174 @@ class _HistoricalTrendsScreenState
             ),
             const SizedBox(height: 16.0),
             // Filters: Date range & Sample data tag
-                    Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      runSpacing: 6.0,
-                      children: [
-                        DateRangeFilter(
-                          selectedOption: _dateFilter,
-                          onChanged: (sel) => setState(() => _dateFilter = sel),
-                        ),
-                        StatusChip(
-                          label: bleSource.isSimulator
-                              ? 'Sample data'
-                              : 'Hardware',
-                          variant: StatusChipVariant.sample,
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12.0),
-                    // Protocol Selector Chips
-                    SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      physics: const BouncingScrollPhysics(),
-                      child: Row(
-                        children: [
-                          _FilterPill(
-                            label: 'All Protocols',
-                            isSelected: _protocolFilter == null,
-                            onTap: () => setState(() => _protocolFilter = null),
-                          ),
-                          const SizedBox(width: 8.0),
-                          _FilterPill(
-                            label: 'Resting',
-                            isSelected: _protocolFilter == SessionType.rest,
-                            onTap: () => setState(
-                              () => _protocolFilter = SessionType.rest,
-                            ),
-                          ),
-                          const SizedBox(width: 8.0),
-                          _FilterPill(
-                            label: 'Post-Activity',
-                            isSelected:
-                                _protocolFilter == SessionType.postActivity,
-                            onTap: () => setState(
-                              () => _protocolFilter = SessionType.postActivity,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 18.0),
-                    // Trend Chart Card
-                    MetricCard(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Wrap(
-                            alignment: WrapAlignment.spaceBetween,
-                            crossAxisAlignment: WrapCrossAlignment.center,
-                            runSpacing: 4.0,
-                            children: [
-                              const Text(
-                                'Optical Pulse Rate Trend',
-                                style: TextStyle(
-                                  fontFamily: 'Outfit',
-                                  fontSize: 16.0,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textPrimary,
-                                ),
-                              ),
-                              if (periodAvg != null)
-                                Text(
-                                  'Avg $periodAvg BPM',
-                                  style: const TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.accentCyan,
-                                  ),
-                                ),
-                            ],
-                          ),
-                          const SizedBox(height: 16.0),
-                          TrendChart(
-                            values: values,
-                            labels: labels,
-                            height: 140.0,
-                            lineColor: AppColors.accentBlue,
-                          ),
-                          const SizedBox(height: 10.0),
-                          const Center(
-                            child: Text(
-                              'Missing days show gaps · no fabricated data',
-                              style: TextStyle(
-                                fontFamily: 'Outfit',
-                                fontSize: 12.0,
-                                color: AppColors.textMuted,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 16.0),
-                    // Summary Statistics Grid
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _StatSummaryBox(
-                            title: 'Lowest recorded',
-                            value: periodMin != null ? '$periodMin BPM' : 'N/A',
-                          ),
-                        ),
-                        const SizedBox(width: 12.0),
-                        Expanded(
-                          child: _StatSummaryBox(
-                            title: 'Highest recorded',
-                            value: periodMax != null ? '$periodMax BPM' : 'N/A',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 14.0),
-                    // Written Educational Summary
-                    MetricCard(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(
-                            Icons.info_outline_rounded,
-                            color: AppColors.accentCyan,
-                            size: 20.0,
-                          ),
-                          const SizedBox(width: 12.0),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'Observation Summary',
-                                  style: TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 14.0,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.textPrimary,
-                                  ),
-                                ),
-                                const SizedBox(height: 4.0),
-                                Text(
-                                  validValues.isNotEmpty
-                                      ? 'Based on ${validValues.length} recorded time bins, heart rate averaged $periodAvg BPM across the selected interval. '
-                                            'All measurements were recorded locally on your device.'
-                                      : 'Insufficient recordings in this date range. Record more sessions to view longitudinal trends.',
-                                  style: const TextStyle(
-                                    fontFamily: 'Outfit',
-                                    fontSize: 13.0,
-                                    color: AppColors.textSecondary,
-                                    height: 1.35,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(height: 12.0),
-                  ],
+            Wrap(
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              runSpacing: 6.0,
+              children: [
+                DateRangeFilter(
+                  selectedOption: _dateFilter,
+                  onChanged: (sel) => setState(() => _dateFilter = sel),
                 ),
+                StatusChip(
+                  label: bleSource.isSimulator ? 'Sample data' : 'Hardware',
+                  variant: StatusChipVariant.sample,
+                ),
+              ],
+            ),
+            const SizedBox(height: 12.0),
+            // Protocol Selector Chips
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              physics: const BouncingScrollPhysics(),
+              child: Row(
+                children: [
+                  _FilterPill(
+                    label: 'All Protocols',
+                    isSelected: _protocolFilter == null,
+                    onTap: () => setState(() => _protocolFilter = null),
+                  ),
+                  const SizedBox(width: 8.0),
+                  _FilterPill(
+                    label: 'Resting',
+                    isSelected: _protocolFilter == SessionType.rest,
+                    onTap: () =>
+                        setState(() => _protocolFilter = SessionType.rest),
+                  ),
+                  const SizedBox(width: 8.0),
+                  _FilterPill(
+                    label: 'Post-Activity',
+                    isSelected: _protocolFilter == SessionType.postActivity,
+                    onTap: () => setState(
+                      () => _protocolFilter = SessionType.postActivity,
+                    ),
+                  ),
+                ],
               ),
-            );
+            ),
+            const SizedBox(height: 18.0),
+            // Trend Chart Card
+            MetricCard(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    runSpacing: 4.0,
+                    children: [
+                      const Text(
+                        'Optical Pulse Rate Trend',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                      if (periodAvg != null)
+                        Text(
+                          'Avg $periodAvg BPM',
+                          style: const TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.accentCyan,
+                          ),
+                        ),
+                    ],
+                  ),
+                  const SizedBox(height: 16.0),
+                  TrendChart(
+                    values: values,
+                    labels: labels,
+                    height: 140.0,
+                    lineColor: AppColors.accentBlue,
+                  ),
+                  const SizedBox(height: 10.0),
+                  const Center(
+                    child: Text(
+                      'Missing days show gaps · no fabricated data',
+                      style: TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 12.0,
+                        color: AppColors.textMuted,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 16.0),
+            // Summary Statistics Grid
+            Row(
+              children: [
+                Expanded(
+                  child: _StatSummaryBox(
+                    title: 'Lowest recorded',
+                    value: periodMin != null ? '$periodMin BPM' : 'N/A',
+                  ),
+                ),
+                const SizedBox(width: 12.0),
+                Expanded(
+                  child: _StatSummaryBox(
+                    title: 'Highest recorded',
+                    value: periodMax != null ? '$periodMax BPM' : 'N/A',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14.0),
+            // Written Educational Summary
+            MetricCard(
+              padding: const EdgeInsets.all(18.0),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: AppColors.accentCyan,
+                    size: 20.0,
+                  ),
+                  const SizedBox(width: 12.0),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Observation Summary',
+                          style: TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textPrimary,
+                          ),
+                        ),
+                        const SizedBox(height: 4.0),
+                        Text(
+                          validValues.isNotEmpty
+                              ? 'Based on ${validValues.length} recorded time bins, heart rate averaged $periodAvg BPM across the selected interval. '
+                                    'All measurements were recorded locally on your device.'
+                              : 'Insufficient recordings in this date range. Record more sessions to view longitudinal trends.',
+                          style: const TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 13.0,
+                            color: AppColors.textSecondary,
+                            height: 1.35,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12.0),
+          ],
+        ),
+      ),
+    );
   }
 }
 

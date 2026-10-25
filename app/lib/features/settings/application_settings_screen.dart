@@ -234,9 +234,7 @@ class _ApplicationSettingsScreenState
                                 child: GestureDetector(
                                   onTap: () => _updateDuration(sec),
                                   child: AnimatedContainer(
-                                    duration: const Duration(
-                                      milliseconds: 200,
-                                    ),
+                                    duration: const Duration(milliseconds: 200),
                                     padding: const EdgeInsets.symmetric(
                                       vertical: 10.0,
                                     ),
@@ -244,9 +242,7 @@ class _ApplicationSettingsScreenState
                                       color: isSelected
                                           ? const Color(0xFFFFFFFF)
                                           : const Color(0xFF0B1840),
-                                      borderRadius: BorderRadius.circular(
-                                        12.0,
-                                      ),
+                                      borderRadius: BorderRadius.circular(12.0),
                                     ),
                                     child: Center(
                                       child: Text(
@@ -338,10 +334,7 @@ class _ApplicationSettingsScreenState
                             );
                           },
                         ),
-                        const Divider(
-                          color: Color(0xFF1B2A66),
-                          height: 1.0,
-                        ),
+                        const Divider(color: Color(0xFF1B2A66), height: 1.0),
                         _buildNavTile(
                           icon: Icons.alarm_rounded,
                           title: 'Reminder Settings',
@@ -349,16 +342,12 @@ class _ApplicationSettingsScreenState
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (_) =>
-                                    const ReminderSettingsScreen(),
+                                builder: (_) => const ReminderSettingsScreen(),
                               ),
                             );
                           },
                         ),
-                        const Divider(
-                          color: Color(0xFF1B2A66),
-                          height: 1.0,
-                        ),
+                        const Divider(color: Color(0xFF1B2A66), height: 1.0),
                         _buildNavTile(
                           icon: Icons.psychology_rounded,
                           title: 'AI Model Information',
@@ -372,10 +361,7 @@ class _ApplicationSettingsScreenState
                             );
                           },
                         ),
-                        const Divider(
-                          color: Color(0xFF1B2A66),
-                          height: 1.0,
-                        ),
+                        const Divider(color: Color(0xFF1B2A66), height: 1.0),
                         _buildNavTile(
                           icon: Icons.info_outline_rounded,
                           title: 'About PulsePatch Lite',
