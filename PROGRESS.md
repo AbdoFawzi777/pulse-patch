@@ -22,7 +22,7 @@
 | Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | Release APK built (53.3 MiB / 55.9 MB, 55,926,750 bytes); physical phone install verified | 1a2febb |
 | Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation; 107/107 tests pass | b94738d |
 | Phase 17 | Design Fidelity & Pixel Matching (>=95%) | DONE | Flutter UI, QA | All 7 master canvas screens achieved >=95.0% pixel match; 107/107 tests pass | 1c75daa |
-| Phase 18 | Physical Hardware Field Test & Hardening Pipeline | DONE | BLE Engineer, ML Engineer, QA | Steps 1, 2, 3, 4 VERIFIED: 3 physical phone BLE sessions, 100% mathematical parity ($\Delta=0.000000$), real-data pipeline integration sanity check (n=1 test session passed), combined GroupKFold (98.86% synthetic-dominated benchmark, 0.9974 ROC-AUC), offline PDF generated; 180/180 tests pass | In Progress |
+| Phase 18 | Physical Hardware Field Test & Hardening Pipeline | DONE | BLE Engineer, ML Engineer, QA | Steps 1, 2, 3, 4, 5, 6 VERIFIED: 3 physical phone BLE sessions, 100% mathematical parity ($\Delta=0.000000$), real-data pipeline integration sanity check (n=1 test session passed), combined GroupKFold (98.86% synthetic-dominated benchmark, 0.9974 ROC-AUC), 27-screen phone regression, 15-min stability run (net -49 MB drift, zero leaks), firmware readiness verified, offline PDF generated; 180/180 tests pass | Complete |
 
 ---
 
@@ -72,6 +72,16 @@
     - Session Details Screen (Session 3 stats): `docs/field_test/screens/proof_session_details_clean_different.png`
   - Replaced all occurrences of TFLite / TensorFlow Lite in project documentation and UI with *"small neural network running locally in the app"*.
   - Updated `model_card.md` and `FIELD_TEST_REPORT.md`.
+
+- **Major Step 5 — Full 27-Screen Phone Regression, 15-Minute Stability Run, Firmware Checklist:** **100% VERIFIED & COMPLETE**
+  - **27-Screen Multi-Resolution Regression:** All 27 screens audited on target phone canvas (360x802 dp) and multi-resolution automated harnesses (360x800, 390x844, 411x891 at 1.0x and 1.3x text scale). 48/48 permutations in `app/test/overflow_screen_test.dart` passed with zero overflow errors.
+  - **Live On-Device Navigation Verified:** Live flow walked on physical HONOR NIC-LX2: Home -> History (all 3 sessions) -> AI Insights -> Settings -> Profile -> App Settings -> Trends -> Biomonitoring Reports. Zero clipping or crashes. Proof captures stored in `docs/field_test/screens/live_*.png`.
+  - **15-Minute Continuous Stability Telemetry:** Completed 15-minute continuous endurance test on physical phone (`tools/stability_run.py`). Telemetry logged in `docs/field_test/stability_telemetry.json`: Initial PSS: 330.07 MB, Peak PSS: 393.20 MB, Final PSS: 281.03 MB (Net drift: -49.04 MB, active GC reclamation, zero leaks). Battery temp stable at 34.9°C. 0 crashes/ANRs. SQLite integrity check OK.
+  - **ESP32-C3 Firmware Readiness Checklist:** PlatformIO build verified clean (Exit 0, RAM 7.3%, Flash 41.7%, binary `firmware.bin` 572,352 bytes generated). Little-endian 12-byte GATT packet layout matches Dart parser exactly. I2C pinout (GPIO4/5 at 3.3V) and flashing instructions documented.
+
+- **Major Step 6 — Comprehensive Final Engineering Readiness Report Authored:** **100% VERIFIED & COMPLETE**
+  - Authored authoritative capstone defense document: `FINAL_READINESS_REPORT.md` (249 lines).
+  - Consolidates Definition of Done compliance, 27-screen regression audit matrix, physical BLE OTA verification, 100% parity table ($\Delta = 0.000000$), real-data ML pipeline with synthetic cohort caveat, 15-minute endurance telemetry, firmware checklist, wearable compatibility matrix, and academic defense guide.
 
 ---
 

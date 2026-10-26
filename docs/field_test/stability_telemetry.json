@@ -1,0 +1,252 @@
+{
+  "device": "NIC-LX2",
+  "android_version": "15",
+  "duration_minutes": 15,
+  "total_samples": 15,
+  "initial_pss_mb": 330.07,
+  "final_pss_mb": 281.03,
+  "pss_drift_mb": -49.04,
+  "db_integrity": "ok (verified via drift FFI runtime)",
+  "samples": [
+    {
+      "minute": 1,
+      "elapsed_seconds": 2,
+      "meminfo": {
+        "total_pss_kb": 337993,
+        "total_pss_mb": 330.07,
+        "native_heap_kb": 8402,
+        "dalvik_heap_kb": 1025
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:41:22"
+    },
+    {
+      "minute": 2,
+      "elapsed_seconds": 63,
+      "meminfo": {
+        "total_pss_kb": 344734,
+        "total_pss_mb": 336.65,
+        "native_heap_kb": 12307,
+        "dalvik_heap_kb": 7834
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:42:22"
+    },
+    {
+      "minute": 3,
+      "elapsed_seconds": 123,
+      "meminfo": {
+        "total_pss_kb": 340717,
+        "total_pss_mb": 332.73,
+        "native_heap_kb": 11128,
+        "dalvik_heap_kb": 7653
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:43:23"
+    },
+    {
+      "minute": 4,
+      "elapsed_seconds": 184,
+      "meminfo": {
+        "total_pss_kb": 338999,
+        "total_pss_mb": 331.05,
+        "native_heap_kb": 10530,
+        "dalvik_heap_kb": 7017
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:44:23"
+    },
+    {
+      "minute": 5,
+      "elapsed_seconds": 244,
+      "meminfo": {
+        "total_pss_kb": 346615,
+        "total_pss_mb": 338.49,
+        "native_heap_kb": 10455,
+        "dalvik_heap_kb": 7641
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:45:24"
+    },
+    {
+      "minute": 6,
+      "elapsed_seconds": 305,
+      "meminfo": {
+        "total_pss_kb": 339335,
+        "total_pss_mb": 331.38,
+        "native_heap_kb": 12059,
+        "dalvik_heap_kb": 5910
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:46:24"
+    },
+    {
+      "minute": 7,
+      "elapsed_seconds": 365,
+      "meminfo": {
+        "total_pss_kb": 344777,
+        "total_pss_mb": 336.7,
+        "native_heap_kb": 12013,
+        "dalvik_heap_kb": 7671
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:47:25"
+    },
+    {
+      "minute": 8,
+      "elapsed_seconds": 426,
+      "meminfo": {
+        "total_pss_kb": 339582,
+        "total_pss_mb": 331.62,
+        "native_heap_kb": 10869,
+        "dalvik_heap_kb": 6254
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:48:25"
+    },
+    {
+      "minute": 9,
+      "elapsed_seconds": 486,
+      "meminfo": {
+        "total_pss_kb": 341652,
+        "total_pss_mb": 333.64,
+        "native_heap_kb": 11598,
+        "dalvik_heap_kb": 7342
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:49:26"
+    },
+    {
+      "minute": 10,
+      "elapsed_seconds": 547,
+      "meminfo": {
+        "total_pss_kb": 342377,
+        "total_pss_mb": 334.35,
+        "native_heap_kb": 10644,
+        "dalvik_heap_kb": 7851
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:50:26"
+    },
+    {
+      "minute": 11,
+      "elapsed_seconds": 608,
+      "meminfo": {
+        "total_pss_kb": 402655,
+        "total_pss_mb": 393.22,
+        "native_heap_kb": 10533,
+        "dalvik_heap_kb": 5473
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:51:27"
+    },
+    {
+      "minute": 12,
+      "elapsed_seconds": 668,
+      "meminfo": {
+        "total_pss_kb": 285111,
+        "total_pss_mb": 278.43,
+        "native_heap_kb": 10808,
+        "dalvik_heap_kb": 7562
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:52:28"
+    },
+    {
+      "minute": 13,
+      "elapsed_seconds": 729,
+      "meminfo": {
+        "total_pss_kb": 289886,
+        "total_pss_mb": 283.09,
+        "native_heap_kb": 9969,
+        "dalvik_heap_kb": 7428
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:53:28"
+    },
+    {
+      "minute": 14,
+      "elapsed_seconds": 789,
+      "meminfo": {
+        "total_pss_kb": 275570,
+        "total_pss_mb": 269.11,
+        "native_heap_kb": 8311,
+        "dalvik_heap_kb": 1344
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:54:29"
+    },
+    {
+      "minute": 15,
+      "elapsed_seconds": 850,
+      "meminfo": {
+        "total_pss_kb": 287771,
+        "total_pss_mb": 281.03,
+        "native_heap_kb": 10967,
+        "dalvik_heap_kb": 7458
+      },
+      "system": {
+        "cpu_percent": 31064.0,
+        "battery_level": 100,
+        "battery_temp_c": 34.9
+      },
+      "timestamp": "2026-10-26 16:55:29"
+    }
+  ]
+}
