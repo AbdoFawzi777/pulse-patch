@@ -5,7 +5,7 @@
 **Evaluation Target:** HONOR `NIC-LX2` (Android 15, API level 35, Serial: `A9VUCP5A08407069`)  
 **Target Hardware:** Espressif ESP32-C3 DevKitM-1 + Maxim Integrated MAX30102 Optical PPG Sensor  
 **Date:** October 26, 2026  
-**Final Status:** **100% PRODUCTION-READY & DEFENSE-READY**  
+**Final Status:** **Software stack verified end-to-end on real BLE hardware and ready for chip integration; physical ESP32-C3 + MAX30102 testing still pending.**  
 **Repository Working Directory:** `E:\pulse patch`  
 
 ---
@@ -14,17 +14,18 @@
 
 PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonitoring platform bridging an embedded **ESP32-C3 RISC-V microcontroller** with a **MAX30102 optical photoplethysmography sensor** over Bluetooth Low Energy to a **Flutter mobile client** featuring **local SQLite persistence (Pure C / FFI)**, **on-device machine learning pattern analysis**, and full **bilingual localization (English LTR & Arabic RTL)**.
 
-### Final Verification Verdict: **READY FOR GRADUATION DEFENSE**
+### Final Verification Verdict: **SOFTWARE STACK DEFENSE-READY (Physical Hardware Integration Pending)**
+- **Hardware Integration Scope:** Phase 14 (physical ESP32-C3 + MAX30102 breadboard wiring and optical sensor testing) is **explicitly PENDING** due to physical sensor hardware availability. The complete software stack—including firmware source code and binary compilation, mobile application, database layer, BLE ingestion, ML inference, and PDF reporting—is fully verified and defense-ready.
 - **Test Suite:** **180 / 180 tests passing (100% pass rate)**.
 - **Static Analysis:** `flutter analyze` clean (**0 issues found**).
 - **Physical Phone Installation:** Verified on physical `HONOR NIC-LX2` running Android 15.
-- **Physical BLE Over-The-Air Streaming:** 3 complete sessions recorded over BLE from `PulsePatch-SimHR` (255 valid packets received).
+- **Physical BLE Over-The-Air Streaming:** 3 complete sessions recorded over BLE from real peripheral `PulsePatch-SimHR` (255 valid packets received).
 - **Mathematical Parity:** **100% exact numerical match ($\Delta = 0.000000$)** across all 11 statistical features between raw packet recomputation and app-stored database features.
 - **Discriminative On-Device Inference:** Proved on physical hardware that the on-device small neural network classifier correctly yields both educational pattern labels (`Typical pattern` and `Different pattern`) from real auto-triggered inference without heuristic fallback bias.
-- **Model Training on Real Data:** Integrated all 3 real phone-recorded sessions with the synthetic cohort; passed the single-subject integration/pipeline sanity check (n=1 test session) and achieved 98.86% on the 11-subject GroupKFold synthetic-dominated benchmark with zero Python-vs-Dart parity discrepancy.
+- **Model Training on Real Data:** Integrated all 3 real phone-recorded sessions with the synthetic cohort; passed the single-subject integration/pipeline sanity check (n=1 test session) and achieved 98.86% on the 11-subject GroupKFold synthetic-dominated benchmark (with explicit caveat that 10/11 subjects are synthetic) with zero Python-vs-Dart parity discrepancy.
 - **Offline PDF Biomonitoring Report:** 100% offline generation verified ([pulse_patch_biomonitoring_report.pdf](file:///e:/pulse%20patch/docs/field_test/reports/pulse_patch_biomonitoring_report.pdf), 6,953 bytes) with full data origin separation.
-- **27-Screen Full Regression:** All 27 application screens verified on phone canvas without visual clipping, text truncation, or overflow errors.
-- **Firmware Readiness:** PlatformIO build verified clean (Exit 0, RAM 7.3%, Flash 41.7%, binary `firmware.bin` 572,352 bytes generated).
+- **27-Screen Full Regression:** All 27 application screens audited on phone canvas without layout overflows. 6 master screens + icon evaluated for design fidelity (SSIM 86.1%-92.8%, Pixel Match 93.3%-96.8%; Icon 99.1% SSIM / 100% Match; Connect Device 65.0% SSIM / 74.1% Match due to live UI); all 21 derived screens verified for 0 overflow errors and gesture navigation (no design fidelity comparison claimed for derived screens, as no baseline mockups exist).
+- **Firmware Readiness:** PlatformIO build verified clean (Exit 0, RAM 7.3%, Flash 41.7%, binary `firmware.bin` 572,352 bytes generated); 12-byte GATT packet layout matches Dart decoder byte-for-byte.
 - **Non-Diagnostic Scope:** 100% compliance with non-diagnostic boundaries (strictly educational pulse monitoring, zero diagnostic claims, zero medical terminology).
 
 ---
@@ -33,8 +34,8 @@ PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonito
 
 | Requirement | Plan Specification | Achieved Production State | Verification Evidence |
 |---|---|---|---|
-| **Design Canvas Matching** | 6 master screens matched to canvas design | All 7 master targets achieved $\ge 95.0\%$ pixel match at 390x844 logical dp | Golden tests in `app/test/fidelity_screen_test.dart` (7/7 pass) |
-| **Complete Screen Inventory** | 6 canvas + 21 derived screens = 27 total screens | All 27 screens implemented, tested, and visually confirmed on phone | `docs/screenshots/01_splash.png`–`27_app_icon.png` and on-device screenshots |
+| **Design Canvas Matching** | 6 master screens matched to canvas design | Master screens measured via `scripts/compare_fidelity.py`: SSIM 86.1%–92.8% across primary screens (Icon 99.1%, Connect Device 65.0%), Pixel Match 93.3%–96.8% (Icon 100.0%, Connect Device 74.1%). Note: Earlier $\ge 95\%$ claims conflated Pixel Match with SSIM. | `scripts/compare_fidelity.py` and `app/test/fidelity_screen_test.dart` |
+| **Complete Screen Inventory** | 6 canvas + 21 derived screens = 27 total screens | All 27 screens implemented; 6 master screens matched to design mockups; 21 derived screens pass overflow tests and live phone navigation (no design mockup exists for derived screens) | `docs/screenshots/01_splash.png`–`27_app_icon.png` and `overflow_screen_test.dart` |
 | **Bilingual Localization** | English (LTR) and Arabic (RTL) | 100% string coverage across both languages with instant live toggle | `app/lib/core/l10n/`, RTL widget tests pass |
 | **100% Offline Autonomy** | Zero cloud calls, zero telemetry, local DB | Pure C / FFI SQLite engine (`drift`), zero network dependencies | Privacy audit tests, offline mode inspection |
 | **Hardware & Simulation** | Real sensor support + deterministic simulator | Dual-engine architecture with automatic or manual fallback and UI transparency | `firmware/src/main.cpp`, `UnifiedHeartRateSource` |
@@ -49,37 +50,42 @@ PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonito
 
 ## 3. Comprehensive 27-Screen Phone Regression Matrix
 
-All 27 screens were audited on the physical target hardware (HONOR `NIC-LX2`, 360 x 802 dp logical canvas, 320 dpi, Android 15) and across multi-resolution test harnesses (360x800, 390x844, 411x891 at 1.0x and 1.3x text scaling). Zero layout overflows, unhandled exceptions, or visual occlusions exist.
+All 27 screens were audited on the physical target hardware (HONOR `NIC-LX2`, 360 x 802 dp logical canvas, 320 dpi, Android 15) and across multi-resolution test harnesses (360x800, 390x844, 411x891 at 1.0x and 1.3x text scaling).
 
-| # | Screen Name | Route / Class | Canvas Target | Resolution Tested | Overflow Audit | Physical Verification Evidence |
+> [!NOTE]
+> **Scope Clarification on "0 issues":**
+> - For the **6 master canvas screens + App Icon**, "0 issues" reflects both zero layout overflow errors AND measured design fidelity against the HTML/CSS design references via `scripts/compare_fidelity.py`.
+> - For the **21 derived screens**, "0 issues" denotes **zero layout overflow test failures** across all 48 test permutations, plus clean physical on-device navigation without crashes or ANRs. No visual fidelity or SSIM matching is claimed for derived screens, as no Figma/HTML design reference exists for them.
+
+| # | Screen Name | Route / Class | Category & Design Baseline Status | Resolution Tested | Overflow Audit | Physical Navigation Verification Evidence |
 |---|---|---|---|---|---|---|
-| **01** | Splash Screen | `SplashScreen` | `01_splash.png` | 360x802 dp | 0 issues | Clean animated pulse logo on `#04030C` background |
-| **02** | Welcome | `WelcomeScreen` | `02_welcome.png` | 360x802 dp | 0 issues | Value cards clear status and gesture bars |
-| **03** | How It Works | `HowItWorksScreen` | `03_how_it_works.png` | 360x802 dp | 0 issues | 5-step numbered scrollable instruction list |
-| **04** | User Preferences | `UserPreferencesScreen` | `04_user_preferences.png` | 360x802 dp | 0 issues | Profile setup input fields and units selector |
-| **05** | Permissions | `PermissionsScreen` | `05_permissions.png` | 360x802 dp | 0 issues | Pre-permission education cards with grant actions |
-| **06** | Home Dashboard | `HomeScreen` | `Home.png` (96.2% match) | 360x802 dp | 0 issues | Layered pulse heart, last session card, AI card ([proof_home_different_pattern.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_home_different_pattern.png)) |
-| **07** | Connect Device | `ConnectDeviceScreen` | `Connect device.png` (95.1%) | 360x802 dp | 0 issues | Collapsing radar header, masked MACs, HR filter ([proof_01_scan_list_pulsepatch_simhr.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_01_scan_list_pulsepatch_simhr.png)) |
-| **08** | Troubleshooting | `DeviceTroubleshootingScreen`| `08_device_troubleshooting.png` | 360x802 dp | 0 issues | 4-card diagnostic guide for BLE and sensor faults |
-| **09** | Measurement Prep | `MeasurementPreparationScreen` | `09_measurement_prep.png` | 360x802 dp | 0 issues | Resting vs Post-Activity chips with duration selector |
-| **10** | Live Measuring (Sim) | `LiveMeasurementScreen` | `Measuring.png` (95.4% match) | 360x802 dp | 0 issues | 120-sample optical waveform trace with countdown |
-| **11** | Live Measuring (BLE) | `LiveMeasurementScreen` | `11_live_measuring_real_device.png` | 360x802 dp | 0 issues | Live BPM trend line, packet rate, SQI quality pill |
-| **12** | Complete Summary | `MeasurementCompleteScreen` | `Heart Rate.png` (96.8% match) | 360x802 dp | 0 issues | Hero BPM number, summary dot chart, save action |
-| **13** | AI Dashboard | `AiInsightsDashboardScreen` | `AI Insights.png` (96.0% match) | 360x802 dp | 0 issues | 5-metric cards, explanation, local NN footer ([proof_ai_insights_different_pattern.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_ai_insights_different_pattern.png)) |
-| **14** | Pattern Analysis | `SessionPatternAnalysisScreen`| `14_session_pattern_analysis.png` | 360x802 dp | 0 issues | Session pattern label and historical context |
-| **15** | Recovery Analysis | `RecoveryAnalysisScreen` | `15_recovery_analysis.png` | 360x802 dp | 0 issues | 60s recovery drop banner, 90s curve ([proof_recovery_analysis_screen.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_recovery_analysis_screen.png)) |
-| **16** | Historical Trends | `HistoricalTrendsScreen` | `16_historical_trends.png` | 360x802 dp | 0 issues | Trend bar chart with gap handling, protocol filters ([live_nav_reports_screen_real.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_reports_screen_real.png)) |
-| **17** | AI Model Info | `AiModelInfoScreen` | `17_ai_model_info.png` | 360x802 dp | 0 issues | 233-parameter MLP disclosure, training cohort note |
-| **18** | History Log | `MeasurementHistoryScreen` | `History.png` (96.4% match) | 360x802 dp | 0 issues | Chronological session list with all 3 sessions ([proof_history_all_sessions.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_history_all_sessions.png)) |
-| **19** | Session Details | `SessionDetailsScreen` | `19_session_details.png` | 360x802 dp | 0 issues | Full metrics, pulse intervals, delete action ([proof_session_details_clean_different.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_session_details_clean_different.png)) |
-| **20** | Biomonitoring Reports| `ReportsScreen` | `20_reports.png` | 360x802 dp | 0 issues | Summary cards, origin notice, PDF export ([live_nav_reports_screen_final.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_reports_screen_final.png)) |
-| **21** | Profile & Preferences | `ProfilePreferencesScreen` | `21_profile_preferences.png` | 360x802 dp | 0 issues | Units toggle, bilingual English/Arabic switch ([live_nav_profile.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_profile.png)) |
-| **22** | Settings | `ApplicationSettingsScreen` | `22_application_settings.png` | 360x802 dp | 0 issues | Auto-reconnect, duration selector, nav tiles ([live_nav_app_settings_2.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_app_settings_2.png)) |
-| **23** | Notifications | `NotificationsCenterScreen` | `23_notifications_center.png` | 360x802 dp | 0 issues | Biomonitoring alert event log and clear actions |
-| **24** | Reminders | `ReminderSettingsScreen` | `24_reminder_settings.png` | 360x802 dp | 0 issues | Passive measurement reminder scheduling |
-| **25** | Privacy & Data | `PrivacyDataManagementScreen`| `25_privacy_data.png` | 360x802 dp | 0 issues | 100% offline notice, CSV export, DB purge action |
-| **26** | About | `AboutScreen` | `26_about.png` | 360x802 dp | 0 issues | Project architecture stack, non-diagnostic notice |
-| **27** | Launcher Icon | `AppIconWidget` | `App icon.png` (97.1% match) | 512x512 px | 0 issues | Multi-resolution Android mipmap launcher icons |
+| **01** | Splash Screen | `SplashScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Clean animated pulse logo on `#04030C` background |
+| **02** | Welcome | `WelcomeScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Value cards clear status and gesture bars |
+| **03** | How It Works | `HowItWorksScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | 5-step numbered scrollable instruction list |
+| **04** | User Preferences | `UserPreferencesScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Profile setup input fields and units selector |
+| **05** | Permissions | `PermissionsScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Pre-permission education cards with grant actions |
+| **06** | Home Dashboard | `HomeScreen` | **Master Canvas** (`Home.png`: SSIM 86.1%, Match 94.3%) | 360x802 dp | 0 overflow errors | Layered pulse heart, last session card, AI card ([proof_home_different_pattern.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_home_different_pattern.png)) |
+| **07** | Connect Device | `ConnectDeviceScreen` | **Master Canvas** (`Connect device.png`: SSIM 65.0%, Match 74.1% - dynamic live UI) | 360x802 dp | 0 overflow errors | Collapsing radar header, masked MACs, HR filter ([proof_01_scan_list_pulsepatch_simhr.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_01_scan_list_pulsepatch_simhr.png)) |
+| **08** | Troubleshooting | `DeviceTroubleshootingScreen`| Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | 4-card diagnostic guide for BLE and sensor faults |
+| **09** | Measurement Prep | `MeasurementPreparationScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Resting vs Post-Activity chips with duration selector |
+| **10** | Live Measuring (Sim) | `LiveMeasurementScreen` | **Master Canvas** (`Measuring.png`: SSIM 91.1%, Match 95.1%) | 360x802 dp | 0 overflow errors | 120-sample optical waveform trace with countdown |
+| **11** | Live Measuring (BLE) | `LiveMeasurementScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Live BPM trend line, packet rate, SQI quality pill |
+| **12** | Complete Summary | `MeasurementCompleteScreen` | **Master Canvas** (`Heart Rate.png`: SSIM 92.8%, Match 96.8%) | 360x802 dp | 0 overflow errors | Hero BPM number, summary dot chart, save action |
+| **13** | AI Dashboard | `AiInsightsDashboardScreen` | **Master Canvas** (`AI Insights.png`: SSIM 86.8%, Match 93.3%) | 360x802 dp | 0 overflow errors | 5-metric cards, explanation, local NN footer ([proof_ai_insights_different_pattern.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_ai_insights_different_pattern.png)) |
+| **14** | Pattern Analysis | `SessionPatternAnalysisScreen`| Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Session pattern label and historical context |
+| **15** | Recovery Analysis | `RecoveryAnalysisScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | 60s recovery drop banner, 90s curve ([proof_recovery_analysis_screen.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_recovery_analysis_screen.png)) |
+| **16** | Historical Trends | `HistoricalTrendsScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Trend bar chart with gap handling, protocol filters ([live_nav_reports_screen_real.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_reports_screen_real.png)) |
+| **17** | AI Model Info | `AiModelInfoScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | 233-parameter MLP disclosure, training cohort note |
+| **18** | History Log | `MeasurementHistoryScreen` | **Master Canvas** (`History.png`: SSIM 87.4%, Match 93.9%) | 360x802 dp | 0 overflow errors | Chronological session list with all 3 sessions ([proof_history_all_sessions.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_history_all_sessions.png)) |
+| **19** | Session Details | `SessionDetailsScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Full metrics, pulse intervals, delete action ([proof_session_details_clean_different.png](file:///e:/pulse%20patch/docs/field_test/screens/proof_session_details_clean_different.png)) |
+| **20** | Biomonitoring Reports| `ReportsScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Summary cards, origin notice, PDF export ([live_nav_reports_screen_final.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_reports_screen_final.png)) |
+| **21** | Profile & Preferences | `ProfilePreferencesScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Units toggle, bilingual English/Arabic switch ([live_nav_profile.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_profile.png)) |
+| **22** | Settings | `ApplicationSettingsScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Auto-reconnect, duration selector, nav tiles ([live_nav_app_settings_2.png](file:///e:/pulse%20patch/docs/field_test/screens/live_nav_app_settings_2.png)) |
+| **23** | Notifications | `NotificationsCenterScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Biomonitoring alert event log and clear actions |
+| **24** | Reminders | `ReminderSettingsScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Passive measurement reminder scheduling |
+| **25** | Privacy & Data | `PrivacyDataManagementScreen`| Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | 100% offline notice, CSV export, DB purge action |
+| **26** | About | `AboutScreen` | Derived Screen (Tokens only, no baseline) | 360x802 dp | 0 overflow errors | Project architecture stack, non-diagnostic notice |
+| **27** | Launcher Icon | `AppIconWidget` | **Master Canvas** (`App icon.png`: SSIM 99.1%, Match 100.0%) | 512x512 px | 0 overflow errors | Multi-resolution Android mipmap launcher icons |
 
 ---
 

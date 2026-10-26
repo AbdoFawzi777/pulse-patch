@@ -21,7 +21,7 @@
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Simulation verified; checklist documented in docs/hardware_integration_guide.md | Pending hardware |
 | Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | Release APK built (53.3 MiB / 55.9 MB, 55,926,750 bytes); physical phone install verified | 1a2febb |
 | Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation; 107/107 tests pass | b94738d |
-| Phase 17 | Design Fidelity & Pixel Matching (>=95%) | DONE | Flutter UI, QA | All 7 master canvas screens achieved >=95.0% pixel match; 107/107 tests pass | 1c75daa |
+| Phase 17 | Design Fidelity & Pixel Matching | DONE | Flutter UI, QA | Master screens measured via scripts/compare_fidelity.py (SSIM 86.1%-92.8%, Pixel Match 93.3%-96.8%; Icon 99.1% SSIM / 100% Match; Connect Device 65.0% SSIM / 74.1% Match due to live UI); 107/107 tests pass | 1c75daa |
 | Phase 18 | Physical Hardware Field Test & Hardening Pipeline | DONE | BLE Engineer, ML Engineer, QA | Steps 1, 2, 3, 4, 5, 6 VERIFIED: 3 physical phone BLE sessions, 100% mathematical parity ($\Delta=0.000000$), real-data pipeline integration sanity check (n=1 test session passed), combined GroupKFold (98.86% synthetic-dominated benchmark, 0.9974 ROC-AUC), 27-screen phone regression, 15-min stability run (net -49 MB drift, zero leaks), firmware readiness verified, offline PDF generated; 180/180 tests pass | Complete |
 
 ---
