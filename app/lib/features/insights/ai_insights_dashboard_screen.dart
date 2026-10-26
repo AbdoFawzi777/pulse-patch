@@ -336,7 +336,7 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
 
             // Footnote (.m)
             const Text(
-              'Runs on this phone · TensorFlow Lite · 6 sessions available',
+              'Runs on this phone · small neural network running locally in the app · 6 sessions available',
               maxLines: 1,
               style: TextStyle(
                 fontFamily: 'Outfit',

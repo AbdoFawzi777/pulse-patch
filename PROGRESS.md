@@ -61,7 +61,7 @@
 | **End HR (BPM)** | 73.0 | 73.0 | 0.000000 | **EXACT MATCH** |
 | **Recovery Drop (BPM)** | -1.0 | -1.0 | 0.000000 | **EXACT MATCH** |
 
-*Pulse Interval: 835.3 ms | Estimated Variability: 20.4 ms | AI Model Inference: Typical pattern (Local TFLite)*
+*Pulse Interval: 835.3 ms | Estimated Variability: 20.4 ms | AI Model Inference: Typical pattern (small neural network running locally in the app)*
 
 ---
 
