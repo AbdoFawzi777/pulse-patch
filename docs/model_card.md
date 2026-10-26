@@ -64,8 +64,10 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
      - sess-1793000580974 (90s post-activity recovery plateau, mean HR: 74.03 BPM, Typical pattern)
      - sess-1793010133841 (90s clean post-activity recovery descent, recovery drop: 9.0 BPM < 12 BPM threshold, Different pattern)
 3. **Cross-Validation & Evaluation Strategy:**
-   - Multi-subject combined cohort (11 subjects): 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage, VOL_REAL_01 in Holdout Fold 1). Tiny MLP achieved **98.86% Accuracy**, **100% Precision**, **97.50% F1**, and **0.9974 ROC-AUC**.
-   - Single-subject real data: Time-ordered chronological split (2 earlier train, 1 later test) achieving **100% Accuracy**. Zero generalization claim across subjects.
+   - Multi-subject combined cohort (11 subjects): 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage, VOL_REAL_01 in Holdout Fold 1). Tiny MLP achieved **98.86%** on this benchmark (ROC-AUC: 0.9974).
+     > [!WARNING]
+     > **Cohort Composition Caveat:** 10 of the 11 subjects are synthetic simulation profiles and only 1 real subject with 3 sessions exists; this 98.86% benchmark score primarily reflects synthetic-data performance and mathematical stability, NOT real-world generalization or clinical diagnostic accuracy. It must not stand alone as "model accuracy".
+   - Single-subject real data: Integration / pipeline sanity check (n=1 test session) using time-ordered chronological split (2 earlier train, 1 later test; n=1 test session passed). Serves as an end-to-end integration and pipeline sanity check, not a meaningful accuracy metric.
 
 ---
 

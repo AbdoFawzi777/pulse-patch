@@ -7,7 +7,7 @@
     "mean_recall": 0.7384126984126984,
     "mean_f1": 0.7721861471861472,
     "mean_roc_auc": 0.9597118437118437,
-    "mean_brier_calibration": 0.04937268355002754,
+    "mean_brier_calibration": 0.04937268355002753,
     "confusion_matrix": [
       [
         130,

@@ -137,21 +137,24 @@ The machine learning pipeline in `ml/src/train.py` was executed using all 3 real
 - **Synthetic Bootstrap Dataset:** 160 sessions across 10 modeled volunteers (`VOL_01`–`VOL_10`).
 - **Combined Dataset:** 163 total sessions across 11 distinct subjects (`ml/data/combined_training_data.csv`).
 
-### Single-Subject Chronological Split Evaluation (`standard_hr`)
+> [!IMPORTANT]
+> **Cohort Composition Caveat & Generalization Boundary:** In this 11-subject cohort, 10 subjects (160 sessions) are synthetic simulation profiles and only 1 real subject with 3 sessions exists. Consequently, the 98.86% GroupKFold benchmark score mainly reflects synthetic-data performance and pipeline mathematical stability, NOT real-world generalization or clinical diagnostic accuracy. It must never stand alone as standalone "model accuracy".
+
+### Single-Subject Integration / Pipeline Sanity Check (`standard_hr`, n=1 test session)
 Evaluated strictly using time-ordered chronological session split (75% earlier train, 25% later test) without cross-subject leakage:
 - **Train Partition (earlier sessions):** 2 sessions (`sess-1792996240842`, `sess-1793000580974`)
 - **Test Partition (later session):** 1 session (`sess-1793010133841`)
-- **Test Accuracy:** **100.00%** (Precision: 100%, Recall: 100%, F1: 100%)
-- *Generalization Note:* Demonstrates pipeline stability on one subject's chronological data and does not make claims of population-wide generalization.
+- **Integration / Pipeline Sanity Check Result:** Passed successfully (1/1 test session correctly predicted; integration/pipeline sanity check on n=1 test session, not a statistical accuracy metric)
+- *Generalization Note:* Serves as an end-to-end integration and pipeline sanity check demonstrating software workflow stability on one subject, and does not make claims of population-wide generalization or clinical accuracy.
 
 ### 5-Fold GroupKFold Cross-Validation (All 11 Subjects, N=163 Sessions)
 Grouped strictly by subject ID (`VOL_01`–`VOL_10` + `VOL_REAL_01` in Holdout Fold 1):
 
-| Model Architecture | Mean Accuracy | Precision | Recall | F1 Score | ROC-AUC | Brier Loss |
-|---|---|---|---|---|---|---|
-| **Logistic Regression Baseline** | 92.61% ($\pm 4.3\%$) | 85.00% | 73.84% | 77.22% | 0.9597 | 0.0494 |
-| **Random Forest Baseline** | 98.86% ($\pm 2.3\%$) | 100.00% | 95.56% | 97.50% | 0.9863 | 0.0101 |
-| **Tiny MLP (Primary Model)** | **98.86%** ($\pm 2.3\%$) | **100.00%** | **95.56%** | **97.50%** | **0.9974** | **0.0131** |
+| Model Architecture | Mean CV Score | Precision | Recall | F1 Score | ROC-AUC | Brier Loss | Evaluation Scope |
+|---|---|---|---|---|---|---|---|
+| **Logistic Regression Baseline** | 92.61% ($\pm 4.3\%$) | 85.00% | 73.84% | 77.22% | 0.9597 | 0.0494 | Synthetic-dominated benchmark |
+| **Random Forest Baseline** | 98.86% ($\pm 2.3\%$) | 100.00% | 95.56% | 97.50% | 0.9863 | 0.0101 | Synthetic-dominated benchmark |
+| **Tiny MLP (Primary Model)** | **98.86%** ($\pm 2.3\%$) | **100.00%** | **95.56%** | **97.50%** | **0.9974** | **0.0131** | Synthetic-dominated benchmark (10/11 subjects synthetic) |
 
 ### Confusion Matrix (Aggregated 163 Cross-Validation Holdout Sessions)
 ```

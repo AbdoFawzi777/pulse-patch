@@ -1,7 +1,7 @@
 {
   "Logistic Regression": {
-    "evaluation_type": "single_subject_time_ordered_split",
-    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "evaluation_type": "single_subject_pipeline_sanity_check",
+    "generalization_note": "Integration/pipeline sanity check (n=1 test session); demonstrates software pipeline stability on one subject only and is not a generalizable accuracy metric.",
     "mean_accuracy": 1.0,
     "std_accuracy": 0.0,
     "mean_precision": 1.0,
@@ -23,8 +23,8 @@
     "test_samples": 1
   },
   "Random Forest": {
-    "evaluation_type": "single_subject_time_ordered_split",
-    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "evaluation_type": "single_subject_pipeline_sanity_check",
+    "generalization_note": "Integration/pipeline sanity check (n=1 test session); demonstrates software pipeline stability on one subject only and is not a generalizable accuracy metric.",
     "mean_accuracy": 1.0,
     "std_accuracy": 0.0,
     "mean_precision": 1.0,
@@ -46,8 +46,8 @@
     "test_samples": 1
   },
   "Tiny MLP (5->16->8->2)": {
-    "evaluation_type": "single_subject_time_ordered_split",
-    "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+    "evaluation_type": "single_subject_pipeline_sanity_check",
+    "generalization_note": "Integration/pipeline sanity check (n=1 test session); demonstrates software pipeline stability on one subject only and is not a generalizable accuracy metric.",
     "mean_accuracy": 1.0,
     "std_accuracy": 0.0,
     "mean_precision": 1.0,

@@ -75,8 +75,8 @@ def evaluate_models_single_subject_time_split(df: pd.DataFrame, test_ratio: floa
     """
     print("\n" + "=" * 80)
     print("SINGLE-SUBJECT DATASET DETECTED (1 unique subject)")
-    print("Evaluation method: Time-ordered chronological session split (75% train, 25% test).")
-    print("CRITICAL NOTE: Results show pipeline stability on one person's data and do NOT generalize.")
+    print("Evaluation method: Integration/pipeline sanity check (time-ordered chronological split, n=1 test session).")
+    print("CRITICAL NOTE: Serves as an end-to-end integration/pipeline sanity check; not a meaningful accuracy metric.")
     print("=" * 80)
 
     # Sort chronologically if timestamps exist
@@ -143,8 +143,8 @@ def evaluate_models_single_subject_time_split(df: pd.DataFrame, test_ratio: floa
         print(f"{name:<25} | {acc*100:6.2f}%    | {prec*100:6.2f}%    | {rec*100:6.2f}%    | {f1*100:6.2f}%    | {roc:6.4f}")
 
         results[name] = {
-            "evaluation_type": "single_subject_time_ordered_split",
-            "generalization_note": "Evaluated on single-subject data; demonstrates pipeline stability on one subject only and does not generalize.",
+            "evaluation_type": "single_subject_pipeline_sanity_check",
+            "generalization_note": "Integration/pipeline sanity check (n=1 test session); demonstrates software pipeline stability on one subject only and is not a generalizable accuracy metric.",
             "mean_accuracy": acc,
             "std_accuracy": 0.0,
             "mean_precision": prec,

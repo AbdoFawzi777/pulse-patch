@@ -22,7 +22,7 @@
 | Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | Release APK built (53.3 MiB / 55.9 MB, 55,926,750 bytes); physical phone install verified | 1a2febb |
 | Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation; 107/107 tests pass | b94738d |
 | Phase 17 | Design Fidelity & Pixel Matching (>=95%) | DONE | Flutter UI, QA | All 7 master canvas screens achieved >=95.0% pixel match; 107/107 tests pass | 1c75daa |
-| Phase 18 | Physical Hardware Field Test & Hardening Pipeline | DONE | BLE Engineer, ML Engineer, QA | Steps 1, 2, 3, 4 VERIFIED: 3 physical phone BLE sessions, 100% mathematical parity ($\Delta=0.000000$), retraining on real data (98.86% acc, 0.9974 ROC-AUC), offline PDF generated; 179/179 tests pass | In Progress |
+| Phase 18 | Physical Hardware Field Test & Hardening Pipeline | DONE | BLE Engineer, ML Engineer, QA | Steps 1, 2, 3, 4 VERIFIED: 3 physical phone BLE sessions, 100% mathematical parity ($\Delta=0.000000$), real-data pipeline integration sanity check (n=1 test session passed), combined GroupKFold (98.86% synthetic-dominated benchmark, 0.9974 ROC-AUC), offline PDF generated; 180/180 tests pass | In Progress |
 
 ---
 
@@ -53,8 +53,8 @@
 - **Major Step 2 — Real Data for Training Pipeline:** **100% VERIFIED & COMPLETE**
   - Sub-step 1: Exported all 3 real recorded sessions from phone SQLite DB to `ml/data/phone_recorded_sessions.csv`.
   - Sub-step 2: Built `ml/data/combined_training_data.csv` (160 synthetic + 3 real sessions across 11 subjects: 10 synthetic + 1 real `VOL_REAL_01`).
-  - Sub-step 3: Evaluated single-subject time-ordered chronological split (2 earlier train, 1 later test): 100% Accuracy.
-  - Sub-step 4: Evaluated 5-fold GroupKFold across all 11 subjects (`VOL_REAL_01` in Holdout Fold 1): Tiny MLP achieved **98.86% Accuracy**, **100.00% Precision**, **97.50% F1 Score**, and **0.9974 ROC-AUC**.
+  - Sub-step 3: Evaluated single-subject real data as an integration/pipeline sanity check (2 earlier train, 1 later test; n=1 test session passed, sanity check rather than generalizable accuracy metric).
+  - Sub-step 4: Evaluated 5-fold GroupKFold across all 11 subjects (`VOL_REAL_01` in Holdout Fold 1): Tiny MLP achieved **98.86%** on this benchmark (100.00% Precision, 97.50% F1, 0.9974 ROC-AUC). *(Explicit Caveat: 10 of the 11 subjects are synthetic and only 1 real subject with 3 sessions exists; this metric mainly reflects synthetic-data performance and mathematical stability, not real-world generalization).* 
   - Sub-step 5: Exported production weights to `ml/models/weights.json` and updated `app/assets/ml/model_meta.json`.
   - Sub-step 6: Verified Python-vs-Dart parity (`ml/src/verify_parity.py`): 100% agreement across all 4 test vectors.
   - Sub-step 7: Full Flutter test suite passing: **179 / 179 tests pass**, static analysis 0 issues.
@@ -140,7 +140,7 @@
 ## Physical Hardware Action Status
 
 **No further physical hardware actions required.**  
-All 3 physical BLE sessions have been recorded on the physical Android phone (`HONOR NIC-LX2`), stored in SQLite, mathematically audited with 100% exact parity ($\Delta = 0.000000$), verified on screen with proof screenshots, integrated into the combined training pipeline (98.86% accuracy, 0.9974 ROC-AUC), and exported as an offline PDF report.
+All 3 physical BLE sessions have been recorded on the physical Android phone (`HONOR NIC-LX2`), stored in SQLite, mathematically audited with 100% exact parity ($\Delta = 0.000000$), verified on screen with proof screenshots, integrated into the combined training pipeline (98.86% synthetic-dominated benchmark, 0.9974 ROC-AUC; 10/11 subjects synthetic caveat), and exported as an offline PDF report.
 
 ---
 

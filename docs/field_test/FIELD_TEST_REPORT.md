@@ -232,8 +232,8 @@ Three real sessions were recorded directly on the physical Android phone (`HONOR
 ## 8. Real Data Training Pipeline Execution
 
 All 3 real recorded sessions from the phone SQLite database were exported to `ml/data/phone_recorded_sessions.csv` and combined with the synthetic bootstrap cohort (`ml/data/combined_training_data.csv`, 163 total sessions across 11 subjects):
-- **Single-Subject Chronological Split (`standard_hr`):** 2 train / 1 test -> **100% Accuracy**.
-- **11-Subject 5-Fold GroupKFold:** Tiny MLP achieved **98.86% Accuracy**, **100.00% Precision**, **97.50% F1 Score**, and **0.9974 ROC-AUC**.
+- **Single-Subject Pipeline Sanity Check (`standard_hr`):** 2 train / 1 test -> **Integration/pipeline sanity check passed (n=1 test session)** (not a generalizable accuracy metric).
+- **11-Subject 5-Fold GroupKFold:** Tiny MLP achieved **98.86%** (100.00% Precision, 97.50% F1 Score, and 0.9974 ROC-AUC). *(Explicit Caveat: 10 of 11 subjects are synthetic simulation profiles and only 1 real subject with 3 sessions exists; this benchmark score mainly reflects synthetic-data performance and mathematical stability, not real-world generalization).*
 - **Parity Check:** Python vs. Dart isolate forward pass parity verified on all test vectors with 100% agreement.
 
 ---
