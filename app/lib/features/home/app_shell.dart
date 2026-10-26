@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/repositories/session_repository.dart';
 import '../../domain/entities/session_record.dart';
+import '../../domain/ml/ai_providers.dart';
 import '../../domain/signal/session_recorder.dart';
 import '../../shared/widgets/bottom_circle_nav.dart';
 import '../device/connect_device_screen.dart';
@@ -105,6 +106,26 @@ class _AppShellState extends ConsumerState<AppShell> {
           samples: recorder.samples,
           stats: stats,
         );
+
+    // Compute and store AI Insights result immediately
+    if (stats != null) {
+      try {
+        await ref
+            .read(aiInferenceServiceProvider)
+            .analyzeSession(
+              sessionId: session.id,
+              features: {
+                'mean_hr': stats.meanHr,
+                'std_hr': stats.stdHr,
+                'start_hr': stats.startHr,
+                'end_hr': stats.endHr,
+                'recovery_drop': stats.recoveryDrop,
+              },
+              validSampleCount: stats.validSampleCount,
+              sessionType: session.type,
+            );
+      } catch (_) {}
+    }
 
     setState(() {
       _activeRecorder = null;

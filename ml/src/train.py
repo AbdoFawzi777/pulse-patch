@@ -33,13 +33,18 @@ LABEL_NAMES = ["Typical pattern", "Different pattern"]
 
 def derive_educational_labels_if_missing(df: pd.DataFrame) -> pd.DataFrame:
     """
-    If 'label' column is not in exported CSV, derives educational classification
+    If 'label' column is not in exported CSV or contains NaNs, derives educational classification
     labels based on the standard resting & post-activity recovery protocol heuristics.
     """
     df = df.copy()
-    if "label" not in df.columns:
+    has_nans = ("label" in df.columns) and df["label"].isna().any()
+    if "label" not in df.columns or has_nans:
         labels = []
         for _, row in df.iterrows():
+            if "label" in df.columns and not pd.isna(row["label"]):
+                labels.append(int(row["label"]))
+                continue
+
             stype = str(row.get("session_type", "rest")).lower()
             mean_hr = float(row.get("mean_hr", 70.0))
             std_hr = float(row.get("std_hr", 3.0))
@@ -58,7 +63,7 @@ def derive_educational_labels_if_missing(df: pd.DataFrame) -> pd.DataFrame:
                 else:
                     labels.append(0)  # Typical pattern
         df["label"] = labels
-        df["label_name"] = [LABEL_NAMES[l] for l in labels]
+        df["label_name"] = [LABEL_NAMES[int(l)] for l in labels]
     return df
 
 
@@ -360,8 +365,12 @@ if __name__ == "__main__":
     df = pd.read_csv(csv_path)
 
     # Normalize column names if exported from app
-    if "subject_code" in df.columns and "subject_id" not in df.columns:
+    if "subject_id" in df.columns and "subject_code" in df.columns:
+        df["subject_id"] = df["subject_id"].fillna(df["subject_code"])
+    elif "subject_code" in df.columns and "subject_id" not in df.columns:
         df["subject_id"] = df["subject_code"]
+    elif "subject_id" not in df.columns:
+        df["subject_id"] = "VOL_01"
     if "source" not in df.columns:
         df["source"] = "synthetic"
 

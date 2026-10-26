@@ -38,6 +38,11 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
         : null;
 
     final patternLabel = aiResult?.label ?? 'Typical pattern';
+    final String explanationText =
+        (aiResult?.explanation != null && aiResult!.explanation!.isNotEmpty)
+        ? aiResult.explanation!
+        : 'Similar to your last 5 rest sessions. A pattern label, not a health rating.';
+
     final meanHr = stats?.meanHr.round() ?? 74;
     final stdHr = stats != null ? stats.stdHr.toStringAsFixed(1) : '3.1';
     final startHr = stats?.startHr.round() ?? 78;
@@ -130,9 +135,9 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
                         ),
                       ),
                     ),
-                    const Text(
-                      'Similar to your last 5 rest sessions. A pattern label, not a health rating.',
-                      style: TextStyle(
+                    Text(
+                      explanationText,
+                      style: const TextStyle(
                         fontFamily: 'Outfit',
                         fontSize: 14.0,
                         fontWeight: FontWeight.w300,

@@ -85,6 +85,7 @@ class AiInferenceState {
 
 class _InferencePayload {
   const _InferencePayload({
+    required this.sessionType,
     required this.rawFeatures,
     required this.metadataJson,
     required this.priorSessionCount,
@@ -92,6 +93,7 @@ class _InferencePayload {
     required this.priorStdHr,
   });
 
+  final SessionType sessionType;
   final Map<String, double> rawFeatures;
   final String metadataJson;
   final int priorSessionCount;
@@ -235,6 +237,7 @@ class AiInferenceService {
 
     try {
       final payload = _InferencePayload(
+        sessionType: sessionType,
         rawFeatures: rawMap,
         metadataJson: jsonEncode(meta.toJson()),
         priorSessionCount: priorCount,
@@ -373,12 +376,29 @@ class AiInferenceService {
       isTypical = math.sqrt(zDistSq) <= 2.8;
     }
 
+    final isPostActivity = payload.sessionType == SessionType.postActivity;
+    final recDrop = payload.rawFeatures['recovery_drop'] ?? 0.0;
+
+    if (isPostActivity) {
+      // Documented post-activity recovery rule:
+      // Typical: rate recovery drop >= 12.0 BPM across 60s post-exercise window
+      // Different: blunted / delayed recovery drop < 12.0 BPM
+      isTypical = recDrop >= 12.0;
+    }
+
     final String label = isTypical ? 'Typical pattern' : 'Different pattern';
 
     // Plain-language non-diagnostic explanation
-    final String explanation = isTypical
-        ? 'Similar to your last ${payload.priorSessionCount > 0 ? payload.priorSessionCount : "reference"} rest sessions. A pattern label, not a health rating.'
-        : 'Varied from your typical resting baseline pattern. A statistical pattern label, not a health rating.';
+    final String explanation;
+    if (isPostActivity) {
+      explanation = isTypical
+          ? 'Rate recovery drop (${recDrop.round()} BPM) shows expected deceleration following activity. A pattern label, not a health rating.'
+          : 'Rate recovery drop (${recDrop.round()} BPM) is blunted (<12 BPM drop in 60s). A pattern label, not a health rating.';
+    } else {
+      explanation = isTypical
+          ? 'Similar to your last ${payload.priorSessionCount > 0 ? payload.priorSessionCount : "reference"} rest sessions. A pattern label, not a health rating.'
+          : 'Varied from your typical resting baseline pattern. A statistical pattern label, not a health rating.';
+    }
 
     // Historical comparison text
     String comparisonText;

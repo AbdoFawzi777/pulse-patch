@@ -1,65 +1,65 @@
 {
   "Logistic Regression": {
     "evaluation_type": "multi_subject_group_kfold",
-    "mean_accuracy": 0.9375,
-    "std_accuracy": 0.05229125165837972,
+    "mean_accuracy": 0.9260714285714287,
+    "std_accuracy": 0.042758070010471806,
     "mean_precision": 0.85,
-    "mean_recall": 0.7828571428571429,
-    "mean_f1": 0.7971861471861472,
-    "mean_roc_auc": 0.9781164021164022,
-    "mean_brier_calibration": 0.03833713504525253,
+    "mean_recall": 0.7384126984126984,
+    "mean_f1": 0.7721861471861472,
+    "mean_roc_auc": 0.9597118437118437,
+    "mean_brier_calibration": 0.04937268355002754,
     "confusion_matrix": [
       [
-        131,
+        130,
         4
       ],
       [
-        6,
+        8,
         21
       ]
     ],
-    "n_samples": 162
+    "n_samples": 163
   },
   "Random Forest": {
     "evaluation_type": "multi_subject_group_kfold",
-    "mean_accuracy": 1.0,
-    "std_accuracy": 0.0,
+    "mean_accuracy": 0.9885714285714287,
+    "std_accuracy": 0.022857142857142864,
     "mean_precision": 1.0,
-    "mean_recall": 1.0,
-    "mean_f1": 1.0,
-    "mean_roc_auc": 1.0,
-    "mean_brier_calibration": 0.00385754983882722,
+    "mean_recall": 0.9555555555555555,
+    "mean_f1": 0.975,
+    "mean_roc_auc": 0.9863247863247864,
+    "mean_brier_calibration": 0.010133520422396968,
     "confusion_matrix": [
       [
-        135,
+        134,
         0
       ],
       [
-        0,
+        2,
         27
       ]
     ],
-    "n_samples": 162
+    "n_samples": 163
   },
   "Tiny MLP (5->16->8->2)": {
     "evaluation_type": "multi_subject_group_kfold",
-    "mean_accuracy": 0.99375,
-    "std_accuracy": 0.012499999999999999,
+    "mean_accuracy": 0.9885714285714287,
+    "std_accuracy": 0.022857142857142864,
     "mean_precision": 1.0,
-    "mean_recall": 0.9714285714285715,
-    "mean_f1": 0.9846153846153847,
-    "mean_roc_auc": 1.0,
-    "mean_brier_calibration": 0.0033604256982395276,
+    "mean_recall": 0.9555555555555555,
+    "mean_f1": 0.975,
+    "mean_roc_auc": 0.9974358974358974,
+    "mean_brier_calibration": 0.013079164449640263,
     "confusion_matrix": [
       [
-        135,
+        134,
         0
       ],
       [
-        1,
-        26
+        2,
+        27
       ]
     ],
-    "n_samples": 162
+    "n_samples": 163
   }
 }

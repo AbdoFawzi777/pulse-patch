@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 /// Model inference result stored per session.
 class AiResultRecord {
   const AiResultRecord({
@@ -13,6 +15,15 @@ class AiResultRecord {
   final String label; // "typical" or "different"
   final String featuresJson;
   final DateTime createdAt;
+
+  String? get explanation {
+    try {
+      final map = jsonDecode(featuresJson) as Map<String, dynamic>;
+      return map['explanation'] as String?;
+    } catch (_) {
+      return null;
+    }
+  }
 
   Map<String, dynamic> toJson() => {
     'sessionId': sessionId,

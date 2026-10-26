@@ -57,14 +57,15 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
 1. **Protocol Design (Section 7.1):**
    - **Resting Protocol:** Seated rest in quiet environment for 2-3 minutes (or 60s standard session).
    - **Post-Activity Recovery Protocol:** 1 minute brisk step-test / stairs followed immediately by 1-2 minutes of seated rest (or 90s recovery session).
-2. **Shipped Model Training Data (162 Sessions, 11 Subjects):**
+2. **Shipped Model Training Data (163 Sessions, 11 Subjects):**
    - **Synthetic Bootstrap Cohort:** 160 sessions across 10 modeled volunteer profiles (VOL_01-VOL_10, 80 rest, 80 post-activity), labeled source=synthetic (*synthetic pipeline test, not real validation*).
-   - **Real Over-The-Air BLE Sessions:** 2 sessions recorded on physical Android phone (HONOR NIC-LX2) over Bluetooth Low Energy from PulsePatch-SimHR (source=real_ble_peripheral, subject VOL_REAL_01):
-     - sess-1792996240842 (60s resting baseline, mean HR: 71.83 BPM)
-     - sess-1793000580974 (90s post-activity recovery, mean HR: 74.03 BPM)
+   - **Real Over-The-Air BLE Sessions:** 3 sessions recorded on physical Android phone (HONOR NIC-LX2) over Bluetooth Low Energy from PulsePatch-SimHR (source=standard_hr, subject VOL_REAL_01):
+     - sess-1792996240842 (60s resting baseline, mean HR: 71.83 BPM, Typical pattern)
+     - sess-1793000580974 (90s post-activity recovery plateau, mean HR: 74.03 BPM, Typical pattern)
+     - sess-1793010133841 (90s clean post-activity recovery descent, recovery drop: 9.0 BPM < 12 BPM threshold, Different pattern)
 3. **Cross-Validation & Evaluation Strategy:**
-   - Multi-subject synthetic data: 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage).
-   - Single-subject real data: Time-ordered chronological split (earlier train, later test). Zero generalization claim across subjects.
+   - Multi-subject combined cohort (11 subjects): 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage, VOL_REAL_01 in Holdout Fold 1). Tiny MLP achieved **98.86% Accuracy**, **100% Precision**, **97.50% F1**, and **0.9974 ROC-AUC**.
+   - Single-subject real data: Time-ordered chronological split (2 earlier train, 1 later test) achieving **100% Accuracy**. Zero generalization claim across subjects.
 
 ---
 

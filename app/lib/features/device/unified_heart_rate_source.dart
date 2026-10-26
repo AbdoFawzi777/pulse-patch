@@ -278,16 +278,17 @@ class UnifiedHeartRateSource implements HeartRateSource {
               ? {...existing.advertisedServices, ...serviceUuids}.toList()
               : serviceUuids;
 
-          final isSimHost = rawName.contains('ABDOFAWZI') || rawName.contains('PulsePatch');
+          final isSimHost =
+              rawName.contains('ABDOFAWZI') || rawName.contains('PulsePatch');
           final cleanName = isSimHost
               ? 'PulsePatch-SimHR'
               : (rawName.trim().isNotEmpty
-                  ? rawName.trim()
-                  : (existing != null &&
-                            existing.name.trim().isNotEmpty &&
-                            existing.name != 'Unnamed device'
-                        ? existing.name.trim()
-                        : 'Unnamed device'));
+                    ? rawName.trim()
+                    : (existing != null &&
+                              existing.name.trim().isNotEmpty &&
+                              existing.name != 'Unnamed device'
+                          ? existing.name.trim()
+                          : 'Unnamed device'));
 
           _discoveredMap[id] = DiscoveredBleDevice(
             id: id,
@@ -339,8 +340,8 @@ class UnifiedHeartRateSource implements HeartRateSource {
     } else {
       switch (dev.category) {
         case BleDeviceCategory.pulsePatch:
-          final hasCustom = dev.advertisedServices
-                  .any((u) => u.contains('7243-4e64')) ||
+          final hasCustom =
+              dev.advertisedServices.any((u) => u.contains('7243-4e64')) ||
               dev.discoveredServices.any((u) => u.contains('7243-4e64'));
           if (hasCustom) {
             checker = PulsePatchSource();
@@ -433,8 +434,8 @@ class UnifiedHeartRateSource implements HeartRateSource {
     } else {
       switch (device.category) {
         case BleDeviceCategory.pulsePatch:
-          final hasCustom = device.advertisedServices
-                  .any((u) => u.contains('7243-4e64')) ||
+          final hasCustom =
+              device.advertisedServices.any((u) => u.contains('7243-4e64')) ||
               device.discoveredServices.any((u) => u.contains('7243-4e64'));
           if (hasCustom) {
             _activeSource = PulsePatchSource();

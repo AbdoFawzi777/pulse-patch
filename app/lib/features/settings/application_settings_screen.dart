@@ -334,7 +334,8 @@ class _ApplicationSettingsScreenState
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => ReportsScreen(
-                                  onBack: () => Navigator.of(context).maybePop(),
+                                  onBack: () =>
+                                      Navigator.of(context).maybePop(),
                                 ),
                               ),
                             );
@@ -344,12 +345,14 @@ class _ApplicationSettingsScreenState
                         _buildNavTile(
                           icon: Icons.trending_up_rounded,
                           title: 'Historical Trends',
-                          subtitle: 'Daily & weekly pulse patterns with gap analysis',
+                          subtitle:
+                              'Daily & weekly pulse patterns with gap analysis',
                           onTap: () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => HistoricalTrendsScreen(
-                                  onBack: () => Navigator.of(context).maybePop(),
+                                  onBack: () =>
+                                      Navigator.of(context).maybePop(),
                                 ),
                               ),
                             );
@@ -359,7 +362,8 @@ class _ApplicationSettingsScreenState
                         _buildNavTile(
                           icon: Icons.restore_rounded,
                           title: 'Recovery Analysis',
-                          subtitle: '60s rate recovery drop & personal baseline',
+                          subtitle:
+                              '60s rate recovery drop & personal baseline',
                           onTap: () {
                             final repo = ref.read(sessionRepositoryProvider);
                             final sessions = repo.getAllSessions();
@@ -368,13 +372,16 @@ class _ApplicationSettingsScreenState
                               (s) => s.type == SessionType.postActivity,
                               orElse: () => sessions.first,
                             );
-                            final stats = repo.getStatsForSession(targetSession.id);
+                            final stats = repo.getStatsForSession(
+                              targetSession.id,
+                            );
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (_) => RecoveryAnalysisScreen(
                                   session: targetSession,
                                   stats: stats,
-                                  onBack: () => Navigator.of(context).maybePop(),
+                                  onBack: () =>
+                                      Navigator.of(context).maybePop(),
                                 ),
                               ),
                             );

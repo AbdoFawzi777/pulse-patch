@@ -135,6 +135,88 @@ void main() {
         expect(state.result?.label.toLowerCase(), isNot(contains('unhealthy')));
       },
     );
+
+    test(
+      'AiInferenceService classifies post-activity session with drop >= 12 BPM as Typical pattern',
+      () async {
+        final service = AiInferenceService();
+        await service.initialize();
+
+        final state = await service.analyzeSession(
+          sessionId: 'test-post-typical',
+          features: {
+            'mean_hr': 105.0,
+            'std_hr': 12.0,
+            'start_hr': 128.0,
+            'end_hr': 74.0,
+            'recovery_drop': 46.0, // Large recovery drop >= 12 BPM
+          },
+          validSampleCount: 90,
+          sessionType: SessionType.postActivity,
+        );
+
+        expect(state.status, equals(AiInferenceStatus.success));
+        expect(state.result?.label, equals('Typical pattern'));
+        expect(
+          state.result?.explanation,
+          contains('expected deceleration following activity'),
+        );
+      },
+    );
+
+    test(
+      'AiInferenceService classifies post-activity session with drop < 12 BPM as Different pattern',
+      () async {
+        final service = AiInferenceService();
+        await service.initialize();
+
+        final state = await service.analyzeSession(
+          sessionId: 'test-post-blunted',
+          features: {
+            'mean_hr': 74.0,
+            'std_hr': 0.8,
+            'start_hr': 75.0,
+            'end_hr': 74.0,
+            'recovery_drop': 0.0, // Blunted recovery drop < 12 BPM
+          },
+          validSampleCount: 90,
+          sessionType: SessionType.postActivity,
+        );
+
+        expect(state.status, equals(AiInferenceStatus.success));
+        expect(state.result?.label, equals('Different pattern'));
+        expect(
+          state.result?.explanation,
+          contains('blunted (<12 BPM drop in 60s)'),
+        );
+      },
+    );
+
+    test(
+      'AiInferenceService re-evaluates Session 1 recorded features as Typical pattern',
+      () async {
+        final service = AiInferenceService();
+        await service.initialize();
+
+        final state = await service.analyzeSession(
+          sessionId: 'sess-1792996240842',
+          features: {
+            'mean_hr': 71.83076923076923,
+            'std_hr': 1.305866938680378,
+            'start_hr': 72.0,
+            'end_hr': 73.0,
+            'recovery_drop': -1.0,
+          },
+          validSampleCount: 65,
+          sessionType: SessionType.rest,
+        );
+
+        expect(state.status, equals(AiInferenceStatus.success));
+        expect(state.result?.label, equals('Typical pattern'));
+        expect(state.result?.scaledFeatures['mean_hr'], closeTo(-0.771, 0.01));
+        expect(state.result?.explanation, contains('Similar to your last'));
+      },
+    );
   });
 
   group('Phase 9 AI Insights - Screen Widget Tests', () {
