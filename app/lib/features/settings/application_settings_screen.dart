@@ -2,10 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/repositories/preferences_repository.dart';
+import '../../data/repositories/session_repository.dart';
+import '../../domain/entities/session_record.dart';
 import '../../shared/widgets/bottom_circle_nav.dart';
 import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../insights/ai_model_info_screen.dart';
+import '../reports/historical_trends_screen.dart';
+import '../reports/recovery_analysis_screen.dart';
+import '../reports/reports_screen.dart';
 import 'about_screen.dart';
 import 'privacy_data_management_screen.dart';
 import 'profile_preferences_screen.dart';
@@ -321,6 +326,61 @@ class _ApplicationSettingsScreenState
                     ),
                     child: Column(
                       children: [
+                        _buildNavTile(
+                          icon: Icons.picture_as_pdf_rounded,
+                          title: 'Pulse Summary Reports',
+                          subtitle: 'Generate offline PDF reports and exports',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ReportsScreen(
+                                  onBack: () => Navigator.of(context).maybePop(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const Divider(color: Color(0xFF1B2A66), height: 1.0),
+                        _buildNavTile(
+                          icon: Icons.trending_up_rounded,
+                          title: 'Historical Trends',
+                          subtitle: 'Daily & weekly pulse patterns with gap analysis',
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => HistoricalTrendsScreen(
+                                  onBack: () => Navigator.of(context).maybePop(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const Divider(color: Color(0xFF1B2A66), height: 1.0),
+                        _buildNavTile(
+                          icon: Icons.restore_rounded,
+                          title: 'Recovery Analysis',
+                          subtitle: '60s rate recovery drop & personal baseline',
+                          onTap: () {
+                            final repo = ref.read(sessionRepositoryProvider);
+                            final sessions = repo.getAllSessions();
+                            if (sessions.isEmpty) return;
+                            final targetSession = sessions.firstWhere(
+                              (s) => s.type == SessionType.postActivity,
+                              orElse: () => sessions.first,
+                            );
+                            final stats = repo.getStatsForSession(targetSession.id);
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => RecoveryAnalysisScreen(
+                                  session: targetSession,
+                                  stats: stats,
+                                  onBack: () => Navigator.of(context).maybePop(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                        const Divider(color: Color(0xFF1B2A66), height: 1.0),
                         _buildNavTile(
                           icon: Icons.lock_outline_rounded,
                           title: 'Privacy & Data Management',

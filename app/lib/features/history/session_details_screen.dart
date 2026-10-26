@@ -7,7 +7,9 @@ import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/dot_variability_chart.dart';
 import '../../shared/widgets/metric_card.dart';
+import '../../shared/widgets/pill_button.dart';
 import '../../shared/widgets/pulse_trace_chart.dart';
+import '../reports/recovery_analysis_screen.dart';
 
 /// Heart Rate screen matching Detail.dc.html and Heart Rate.png exactly.
 class SessionDetailsScreen extends ConsumerWidget {
@@ -274,6 +276,28 @@ class SessionDetailsScreen extends ConsumerWidget {
                     ],
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: 8.0),
+          ],
+
+          if (session.type == SessionType.postActivity) ...[
+            const SizedBox(height: 8.0),
+            Center(
+              child: PillButton(
+                label: 'View Rate Recovery Analysis',
+                style: PillButtonStyle.dark,
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => RecoveryAnalysisScreen(
+                        session: session,
+                        stats: stats,
+                        onBack: () => Navigator.of(context).maybePop(),
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
             const SizedBox(height: 8.0),

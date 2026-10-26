@@ -55,16 +55,16 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
 ## 4. Training Data & Cohort Protocol
 
 1. **Protocol Design (Section 7.1):**
-   - **Resting Protocol:** Seated rest in quiet environment for 2–3 minutes.
-   - **Post-Activity Recovery Protocol:** 1 minute brisk step-test / stairs followed immediately by 2 minutes of seated rest.
-2. **Cohort Demographics:**
-   - 10 anonymous volunteer subjects (`VOL_01` through `VOL_10`).
-   - 160 total recording sessions (80 resting sessions, 80 post-activity sessions).
-   - Data Source: Synthetic bootstrap cohort modeled honestly and strictly labeled `source=synthetic` as required by Section 7.2.
-   - Ground truth class distribution: 133 Typical pattern sessions (83.1%), 27 Different pattern sessions (16.9%).
-3. **Cross-Validation Setup:**
-   - 5-Fold `GroupKFold` grouped strictly by `subject_id` (2 holdout volunteers per fold).
-   - Zero inter-subject data leakage. Scaler fitted on training folds only.
+   - **Resting Protocol:** Seated rest in quiet environment for 2-3 minutes (or 60s standard session).
+   - **Post-Activity Recovery Protocol:** 1 minute brisk step-test / stairs followed immediately by 1-2 minutes of seated rest (or 90s recovery session).
+2. **Shipped Model Training Data (162 Sessions, 11 Subjects):**
+   - **Synthetic Bootstrap Cohort:** 160 sessions across 10 modeled volunteer profiles (VOL_01-VOL_10, 80 rest, 80 post-activity), labeled source=synthetic (*synthetic pipeline test, not real validation*).
+   - **Real Over-The-Air BLE Sessions:** 2 sessions recorded on physical Android phone (HONOR NIC-LX2) over Bluetooth Low Energy from PulsePatch-SimHR (source=real_ble_peripheral, subject VOL_REAL_01):
+     - sess-1792996240842 (60s resting baseline, mean HR: 71.83 BPM)
+     - sess-1793000580974 (90s post-activity recovery, mean HR: 74.03 BPM)
+3. **Cross-Validation & Evaluation Strategy:**
+   - Multi-subject synthetic data: 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage).
+   - Single-subject real data: Time-ordered chronological split (earlier train, later test). Zero generalization claim across subjects.
 
 ---
 

@@ -155,9 +155,10 @@ def generate_bpm_for_mode(mode: str, elapsed: float, duration: float, base_bpm: 
             decay = (1.0 - math.exp(-2.5 * p)) / (1.0 - math.exp(-2.5))
             return int(round(126.0 - 44.0 * decay))
         else:
-            # 82 down to 74
-            p = (elapsed - 60.0) / 30.0
-            return int(round(82.0 - 8.0 * p))
+            # 82 down to 74, clamped so it never drops below normal recovery baseline
+            p = min(1.0, max(0.0, (elapsed - 60.0) / 30.0))
+            rsa = 1.0 * math.sin(elapsed * 0.25)
+            return int(round(82.0 - 8.0 * p + rsa))
 
     else:  # 'sine'
         return int(round(base_bpm + 10.0 * math.sin(elapsed / 4.0)))

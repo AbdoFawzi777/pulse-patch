@@ -84,7 +84,7 @@ def evaluate_models_single_subject_time_split(df: pd.DataFrame, test_ratio: floa
     y = df["label"].values
 
     n_total = len(df)
-    n_train = max(2, int(n_total * (1.0 - test_ratio)))
+    n_train = max(1, min(n_total - 1, int(n_total * (1.0 - test_ratio)))) if n_total > 1 else 1
     n_test = n_total - n_train
 
     print(f"Time-Ordered Split: {n_train} training sessions (earlier), {n_test} test sessions (later)")
