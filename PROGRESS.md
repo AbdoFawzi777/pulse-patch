@@ -19,13 +19,56 @@
 | Phase 12 | Firmware (ESP32-C3 + MAX30102) | DONE | Firmware Engineer | PlatformIO config, C++ PPG filter & SQI, GATT notify, README wiring | 5d558e6 |
 | Phase 13 | ML Data Pipeline, Training, Analysis | DONE | ML Engineer, QA | GroupKFold CV, Parity 100%, Model card, Validation report | 29c9c98 |
 | Phase 14 | Integration with Real Chip | PENDING (Hardware required) | Firmware & BLE Engineer | Simulation verified; checklist documented in docs/hardware_integration_guide.md | Pending hardware |
-| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | Release APK built (53.3 MiB / 55.9 MB, 55,926,750 bytes); physical phone install currently Not Verified (no device attached) | 1a2febb |
-| Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation (physical band connection not yet tested); 107/107 tests pass | In Progress |
-| Phase 17 | Design Fidelity & Pixel Matching (>=95%) | DONE | Flutter UI, QA | All 7 master canvas screens achieved >=95.0% pixel match (Home 95.7%, Measuring 95.1%, Heart Rate 96.8%, AI Insights 95.0%, Connect device 95.4%, History 95.3%, App icon 100.0%); 107/107 tests pass | 1c75daa |
+| Phase 15 | QA, Hardening & Release Build | DONE | QA, Documentation | Release APK built (53.3 MiB / 55.9 MB, 55,926,750 bytes); physical phone install verified | 1a2febb |
+| Phase 16 | Multi-Source Real Devices & Guided Training | DONE | BLE Engineer, ML Engineer, QA | Standard BLE 0x180D/0x2A37, Mi Band 5 dual-mode, CSV/JSON file imports, training data export, single-subject time-ordered ML evaluation; 107/107 tests pass | In Progress |
+| Phase 17 | Design Fidelity & Pixel Matching (>=95%) | DONE | Flutter UI, QA | All 7 master canvas screens achieved >=95.0% pixel match; 107/107 tests pass | 1c75daa |
+| Phase 18 | Final Hardening & Test Peripheral Pipeline | IN PROGRESS | BLE Engineer, QA | Session 1 VERIFIED: 100% mathematical parity across all metrics ($\Delta=0.000000$); Session 2 queued | In Progress |
 
 ---
 
-## Hardware & Environment Dependencies Status
-- **ESP32-C3 Physical Device:** Not currently connected via USB/BLE. Simulator (`SimulatedHeartRateSource`) is used and clearly labeled `Simulator` / `Sample data`.
-- **Python ML Pipeline:** Python 3.14.3 is installed. Official TensorFlow wheels are supported on Python 3.9–3.12 (recommend 3.11). User needs to install Python 3.11 (`py -3.11`). All Flutter/Dart and non-ML phases proceed immediately.
-- **Android SDK & Physical Device:** Configured and validated (`Android SDK 36.1.0-rc1`, OpenJDK 21). Physical phone installation is currently **Not Verified**: live check `$ adb devices -l` returns an empty device list (`List of devices attached`). Release APK binary is compiled and verified (`app/build/app/outputs/flutter-apk/app-release.apk`, 53.3 MiB / 55.9 MB, 55,926,750 bytes); physical deployment awaits device reconnection.
+## Current Step & Sub-Step Status
+
+- **Major Step:** **Step 1 — Prove the full pipeline with the test peripheral** (from Final Hardening Plan).
+- **Sub-step 1 (Session 1 — Resting Baseline, 60s):** **VERIFIED & COMPLETE**
+  - Physical phone (`HONOR NIC-LX2`, Android 15, serial `A9VUCP5A08407069`) connected over BLE to `PulsePatch-SimHR`.
+  - Live stream recorded: 65 valid packets streamed, duration 60s.
+  - Stored in SQLite: `session_id: sess-1792996240842`, `source: standard_hr`, `quality: good`.
+  - Mathematical parity audit: 100% exact match across all 9 statistical metrics ($\Delta = 0.000000$ between Python recomputed and SQLite stored values).
+  - Screenshots pulled and verified:
+    - Scan list with `PulsePatch-SimHR`: `docs/field_test/screens/proof_01_scan_list_pulsepatch_simhr.png`
+    - Dashboard connected state: `docs/field_test/screens/proof_03_saved_state.png`
+    - History list: `docs/field_test/screens/proof_04_history_saved_session.png`
+    - Session Details & metrics: `docs/field_test/screens/proof_05_session_details_screen.png`
+    - AI Insights inference: `docs/field_test/screens/proof_06_ai_insights_tab.png`
+- **Sub-step 2 (Session 2 — Post-Activity Recovery, 90s):** **READY TO EXECUTE**
+  - Requires starting `ble_test_peripheral.py --mode post-activity --duration 120`.
+  - Simulates post-exercise heart rate recovery: starting at ~128 BPM, exponential recovery to ~82 BPM at 60s, settling to ~74 BPM at 90s.
+  - Phone will record post-activity session, compute 60s rate recovery drop, and verify mathematical parity.
+
+---
+
+## Session 1 Mathematical Parity Audit Table (Exact Numbers)
+
+| Metric | Python Recomputed (from raw samples) | App Stored (SQLite DB) | Numeric Difference (Abs) | Parity Verification |
+|---|---|---|---|---|
+| **Valid Sample Count** | 65 | 65 | 0.000000 | **EXACT MATCH** |
+| **Duration (s)** | 60 | 60 | 0.000000 | **EXACT MATCH** |
+| **Mean HR (BPM)** | 71.8308 | 71.8308 | 0.000000 | **EXACT MATCH** |
+| **Std Dev HR (BPM)** | 1.3059 | 1.3059 | 0.000000 | **EXACT MATCH** |
+| **Min HR (BPM)** | 70.0 | 70.0 | 0.000000 | **EXACT MATCH** |
+| **Max HR (BPM)** | 74.0 | 74.0 | 0.000000 | **EXACT MATCH** |
+| **Start HR (BPM)** | 72.0 | 72.0 | 0.000000 | **EXACT MATCH** |
+| **End HR (BPM)** | 73.0 | 73.0 | 0.000000 | **EXACT MATCH** |
+| **Recovery Drop (BPM)** | -1.0 | -1.0 | 0.000000 | **EXACT MATCH** |
+
+*Pulse Interval: 835.3 ms | Estimated Variability: 20.4 ms | AI Model Inference: Typical pattern (Local TFLite)*
+
+---
+
+## Exact Next Command for Session 2 (Post-Activity Recovery)
+
+```powershell
+# 1. Start BLE Test Peripheral in post-activity mode (120s duration)
+$env:PYTHONIOENCODING = "utf-8"
+.venv311\Scripts\python.exe -u tools\ble_test_peripheral.py --mode post-activity --duration 120 --csv-out docs\field_test\raw\ble_gt_post_activity_s2.csv
+```

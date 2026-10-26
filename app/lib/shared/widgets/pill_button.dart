@@ -47,6 +47,7 @@ class PillButton extends StatelessWidget {
       enabled: onPressed != null,
       label: label,
       child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
         onTap: onPressed,
         child: Container(
           width: width,
