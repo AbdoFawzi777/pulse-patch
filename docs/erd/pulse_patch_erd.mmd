@@ -1,0 +1,62 @@
+erDiagram
+    sessions ||--o{ samples : "has (1:N cascade delete)"
+    sessions ||--o| session_stats : "summarized_by (1:1 cascade delete)"
+    sessions ||--o| ai_results : "evaluated_by (1:1 cascade delete)"
+
+    sessions {
+        TEXT id PK "Session UUID primary key"
+        INTEGER started_at "Recording start epoch timestamp (ms)"
+        INTEGER ended_at "Recording end epoch timestamp (ms, nullable)"
+        TEXT type "Session protocol: rest | postActivity"
+        TEXT quality_summary "Signal quality summary: good | fair | weak"
+        TEXT app_version "SemVer mobile app version string"
+        TEXT source "Source code: pulsepatch | simulator | standard_hr | generic_ble | miband5 | import"
+    }
+
+    samples {
+        INTEGER id PK "Auto-incrementing sample record ID"
+        TEXT session_id FK "Foreign key -> sessions(id) ON DELETE CASCADE"
+        INTEGER t_ms "Relative session offset timestamp (ms)"
+        REAL bpm "Filtered heart rate measurement (nullable)"
+        INTEGER quality "Signal Quality Index SQI score (0-100)"
+        INTEGER is_valid "Validity gate boolean flag (0 or 1)"
+        REAL spo2 "Blood oxygen saturation percentage (nullable)"
+    }
+
+    session_stats {
+        TEXT session_id PK,FK "Primary and foreign key -> sessions(id) ON DELETE CASCADE"
+        REAL mean_hr "Average valid heart rate (BPM)"
+        REAL std_hr "Standard deviation of valid heart rate (BPM)"
+        REAL min_hr "Minimum valid heart rate reading (BPM)"
+        REAL max_hr "Maximum valid heart rate reading (BPM)"
+        REAL start_hr "Initial baseline heart rate reading (BPM)"
+        REAL end_hr "Final heart rate reading at end of session (BPM)"
+        REAL recovery_drop "Post-activity recovery drop (start_hr - end_hr, nullable)"
+        REAL pulse_interval_ms "Mean pulse interval duration (ms, nullable)"
+        REAL variability_est_ms "Short-term pulse interval variability estimate (ms, nullable)"
+        INTEGER valid_sample_count "Count of accepted samples (SQI >= 60)"
+        INTEGER total_duration_seconds "Total session duration elapsed (seconds)"
+        REAL avg_spo2 "Average SpO2 level percentage across session (nullable)"
+    }
+
+    ai_results {
+        TEXT session_id PK,FK "Primary and foreign key -> sessions(id) ON DELETE CASCADE"
+        TEXT model_version "ML classifier model version identifier"
+        TEXT label "Classification result: Typical pattern | Different pattern"
+        TEXT features_json "JSON object of 11 normalized feature inputs"
+        INTEGER created_at "Inference execution epoch timestamp (ms)"
+    }
+
+    reminders {
+        INTEGER id PK "Auto-incrementing reminder configuration ID"
+        INTEGER hour "Scheduled hour in 24-hour format (0-23)"
+        INTEGER minute "Scheduled minute (0-59)"
+        TEXT label "User-visible notification title / description"
+        INTEGER is_enabled "Active reminder toggle boolean flag (0 or 1)"
+        TEXT days_of_week "Comma-separated active days of week (e.g. 1,2,3,4,5,6,7)"
+    }
+
+    app_settings {
+        TEXT key PK "Configuration key identifier"
+        TEXT value "Stored configuration payload / value"
+    }
