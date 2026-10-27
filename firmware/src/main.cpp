@@ -53,6 +53,7 @@ struct PulsePacket {
     uint8_t  reserved;          // Offset 11: 0x00 reserved padding
 };
 #pragma pack(pop)
+static_assert(sizeof(PulsePacket) == 12, "PulsePacket size must be exactly 12 bytes");
 
 // =============================================================================
 // Global State

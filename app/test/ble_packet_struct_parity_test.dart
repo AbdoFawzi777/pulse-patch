@@ -76,5 +76,27 @@ void main() {
       final roundTrip = parsed.toBytes();
       expect(roundTrip, equals(firmwareCalculatingBytes));
     });
+
+    test('Rejects payloads shorter or longer than exactly 12 bytes', () {
+      // Test all lengths from 0 to 11 bytes
+      for (int len = 0; len < 12; len++) {
+        final shortPayload = List<int>.filled(len, 0x01);
+        expect(
+          BlePacket.parse(shortPayload),
+          isNull,
+          reason: 'Payload of length $len must be rejected',
+        );
+      }
+
+      // Test lengths longer than 12 bytes
+      for (int len = 13; len <= 20; len++) {
+        final longPayload = List<int>.filled(len, 0x01);
+        expect(
+          BlePacket.parse(longPayload),
+          isNull,
+          reason: 'Payload of length $len must be rejected',
+        );
+      }
+    });
   });
 }

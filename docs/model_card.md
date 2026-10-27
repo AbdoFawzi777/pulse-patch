@@ -59,15 +59,15 @@ $$z_i = \frac{x_i - \mu_i}{\sigma_i}$$
    - **Post-Activity Recovery Protocol:** 1 minute brisk step-test / stairs followed immediately by 1-2 minutes of seated rest (or 90s recovery session).
 2. **Shipped Model Training Data (163 Sessions, 11 Subjects):**
    - **Synthetic Bootstrap Cohort:** 160 sessions across 10 modeled volunteer profiles (VOL_01-VOL_10, 80 rest, 80 post-activity), labeled source=synthetic (*synthetic pipeline test, not real validation*).
-   - **Real Over-The-Air BLE Sessions:** 3 sessions recorded on physical Android phone (HONOR NIC-LX2) over Bluetooth Low Energy from PulsePatch-SimHR (source=standard_hr, subject VOL_REAL_01):
+   - **Over-The-Air BLE Sessions from Test Peripheral (Simulated Physiology):** 3 sessions recorded on physical Android phone (HONOR NIC-LX2) over Bluetooth Low Energy from PulsePatch-SimHR (source=standard_hr, subject VOL_BLE_SIM_01):
      - sess-1792996240842 (60s resting baseline, mean HR: 71.83 BPM, Typical pattern)
      - sess-1793000580974 (90s post-activity recovery plateau, mean HR: 74.03 BPM, Typical pattern)
      - sess-1793010133841 (90s clean post-activity recovery descent, recovery drop: 9.0 BPM < 12 BPM threshold, Different pattern)
 3. **Cross-Validation & Evaluation Strategy:**
-   - Multi-subject combined cohort (11 subjects): 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage, VOL_REAL_01 in Holdout Fold 1). Tiny MLP achieved **98.86%** on this benchmark (ROC-AUC: 0.9974).
+   - Multi-subject combined cohort (11 subjects): 5-Fold GroupKFold grouped strictly by subject_id (zero inter-subject leakage, VOL_BLE_SIM_01 in Holdout Fold 1). Tiny MLP achieved **98.86%** on this benchmark (ROC-AUC: 0.9974).
      > [!WARNING]
-     > **Cohort Composition Caveat:** 10 of the 11 subjects are synthetic simulation profiles and only 1 real subject with 3 sessions exists; this 98.86% benchmark score primarily reflects synthetic-data performance and mathematical stability, NOT real-world generalization or clinical diagnostic accuracy. It must not stand alone as "model accuracy".
-   - Single-subject real data: Integration / pipeline sanity check (n=1 test session) using time-ordered chronological split (2 earlier train, 1 later test; n=1 test session passed). Serves as an end-to-end integration and pipeline sanity check, not a meaningful accuracy metric.
+     > **Cohort Composition Caveat:** 10 of the 11 subjects are synthetic simulation profiles, and the 11th subject (`VOL_BLE_SIM_01`, 3 sessions) represents simulated heart rate profiles streamed over physical BLE from the test peripheral `PulsePatch-SimHR`. Zero human subject physiological recordings are included. This 98.86% benchmark score primarily reflects synthetic-data performance, software pipeline stability, and BLE transport integration, NOT real-world human physiological generalization or clinical diagnostic accuracy. It must not stand alone as "model accuracy".
+   - Single-subject BLE test peripheral data: Integration / pipeline sanity check (n=1 test session) using time-ordered chronological split (2 earlier train, 1 later test; n=1 test session passed). Serves as an end-to-end integration and pipeline sanity check, not a meaningful accuracy metric.
 
 ---
 

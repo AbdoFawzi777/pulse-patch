@@ -285,7 +285,7 @@ class PdfReportGenerator {
                 pw.SizedBox(height: 2.0),
                 pw.Bullet(
                   text:
-                      'Measured: Optical PPG samples from MAX30102 via ESP32-C3 BLE transmission.',
+                      'Received Data: Real over-the-air BLE packets from test peripheral (PulsePatch-SimHR) streaming simulated physiological profiles; physical MAX30102 sensor integration pending.',
                   style: const pw.TextStyle(fontSize: 7.5),
                 ),
                 pw.Bullet(

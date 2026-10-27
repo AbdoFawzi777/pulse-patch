@@ -1,252 +1,321 @@
 {
   "device": "NIC-LX2",
   "android_version": "15",
+  "package": "com.pulsepatch.lite.app",
+  "initial_pid": 10520,
+  "final_pid": 10520,
+  "pid_preserved": true,
   "duration_minutes": 15,
+  "total_elapsed_seconds": 845,
   "total_samples": 15,
-  "initial_pss_mb": 330.07,
-  "final_pss_mb": 281.03,
-  "pss_drift_mb": -49.04,
+  "initial_pss_mb": 317.9,
+  "final_pss_mb": 248.77,
+  "pss_drift_mb": -69.13,
+  "charging_state": "USB charging active during test",
+  "app_state_description": "Foreground active on Home dashboard with touch keepalive interaction every 60s (no active BLE peripheral connected during this endurance pass)",
   "db_integrity": "ok (verified via drift FFI runtime)",
+  "anr_fatal_count": 0,
+  "anr_fatal_logs": [],
   "samples": [
     {
       "minute": 1,
       "elapsed_seconds": 2,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 337993,
-        "total_pss_mb": 330.07,
-        "native_heap_kb": 8402,
-        "dalvik_heap_kb": 1025
+        "total_pss_kb": 325525,
+        "total_pss_mb": 317.9,
+        "native_heap_kb": 4117,
+        "dalvik_heap_kb": 578
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.0,
+        "battery_level": 60,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:41:22"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:04:42"
     },
     {
       "minute": 2,
       "elapsed_seconds": 63,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 344734,
-        "total_pss_mb": 336.65,
-        "native_heap_kb": 12307,
-        "dalvik_heap_kb": 7834
+        "total_pss_kb": 355523,
+        "total_pss_mb": 347.19,
+        "native_heap_kb": 9590,
+        "dalvik_heap_kb": 1609
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.4,
+        "battery_level": 60,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:42:22"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:05:42"
     },
     {
       "minute": 3,
       "elapsed_seconds": 123,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 340717,
-        "total_pss_mb": 332.73,
-        "native_heap_kb": 11128,
-        "dalvik_heap_kb": 7653
+        "total_pss_kb": 370694,
+        "total_pss_mb": 362.01,
+        "native_heap_kb": 11405,
+        "dalvik_heap_kb": 7568
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.4,
+        "battery_level": 60,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:43:23"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:06:42"
     },
     {
       "minute": 4,
-      "elapsed_seconds": 184,
+      "elapsed_seconds": 183,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 338999,
-        "total_pss_mb": 331.05,
-        "native_heap_kb": 10530,
-        "dalvik_heap_kb": 7017
+        "total_pss_kb": 371244,
+        "total_pss_mb": 362.54,
+        "native_heap_kb": 7113,
+        "dalvik_heap_kb": 7798
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.4,
+        "battery_level": 60,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:44:23"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:07:42"
     },
     {
       "minute": 5,
-      "elapsed_seconds": 244,
+      "elapsed_seconds": 243,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 346615,
-        "total_pss_mb": 338.49,
-        "native_heap_kb": 10455,
-        "dalvik_heap_kb": 7641
+        "total_pss_kb": 357080,
+        "total_pss_mb": 348.71,
+        "native_heap_kb": 2667,
+        "dalvik_heap_kb": 1302
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.4,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:45:24"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:08:42"
     },
     {
       "minute": 6,
-      "elapsed_seconds": 305,
+      "elapsed_seconds": 303,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 339335,
-        "total_pss_mb": 331.38,
-        "native_heap_kb": 12059,
-        "dalvik_heap_kb": 5910
+        "total_pss_kb": 371549,
+        "total_pss_mb": 362.84,
+        "native_heap_kb": 4150,
+        "dalvik_heap_kb": 7354
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.4,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:46:24"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:09:42"
     },
     {
       "minute": 7,
-      "elapsed_seconds": 365,
+      "elapsed_seconds": 363,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 344777,
-        "total_pss_mb": 336.7,
-        "native_heap_kb": 12013,
-        "dalvik_heap_kb": 7671
+        "total_pss_kb": 374206,
+        "total_pss_mb": 365.44,
+        "native_heap_kb": 4462,
+        "dalvik_heap_kb": 7650
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.8,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:47:25"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:10:43"
     },
     {
       "minute": 8,
-      "elapsed_seconds": 426,
+      "elapsed_seconds": 423,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 339582,
-        "total_pss_mb": 331.62,
-        "native_heap_kb": 10869,
-        "dalvik_heap_kb": 6254
+        "total_pss_kb": 375538,
+        "total_pss_mb": 366.74,
+        "native_heap_kb": 4865,
+        "dalvik_heap_kb": 7515
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.8,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:48:25"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:11:43"
     },
     {
       "minute": 9,
-      "elapsed_seconds": 486,
+      "elapsed_seconds": 484,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 341652,
-        "total_pss_mb": 333.64,
-        "native_heap_kb": 11598,
-        "dalvik_heap_kb": 7342
+        "total_pss_kb": 368379,
+        "total_pss_mb": 359.75,
+        "native_heap_kb": 4866,
+        "dalvik_heap_kb": 7362
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.8,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:49:26"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:12:43"
     },
     {
       "minute": 10,
-      "elapsed_seconds": 547,
+      "elapsed_seconds": 544,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 342377,
-        "total_pss_mb": 334.35,
-        "native_heap_kb": 10644,
-        "dalvik_heap_kb": 7851
+        "total_pss_kb": 358777,
+        "total_pss_mb": 350.37,
+        "native_heap_kb": 4978,
+        "dalvik_heap_kb": 2167
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.8,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:50:26"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:13:43"
     },
     {
       "minute": 11,
-      "elapsed_seconds": 608,
+      "elapsed_seconds": 604,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 402655,
-        "total_pss_mb": 393.22,
-        "native_heap_kb": 10533,
-        "dalvik_heap_kb": 5473
+        "total_pss_kb": 371538,
+        "total_pss_mb": 362.83,
+        "native_heap_kb": 5400,
+        "dalvik_heap_kb": 7417
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.8,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:51:27"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:14:43"
     },
     {
       "minute": 12,
-      "elapsed_seconds": 668,
+      "elapsed_seconds": 664,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 285111,
-        "total_pss_mb": 278.43,
-        "native_heap_kb": 10808,
-        "dalvik_heap_kb": 7562
+        "total_pss_kb": 261140,
+        "total_pss_mb": 255.02,
+        "native_heap_kb": 2485,
+        "dalvik_heap_kb": 1256
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.7,
+        "battery_level": 61,
+        "battery_temp_c": 31.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:52:28"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:15:43"
     },
     {
       "minute": 13,
-      "elapsed_seconds": 729,
+      "elapsed_seconds": 724,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 289886,
-        "total_pss_mb": 283.09,
-        "native_heap_kb": 9969,
-        "dalvik_heap_kb": 7428
+        "total_pss_kb": 278087,
+        "total_pss_mb": 271.57,
+        "native_heap_kb": 10973,
+        "dalvik_heap_kb": 7093
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.7,
+        "battery_level": 61,
+        "battery_temp_c": 32.6,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:53:28"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:16:43"
     },
     {
       "minute": 14,
-      "elapsed_seconds": 789,
+      "elapsed_seconds": 784,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 275570,
-        "total_pss_mb": 269.11,
-        "native_heap_kb": 8311,
-        "dalvik_heap_kb": 1344
+        "total_pss_kb": 273546,
+        "total_pss_mb": 267.13,
+        "native_heap_kb": 5294,
+        "dalvik_heap_kb": 7167
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.7,
+        "battery_level": 61,
+        "battery_temp_c": 33.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:54:29"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:17:44"
     },
     {
       "minute": 15,
-      "elapsed_seconds": 850,
+      "elapsed_seconds": 845,
+      "pid": 10520,
+      "pid_stable": true,
       "meminfo": {
-        "total_pss_kb": 287771,
-        "total_pss_mb": 281.03,
-        "native_heap_kb": 10967,
-        "dalvik_heap_kb": 7458
+        "total_pss_kb": 254739,
+        "total_pss_mb": 248.77,
+        "native_heap_kb": 2877,
+        "dalvik_heap_kb": 1409
       },
       "system": {
-        "cpu_percent": 31064.0,
-        "battery_level": 100,
-        "battery_temp_c": 34.9
+        "cpu_percent": 0.7,
+        "battery_level": 62,
+        "battery_temp_c": 32.9,
+        "is_charging": true
       },
-      "timestamp": "2026-10-26 16:55:29"
+      "app_activity": "Foreground active on Home dashboard with automated swipe keepalive",
+      "timestamp": "2026-10-27 09:18:44"
     }
   ]
 }

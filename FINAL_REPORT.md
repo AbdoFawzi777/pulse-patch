@@ -3,7 +3,7 @@
 **Project:** PulsePatch Lite — Educational Pulse Biomonitoring  
 **Author / Team:** Antigravity Engineering Agent Orchestrator & Specialist Team  
 **Date:** October 2026  
-**Version:** 1.0.0 (Release-Ready)  
+**Version:** 1.0.0 (Engineering Candidate)  
 **Repository Working Directory:** `E:\pulse patch`  
 
 ---
@@ -133,7 +133,7 @@ Three real sessions were recorded directly on the physical Android phone (`HONOR
 ## 4. Real Data Training Pipeline & Cross-Validation
 
 The machine learning pipeline in `ml/src/train.py` was executed using all 3 real phone-recorded sessions combined with the synthetic baseline cohort:
-- **Real Phone Dataset:** 3 recorded sessions (`VOL_REAL_01`) from `ml/data/phone_recorded_sessions.csv`.
+- **Real Phone Dataset:** 3 recorded sessions (`VOL_BLE_SIM_01`) from `ml/data/phone_recorded_sessions.csv`.
 - **Synthetic Bootstrap Dataset:** 160 sessions across 10 modeled volunteers (`VOL_01`–`VOL_10`).
 - **Combined Dataset:** 163 total sessions across 11 distinct subjects (`ml/data/combined_training_data.csv`).
 
@@ -148,7 +148,7 @@ Evaluated strictly using time-ordered chronological session split (75% earlier t
 - *Generalization Note:* Serves as an end-to-end integration and pipeline sanity check demonstrating software workflow stability on one subject, and does not make claims of population-wide generalization or clinical accuracy.
 
 ### 5-Fold GroupKFold Cross-Validation (All 11 Subjects, N=163 Sessions)
-Grouped strictly by subject ID (`VOL_01`–`VOL_10` + `VOL_REAL_01` in Holdout Fold 1):
+Grouped strictly by subject ID (`VOL_01`–`VOL_10` + `VOL_BLE_SIM_01` in Holdout Fold 1):
 
 | Model Architecture | Mean CV Score | Precision | Recall | F1 Score | ROC-AUC | Brier Loss | Evaluation Scope |
 |---|---|---|---|---|---|---|---|

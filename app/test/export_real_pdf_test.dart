@@ -91,7 +91,7 @@ void main() {
       ];
 
       final pdfBytes = await PdfReportGenerator.generate(
-        userName: 'Volunteer VOL_REAL_01',
+        userName: 'Volunteer VOL_BLE_SIM_01',
         startDate: DateTime.fromMillisecondsSinceEpoch(1792996240842),
         endDate: now,
         items: items,

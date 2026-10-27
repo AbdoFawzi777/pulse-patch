@@ -53,8 +53,8 @@ for r in rows:
     lbl_name = "Typical pattern" if is_typical else "Different pattern"
 
     records.append({
-        "subject_id": "VOL_REAL_01",
-        "subject_code": "VOL_REAL_01",
+        "subject_id": "VOL_BLE_SIM_01",
+        "subject_code": "VOL_BLE_SIM_01",
         "session_id": sess_id,
         "session_type": stype,
         "source": source,
