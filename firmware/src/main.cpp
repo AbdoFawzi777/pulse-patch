@@ -11,6 +11,7 @@
 #include <Wire.h>
 #include <NimBLEDevice.h>
 #include "MAX30105.h" // SparkFun MAX3010x library (fully compatible with MAX30102)
+#include "pulse_config.h"
 
 // =============================================================================
 // Hardware Configuration & Pinout
@@ -198,6 +199,20 @@ void setup() {
     Wire.begin(I2C_SDA_PIN, I2C_SCL_PIN);
     Wire.setClock(400000); // 400 kHz Fast-Mode I2C
 
+#ifdef I2C_SCANNER_ONLY
+    Serial.println(F("[I2C SCANNER] Starting scan on SDA=GPIO4, SCL=GPIO5..."));
+    byte count = 0;
+    for (byte i = 8; i < 120; i++) {
+        Wire.beginTransmission(i);
+        if (Wire.endTransmission() == 0) {
+            Serial.printf("[I2C SCANNER] Found device at 0x%02X\n", i);
+            count++;
+        }
+    }
+    Serial.printf("[I2C SCANNER] Scan complete. Found %d device(s).\n", count);
+    while (true) { delay(1000); }
+#endif
+
     // Initialize MAX30102 Optical Sensor
     if (!particleSensor.begin(Wire, I2C_SPEED_FAST)) {
         Serial.println(F("[SENSOR] ERROR: MAX30102 sensor not found on I2C bus!"));
@@ -330,6 +345,17 @@ void loop() {
             packet.quality,
             packet.deviceTimestampMs
         );
+
+#ifdef DEBUG_RAW
+        Serial.printf("%lu,%lu,%lu,%.2f,%.1f,%u,%u\n",
+            (unsigned long)now,
+            (unsigned long)(sensorFound ? particleSensor.getIR() : 0),
+            (unsigned long)(sensorFound ? particleSensor.getRed() : 0),
+            currentBpm,
+            (packet.bpmTimes10 != 0xFFFF) ? (packet.bpmTimes10 / 10.0f) : 0.0f,
+            packet.quality,
+            packet.flags);
+#endif
     }
 
     // Handle BLE reconnection state

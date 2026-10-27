@@ -98,5 +98,26 @@ void main() {
         );
       }
     });
+    test('Matches golden_pulse_packet.bin exactly for cross-platform parity', () {
+      final goldenBytes = Uint8List.fromList([
+        0x01, 0x00,              // protocolVersion=1, flags=0
+        0xD0, 0x02,              // bpmTimes10=720 (72.0 BPM)
+        0x55,                    // quality=85
+        0xE8, 0x03, 0x00, 0x00,  // deviceTimestampMs=1000
+        0x01, 0x00,              // sequenceNumber=1
+        0x00,                    // reserved=0
+      ]);
+
+      final parsed = BlePacket.parse(goldenBytes);
+      expect(parsed, isNotNull);
+      expect(parsed!.protocolVersion, equals(1));
+      expect(parsed.contactDetected, isFalse);
+      expect(parsed.motionSuspected, isFalse);
+      expect(parsed.rawBpm, closeTo(72.0, 0.001));
+      expect(parsed.quality, equals(85));
+      expect(parsed.deviceTimestampMs, equals(1000));
+      expect(parsed.sequenceNumber, equals(1));
+      expect(parsed.toBytes(), equals(goldenBytes));
+    });
   });
 }
