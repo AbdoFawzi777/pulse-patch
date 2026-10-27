@@ -1,7 +1,7 @@
 # PulsePatch Lite — AI Model Card
 
 **Model Name:** PulsePatch AI Insights  
-**Engine:** small neural network running locally in the app (pure Dart isolate, 233 floating-point weights)  
+**Engine:** small neural network running locally in the app (pure Dart isolate, 241 floating-point parameters: 216 weights + 25 biases)  
 **Version:** 1.0.0  
 **Date:** October 2026  
 **License:** Open Source (Educational Capstone Project)  
@@ -28,7 +28,7 @@ PulsePatch AI Insights is a compact, on-device machine learning model engineered
   - Hidden Layer 1: 16 units, ReLU activation ($\max(0, z)$)
   - Hidden Layer 2: 8 units, ReLU activation ($\max(0, z)$)
   - Output Layer: 1 unit with Sigmoid logistic activation ($\sigma(z)$) / 2 units with Softmax
-- **Parameters:** 233 floating-point weights and biases
+- **Parameters:** 241 floating-point parameters (216 weights + 25 biases)
 - **Quantization:** Float32 (lossless numerical parity)
 - **Runtime Inference Latency:** $< 0.15\text{ ms}$ on mobile ARM devices and background isolates
 - **Memory Consumption:** $< 12\text{ KB}$ runtime footprint

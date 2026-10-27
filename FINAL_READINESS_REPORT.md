@@ -1,4 +1,4 @@
-# PulsePatch Lite — Final Engineering Readiness & Capstone Defense Report
+﻿# PulsePatch Lite — Final Engineering Readiness & Capstone Defense Report
 
 **Project:** PulsePatch Lite — Privacy-Preserving Pulse Biomonitoring System  
 **Lead Engineering Agent:** Antigravity Engineering Agent Orchestrator & Specialist Team  
@@ -16,7 +16,7 @@ PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonito
 
 ### Final Verification Verdict: **SOFTWARE STACK DEFENSE-READY (Physical Hardware Integration Pending)**
 - **Hardware Integration Scope:** Phase 14 (physical ESP32-C3 + MAX30102 breadboard wiring and optical sensor testing) is **explicitly PENDING** due to physical sensor hardware availability. The complete software stack—including firmware source code and binary compilation, mobile application, database layer, BLE ingestion, ML inference, and PDF reporting—is fully verified and defense-ready.
-- **Test Suite:** **180 / 180 tests passing (100% pass rate)**.
+- **Test Suite:** **307 / 307 tests passing (100% pass rate)**.
 - **Static Analysis:** `flutter analyze` clean (**0 issues found**).
 - **Physical Phone Installation:** Verified on physical `HONOR NIC-LX2` running Android 15.
 - **Physical BLE Over-The-Air Streaming:** 3 complete sessions recorded over BLE from real peripheral `PulsePatch-SimHR` (255 valid packets received).
@@ -32,7 +32,7 @@ PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonito
 
 ## 2. Definition of Done Compliance Audit (Master Build Plan Section 10)
 
-| Requirement | Plan Specification | Achieved Production State | Verification Evidence |
+| Requirement | Plan Specification | Achieved State | Verification Evidence |
 |---|---|---|---|
 | **Design Canvas Matching** | 6 master screens matched to canvas design | Master screens measured via `scripts/compare_fidelity.py`: SSIM 86.1%–92.8% across primary screens (Icon 99.1%, Connect Device 65.0%), Pixel Match 93.3%–96.8% (Icon 100.0%, Connect Device 74.1%). Note: Earlier $\ge 95\%$ claims conflated Pixel Match with SSIM. | `scripts/compare_fidelity.py` and `app/test/fidelity_screen_test.dart` |
 | **Complete Screen Inventory** | 6 canvas + 21 derived screens = 27 total screens | All 27 screens implemented; 6 master screens matched to design mockups; 21 derived screens pass overflow tests and live phone navigation (no design mockup exists for derived screens) | `docs/screenshots/01_splash.png`–`27_app_icon.png` and `overflow_screen_test.dart` |
@@ -40,7 +40,7 @@ PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonito
 | **100% Offline Autonomy** | Zero cloud calls, zero telemetry, local DB | Pure C / FFI SQLite engine (`drift`), zero network dependencies | Privacy audit tests, offline mode inspection |
 | **Hardware & Simulation** | Real sensor support + deterministic simulator | Dual-engine architecture with automatic or manual fallback and UI transparency | `firmware/src/main.cpp`, `UnifiedHeartRateSource` |
 | **Quality & Validity Gate** | 5-sample median filter, $SQI \ge 60$ gate, rate jump clamp | Gating suppresses degraded samples, pauses timers on contact loss | `SignalQualityFilter`, state machine test suite |
-| **Machine Learning Integrity** | Pure Dart isolate forward pass, feature extraction, parity | 233-parameter MLP runs in background isolate ($<0.15$ ms), 100% parity | `docs/model_card.md`, `ml/src/verify_parity.py` |
+| **Machine Learning Integrity** | Pure Dart isolate forward pass, feature extraction, parity | 241-parameter MLP runs in background isolate ($<0.15$ ms), 100% parity | `docs/model_card.md`, `ml/src/verify_parity.py` |
 | **Physical Field Test** | Over-the-air BLE connection on physical phone | 3 real BLE sessions recorded on `HONOR NIC-LX2`, 100% parity ($\Delta = 0$) | `docs/field_test/FIELD_TEST_REPORT.md`, SQLite database |
 | **Offline PDF Reports** | Offline PDF generation with origin separation | Self-contained offline PDF generator rendering 3-tier data declaration | `PdfReportGenerator`, `pulse_patch_biomonitoring_report.pdf` |
 | **Firmware Compilation** | Clean build for ESP32-C3 RISC-V | PlatformIO `pio run` passed cleanly (Exit 0); binary generated | `firmware/.pio/build/esp32-c3-devkitm-1/firmware.bin` |
@@ -53,8 +53,8 @@ PulsePatch Lite is an end-to-end, privacy-preserving educational pulse biomonito
 All 27 screens were audited on the physical target hardware (HONOR `NIC-LX2`, 360 x 802 dp logical canvas, 320 dpi, Android 15) and across multi-resolution test harnesses (360x800, 390x844, 411x891 at 1.0x and 1.3x text scaling).
 
 > [!NOTE]
-> **Scope Clarification on "0 issues" & 48 Test Permutations:**
-> - **The 48 Test Permutations:** `app/test/overflow_screen_test.dart` systematically tests **8 primary screens** across **3 device resolutions** (360x800, 390x844, 411x891) and **2 text scale factors** (1.0x, 1.3x), yielding exactly $8 \times 3 \times 2 = \mathbf{48 \text{ automated permutations}}$, all of which pass with 0 layout overflow errors. The 8 tested screens are: `ConnectDeviceScreen`, `HomeScreen`, `MeasurementPreparationScreen`, `LiveMeasurementScreen`, `MeasurementCompleteScreen`, `AiInsightsDashboardScreen`, `MeasurementHistoryScreen`, and `ApplicationSettingsScreen`.
+> **Scope Clarification on "0 issues" & 174 Test Permutations:**
+> - **The 174 Test Permutations:** `app/test/overflow_screen_test.dart` systematically tests **all 29 UI surfaces** across **3 device resolutions** (360x800, 390x844, 411x891) and **2 text scale factors** (1.0x, 1.3x), yielding exactly $29 \times 3 \times 2 = \mathbf{174 \text{ automated permutations}}$, all of which pass with 0 layout overflow errors. The 29 surfaces are: SplashScreen, WelcomeScreen, HowItWorksScreen, UserPreferencesScreen, PermissionsScreen, HomeScreen, ConnectDeviceScreen, DeviceTroubleshootingScreen, MeasurementPreparationScreen, LiveMeasurementScreen (Sim), LiveMeasurementScreen (BLE), MeasurementCompleteScreen, HeartRateDetailScreen, AiInsightsDashboardScreen, SessionPatternAnalysisScreen, RecoveryAnalysisScreen, HistoricalTrendsScreen, AiModelInfoScreen, MeasurementHistoryScreen, SessionDetailsScreen, ReportsScreen, ProfilePreferencesScreen, ApplicationSettingsScreen, NotificationsCenterScreen, ReminderSettingsScreen, PrivacyDataManagementScreen, AboutScreen, AppIconWidget, DeviceDetailBottomSheet.
 > - **Master Canvas Screens (6 + App Icon):** "0 issues" reflects both zero layout overflow errors AND measured design fidelity against the HTML/CSS baseline references via `scripts/compare_fidelity.py`.
 > - **Derived Screens (21 total):** "0 issues" denotes **zero layout overflow test failures** in widget/unit tests and clean execution. **No visual fidelity or SSIM matching is claimed for derived screens, as no Figma/HTML design reference exists for them.**
 > - **Physical On-Device Walkthrough:** Of the 21 derived screens, **11 were physically navigated and screenshotted on the HONOR NIC-LX2 phone** during field testing. The remaining **10 derived screens were validated via automated widget/unit tests only** and were not opened during the physical live capture session.
@@ -243,11 +243,11 @@ PULSEPATCH LITE — FINAL ENGINEERING CAPSTONE READINESS AUDIT
 ========================================================================================
 Target Hardware:        HONOR NIC-LX2 (Android 15, API 35, Serial: A9VUCP5A08407069)
 Firmware Target:        ESP32-C3 DevKitM-1 (PlatformIO, RAM 7.3%, Flash 41.7%)
-Flutter Test Suite:     180 / 180 Passed (0 Failures, 0 Skipped)
+Flutter Test Suite:     307 / 307 Passed (0 Failures, 0 Skipped)
 Static Analysis:        flutter analyze — 0 Issues Found
 Physical Field Sessions: 3 Sessions Recorded Over-The-Air (255 Valid Packets)
 Mathematical Parity:    100% Exact Numerical Parity (Delta = 0.000000 across all metrics)
-Machine Learning Model: Tiny MLP (5->16->8->2, 233 weights, pure Dart isolate)
+Machine Learning Model: Tiny MLP (5->16->8->1, 241 parameters: 216 weights + 25 biases, pure Dart isolate)
 Single-Subject Eval:    Integration/pipeline sanity check passed (n=1 test session)
 GroupKFold Benchmark:   98.86% CV Score (Explicit Caveat: 10/11 subjects synthetic)
 Endurance Stability:    15-Minute Run Passed (Memory stable with active GC, SQLite integrity ok)

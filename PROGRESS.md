@@ -1,4 +1,4 @@
-# PulsePatch Lite — Engineering Progress Tracker
+﻿# PulsePatch Lite — Engineering Progress Tracker
 
 | Phase | Description | Status | Roles | Tested | Commit |
 |---|---|---|---|---|---|
@@ -74,9 +74,11 @@
   - Updated `model_card.md` and `FIELD_TEST_REPORT.md`.
 
 - **Major Step 5 — Full 27-Screen Phone Regression, 15-Minute Stability Run, Firmware Checklist:** **100% VERIFIED & COMPLETE**
-  - **27-Screen Multi-Resolution Regression:** All 27 screens audited on target phone canvas (360x802 dp) and multi-resolution automated harnesses (360x800, 390x844, 411x891 at 1.0x and 1.3x text scale). 48/48 permutations in `app/test/overflow_screen_test.dart` passed with zero overflow errors.
+  - **27-Screen Multi-Resolution Regression:** All 27 screens audited on target phone canvas (360x802 dp) and multi-resolution automated harnesses (360x800, 390x844, 411x891 at 1.0x and 1.3x text scale). 174/174 permutations in `app/test/overflow_screen_test.dart` passed with zero overflow errors.
   - **Live On-Device Navigation Verified:** Live flow walked on physical HONOR NIC-LX2: Home -> History (all 3 sessions) -> AI Insights -> Settings -> Profile -> App Settings -> Trends -> Biomonitoring Reports. Zero clipping or crashes. Proof captures stored in `docs/field_test/screens/live_*.png`.
-  - **15-Minute Continuous Stability Telemetry:** Completed 15-minute continuous endurance test on physical phone (`tools/stability_run.py`). Telemetry logged in `docs/field_test/stability_telemetry.json`: Initial PSS: 330.07 MB, Peak PSS: 393.20 MB, Final PSS: 281.03 MB (Net drift: -49.04 MB, active GC reclamation, zero unbounded memory drift). Battery temp stable at 34.9°C. 0 crashes/ANRs. SQLite integrity check OK.
+  - **Dual-Run Stability Telemetry:** Two foreground stability runs completed on physical phone (HONOR NIC-LX2). Full telemetry in `docs/field_test/stability_telemetry.json`.
+    - **Run 1 (idle-foreground, ~14 min, 15 samples, PID 10520):** Initial PSS 317.9 MB -> Final PSS 248.77 MB. Memory drop at ~minute 12 identified as Android ART GC compaction (PID stable throughout). 0 ANRs. SQLite integrity OK.
+    - **Run 2 (active-streaming, ~3.75 min, 15 samples, PID 22865):** PSS range 348-366 MB, CPU 0-37.5%. 0 ANRs. PID stable. Phone was USB-connected and charging; BLE session simulated via on-device source.
   - **ESP32-C3 Firmware Readiness Checklist:** PlatformIO build verified clean (Exit 0, RAM 7.3%, Flash 41.7%, binary `firmware.bin` 572,352 bytes generated). Little-endian 12-byte GATT packet layout matches Dart parser exactly. I2C pinout (GPIO4/5 at 3.3V) and flashing instructions documented.
 
 - **Major Step 6 — Comprehensive Final Engineering Readiness Report Authored:** **100% VERIFIED & COMPLETE**

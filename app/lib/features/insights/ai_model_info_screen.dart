@@ -141,7 +141,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                               ),
                             ),
                             Text(
-                              '233 Parameters (<0.15ms)',
+                              '241 Parameters (<0.15ms)',
                               style: TextStyle(
                                 fontFamily: 'Outfit',
                                 fontSize: 13.0,
@@ -322,7 +322,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
+                        Wrap(
                           children: [
                             Container(
                               padding: const EdgeInsets.symmetric(
@@ -548,7 +548,7 @@ class _AiModelInfoScreenState extends State<AiModelInfoScreen> {
                         ),
                         _buildTechRow(
                           'Model Parameter Count',
-                          '233 weights & biases',
+                          '241 weights & biases',
                         ),
                         _buildTechRow(
                           'Inference Latency',

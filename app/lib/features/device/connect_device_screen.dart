@@ -146,145 +146,38 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(22.0)),
       ),
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setModalState) => SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Text(
-                        dev.displayName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textPrimary,
-                        ),
-                      ),
-                    ),
-                    _buildRssiBars(dev.rssi),
-                  ],
-                ),
-                const SizedBox(height: 4.0),
-                Text(
-                  '${dev.maskedId} · ${dev.rssi} dBm',
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 13.0,
-                    fontWeight: FontWeight.w300,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-                const SizedBox(height: 12.0),
-                Wrap(
-                  spacing: 6.0,
-                  runSpacing: 4.0,
-                  children: [
-                    if (dev.hasHeartRate)
-                      _buildBadge(
-                        'Heart rate (0x180D)',
-                        const Color(0xFF10B981),
-                      ),
-                    if (dev.hasSpO2)
-                      _buildBadge('SpO2 (0x1822)', const Color(0xFF8B5CF6)),
-                    if (dev.hasPulsePatch)
-                      _buildBadge('PulsePatch', const Color(0xFF06B6D4)),
-                    if (dev.hasNordicUart)
-                      _buildBadge(
-                        'Nordic UART (6E40)',
-                        const Color(0xFFF59E0B),
-                      ),
-                    if (dev.isMiBand)
-                      _buildBadge('Mi Band', const Color(0xFFF59E0B)),
-                  ],
-                ),
-                const SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Checkbox(
-                      value: rememberThis,
-                      activeColor: AppColors.accentCyan,
-                      onChanged: (val) {
-                        setModalState(() => rememberThis = val ?? false);
-                      },
-                    ),
-                    const Text(
-                      'Remember this device for auto-connect',
-                      style: TextStyle(
-                        fontFamily: 'Outfit',
-                        fontSize: 13.0,
-                        fontWeight: FontWeight.w300,
-                        color: AppColors.textPrimary,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16.0),
-                Row(
-                  children: [
-                    Expanded(
-                      child: PillButton(
-                        label: 'Connect',
-                        style: PillButtonStyle.white,
-                        onPressed: () async {
-                          Navigator.pop(ctx);
-                          if (rememberThis) {
-                            await unifiedSource.rememberDevice(
-                              dev.id,
-                              dev.displayName,
-                              dev.category,
-                            );
-                          } else if (isRemembered) {
-                            await unifiedSource.forgetDevice();
-                          }
-                          setState(() => _connectingDeviceId = dev.id);
-                          try {
-                            await unifiedSource.connect(dev.id);
-                          } finally {
-                            if (mounted) {
-                              setState(() => _connectingDeviceId = null);
-                            }
-                          }
-                        },
-                      ),
-                    ),
-                    const SizedBox(width: 8.0),
-                    Expanded(
-                      child: PillButton(
-                        label: 'Check compatibility',
-                        style: PillButtonStyle.dark,
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                          _handleCheckCompatibility(dev);
-                        },
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10.0),
-                SizedBox(
-                  width: double.infinity,
-                  child: PillButton(
-                    label: 'Advanced: map this characteristic',
-                    style: PillButtonStyle.dark,
-                    onPressed: () {
-                      Navigator.pop(ctx);
-                      _showGenericMappingDialog(dev);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      builder: (ctx) => DeviceDetailBottomSheet(
+        device: dev,
+        initialRemember: isRemembered,
+        onRememberChanged: (val) => rememberThis = val,
+        onConnect: () async {
+          Navigator.pop(ctx);
+          if (rememberThis) {
+            await unifiedSource.rememberDevice(
+              dev.id,
+              dev.displayName,
+              dev.category,
+            );
+          } else if (isRemembered) {
+            await unifiedSource.forgetDevice();
+          }
+          setState(() => _connectingDeviceId = dev.id);
+          try {
+            await unifiedSource.connect(dev.id);
+          } finally {
+            if (mounted) {
+              setState(() => _connectingDeviceId = null);
+            }
+          }
+        },
+        onCheckCompatibility: () {
+          Navigator.pop(ctx);
+          _handleCheckCompatibility(dev);
+        },
+        onAdvancedMap: () {
+          Navigator.pop(ctx);
+          _showGenericMappingDialog(dev);
+        },
       ),
     );
   }
@@ -1348,3 +1241,173 @@ class _RadarScannerPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
+
+/// Standalone bottom sheet displaying BLE device details and pairing actions.
+class DeviceDetailBottomSheet extends StatefulWidget {
+  const DeviceDetailBottomSheet({
+    super.key,
+    required this.device,
+    this.initialRemember = false,
+    this.onRememberChanged,
+    this.onConnect,
+    this.onCheckCompatibility,
+    this.onAdvancedMap,
+  });
+
+  final DiscoveredBleDevice device;
+  final bool initialRemember;
+  final ValueChanged<bool>? onRememberChanged;
+  final VoidCallback? onConnect;
+  final VoidCallback? onCheckCompatibility;
+  final VoidCallback? onAdvancedMap;
+
+  @override
+  State<DeviceDetailBottomSheet> createState() => _DeviceDetailBottomSheetState();
+}
+
+class _DeviceDetailBottomSheetState extends State<DeviceDetailBottomSheet> {
+  late bool _rememberThis;
+
+  @override
+  void initState() {
+    super.initState();
+    _rememberThis = widget.initialRemember;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final dev = widget.device;
+    return Material(
+      color: AppColors.cardBgNavy,
+      borderRadius: const BorderRadius.vertical(top: Radius.circular(22.0)),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        dev.displayName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                    _ConnectDeviceScreenState._buildRssiBars(dev.rssi),
+                  ],
+                ),
+                const SizedBox(height: 4.0),
+                Text(
+                  '${dev.maskedId} · ${dev.rssi} dBm',
+                  style: const TextStyle(
+                    fontFamily: 'Outfit',
+                    fontSize: 13.0,
+                    fontWeight: FontWeight.w300,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                const SizedBox(height: 12.0),
+                Wrap(
+                  spacing: 6.0,
+                  runSpacing: 4.0,
+                  children: [
+                    if (dev.hasHeartRate)
+                      _ConnectDeviceScreenState._buildBadge(
+                        'Heart rate (0x180D)',
+                        const Color(0xFF10B981),
+                      ),
+                    if (dev.hasSpO2)
+                      _ConnectDeviceScreenState._buildBadge(
+                        'SpO2 (0x1822)',
+                        const Color(0xFF8B5CF6),
+                      ),
+                    if (dev.hasPulsePatch)
+                      _ConnectDeviceScreenState._buildBadge(
+                        'PulsePatch',
+                        const Color(0xFF06B6D4),
+                      ),
+                    if (dev.hasNordicUart)
+                      _ConnectDeviceScreenState._buildBadge(
+                        'Nordic UART (6E40)',
+                        const Color(0xFFF59E0B),
+                      ),
+                    if (dev.isMiBand)
+                      _ConnectDeviceScreenState._buildBadge(
+                        'Mi Band',
+                        const Color(0xFFF59E0B),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Checkbox(
+                      value: _rememberThis,
+                      activeColor: AppColors.accentCyan,
+                      onChanged: (val) {
+                        setState(() => _rememberThis = val ?? false);
+                        widget.onRememberChanged?.call(_rememberThis);
+                      },
+                    ),
+                    Expanded(
+                      child: const Text(
+                        'Remember this device for auto-connect',
+                        style: TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: PillButton(
+                        label: 'Connect',
+                        style: PillButtonStyle.white,
+                        onPressed: widget.onConnect,
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    Expanded(
+                      child: PillButton(
+                        label: 'Check compatibility',
+                        style: PillButtonStyle.dark,
+                        onPressed: widget.onCheckCompatibility,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10.0),
+                SizedBox(
+                  width: double.infinity,
+                  child: PillButton(
+                    label: 'Advanced: map this characteristic',
+                    style: PillButtonStyle.dark,
+                    onPressed: widget.onAdvancedMap,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+

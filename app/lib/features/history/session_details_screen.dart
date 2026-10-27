@@ -36,9 +36,11 @@ class SessionDetailsScreen extends ConsumerWidget {
     final variability = stats?.variabilityEstMs?.round() ?? 41;
 
     return DesignCanvasScaffold(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           // Header Row (.r)
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -78,49 +80,56 @@ class SessionDetailsScreen extends ConsumerWidget {
           // Hero BPM & Min/Max Row (.r)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: 350.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$meanHr',
+                          style: const TextStyle(
+                            fontFamily: 'Outfit',
+                            fontSize: 96.0,
+                            fontWeight: FontWeight.w300,
+                            color: AppColors.textPrimary,
+                            height: 1.0,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 4.0, left: 4.0),
+                          child: Text(
+                            'BPM',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textPrimary,
+                              height: 1.0,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
                     Text(
-                      '$meanHr',
+                      '$minHr min   $maxHr max',
                       style: const TextStyle(
                         fontFamily: 'Outfit',
-                        fontSize: 96.0,
+                        fontSize: 14.0,
                         fontWeight: FontWeight.w300,
-                        color: AppColors.textPrimary,
-                        height: 1.0,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                    const Padding(
-                      padding: EdgeInsets.only(top: 4.0, left: 4.0),
-                      child: Text(
-                        'BPM',
-                        style: TextStyle(
-                          fontFamily: 'Outfit',
-                          fontSize: 22.0,
-                          fontWeight: FontWeight.w300,
-                          color: AppColors.textPrimary,
-                          height: 1.0,
-                        ),
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ],
                 ),
-                Text(
-                  '$minHr min   $maxHr max',
-                  style: const TextStyle(
-                    fontFamily: 'Outfit',
-                    fontSize: 14.0,
-                    fontWeight: FontWeight.w300,
-                    color: AppColors.textMuted,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
 
@@ -315,6 +324,7 @@ class SessionDetailsScreen extends ConsumerWidget {
           ),
         ],
       ),
-    );
+    ),
+  );
   }
 }

@@ -1,6 +1,6 @@
 # PulsePatch Lite — ESP32-C3 Firmware Guide
 
-This directory contains the production firmware for the **PulsePatch Lite** biomonitoring sensor patch, targeting an **Espressif ESP32-C3 RISC-V Microcontroller** paired with a **Maxim Integrated MAX30102 High-Sensitivity Pulse Oximeter and Heart-Rate Sensor**.
+This directory contains the firmware (not yet tested on hardware) for the **PulsePatch Lite** biomonitoring sensor patch, targeting an **Espressif ESP32-C3 RISC-V Microcontroller** paired with a **Maxim Integrated MAX30102 High-Sensitivity Pulse Oximeter and Heart-Rate Sensor**.
 
 > [!IMPORTANT]
 > **Strictly Non-Diagnostic Educational Biomonitoring Device**  

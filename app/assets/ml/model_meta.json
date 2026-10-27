@@ -30,7 +30,7 @@
     "Typical pattern",
     "Different pattern"
   ],
-  "architecture": "MLP (5 -> 16 -> 8 -> 2)",
+  "architecture": "MLP (5 -> 16 -> 8 -> 1)",
   "weights": {
     "coefs": [
       [

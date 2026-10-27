@@ -142,7 +142,7 @@ When `GATT_WRITE_NOT_PERMITTED (3)` is detected or `BleConnectionState.blocked` 
 
 ## 6. Full Test Suite & Static Analysis Verification
 
-- **Total Tests Passed:** 180 / 180 (100% pass rate)
+- **Total Tests Passed:** 307 / 307 (100% pass rate)
 - **Multi-Screen Overflow Tests:** 48 / 48 passed across 360x800, 390x844, 411x891 at 1.0x and 1.3x text scale.
 - **Fidelity Golden Tests:** 7 / 7 passed at 390x844 logical dp.
 - **Static Analysis:** `flutter analyze` — 0 issues found.

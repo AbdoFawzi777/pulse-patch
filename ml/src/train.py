@@ -319,7 +319,7 @@ def train_and_export_production_model(
             "scale": scaler_scale
         },
         "labels": LABEL_NAMES,
-        "architecture": "MLP (5 -> 16 -> 8 -> 2)",
+        "architecture": "MLP (5 -> 16 -> 8 -> 1)",
         "weights": weights,
         "training_cohort": cohort_desc,
         "sensor_note": sensor_note,

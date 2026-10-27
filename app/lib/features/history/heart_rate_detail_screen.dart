@@ -70,47 +70,54 @@ class HeartRateDetailScreen extends StatelessWidget {
           // Hero BPM Number and Min/Max Row (.r)
           Padding(
             padding: const EdgeInsets.fromLTRB(0.0, 16.0, 0.0, 20.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text.rich(
-                  TextSpan(
-                    text: '$bpm',
-                    style: const TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 96.0,
-                      fontWeight: FontWeight.w300,
-                      color: AppColors.textPrimary,
-                      height: 1.0,
-                      fontFeatures: [FontFeature.tabularFigures()],
-                    ),
-                    children: const [
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              alignment: Alignment.centerLeft,
+              child: SizedBox(
+                width: 350.0,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text.rich(
                       TextSpan(
-                        text: ' BPM',
-                        style: TextStyle(
+                        text: '$bpm',
+                        style: const TextStyle(
                           fontFamily: 'Outfit',
-                          fontSize: 22.0,
+                          fontSize: 96.0,
                           fontWeight: FontWeight.w300,
                           color: AppColors.textPrimary,
+                          height: 1.0,
+                          fontFeatures: [FontFeature.tabularFigures()],
+                        ),
+                        children: const [
+                          TextSpan(
+                            text: ' BPM',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 22.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 6.0),
+                      child: Text(
+                        '$minBpm min   $maxBpm max',
+                        style: const TextStyle(
+                          fontFamily: 'Outfit',
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w300,
+                          color: AppColors.textMuted,
                         ),
                       ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 6.0),
-                  child: Text(
-                    '$minBpm min   $maxBpm max',
-                    style: const TextStyle(
-                      fontFamily: 'Outfit',
-                      fontSize: 14.0,
-                      fontWeight: FontWeight.w300,
-                      color: AppColors.textMuted,
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
 

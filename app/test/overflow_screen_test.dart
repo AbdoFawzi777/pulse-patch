@@ -4,41 +4,63 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:app/data/repositories/preferences_repository.dart';
 import 'package:app/core/theme/app_theme.dart';
 import 'package:app/data/drift/app_database.dart';
+import 'package:app/data/repositories/preferences_repository.dart';
 import 'package:app/data/repositories/session_repository.dart';
+import 'package:app/domain/entities/ai_result_record.dart';
+import 'package:app/domain/entities/session_record.dart';
 import 'package:app/domain/entities/session_stats_record.dart';
 import 'package:app/domain/signal/session_recorder.dart';
 import 'package:app/features/device/connect_device_screen.dart';
+import 'package:app/features/device/device_troubleshooting_screen.dart';
 import 'package:app/features/device/heart_rate_source.dart';
 import 'package:app/features/device/simulated_heart_rate_source.dart';
+import 'package:app/features/device/standard_ble_heart_rate_source.dart';
+import 'package:app/features/history/heart_rate_detail_screen.dart';
 import 'package:app/features/history/measurement_history_screen.dart';
+import 'package:app/features/history/session_details_screen.dart';
 import 'package:app/features/home/home_screen.dart';
 import 'package:app/features/insights/ai_insights_dashboard_screen.dart';
+import 'package:app/features/insights/ai_model_info_screen.dart';
+import 'package:app/features/insights/session_pattern_analysis_screen.dart';
 import 'package:app/features/measurement/live_measurement_screen.dart';
 import 'package:app/features/measurement/measurement_complete_screen.dart';
 import 'package:app/features/measurement/measurement_preparation_screen.dart';
+import 'package:app/features/onboarding/how_it_works_screen.dart';
+import 'package:app/features/onboarding/permissions_screen.dart';
+import 'package:app/features/onboarding/splash_screen.dart';
+import 'package:app/features/onboarding/user_preferences_screen.dart';
+import 'package:app/features/onboarding/welcome_screen.dart';
+import 'package:app/features/reports/historical_trends_screen.dart';
+import 'package:app/features/reports/recovery_analysis_screen.dart';
+import 'package:app/features/reports/reports_screen.dart';
+import 'package:app/features/settings/about_screen.dart';
 import 'package:app/features/settings/application_settings_screen.dart';
+import 'package:app/features/settings/notifications_center_screen.dart';
+import 'package:app/features/settings/privacy_data_management_screen.dart';
+import 'package:app/features/settings/profile_preferences_screen.dart';
+import 'package:app/features/settings/reminder_settings_screen.dart';
+import 'package:app/shared/widgets/app_icon_widget.dart';
 
 Widget _buildScreenHarness({
   required Widget child,
   required Size size,
   required double textScale,
-  AppDatabase? db,
+  required AppDatabase db,
   HeartRateSource? source,
-  SharedPreferences? prefs,
+  required SharedPreferences prefs,
 }) {
-  final inMemDb = db ?? AppDatabase.inMemory();
   final simSource = source ?? SimulatedHeartRateSource();
 
   return ProviderScope(
     overrides: [
-      appDatabaseProvider.overrideWithValue(inMemDb),
+      appDatabaseProvider.overrideWithValue(db),
       heartRateSourceProvider.overrideWithValue(simSource),
-      if (prefs != null) sharedPreferencesProvider.overrideWithValue(prefs),
+      sharedPreferencesProvider.overrideWithValue(prefs),
     ],
     child: MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       home: MediaQuery(
         data: MediaQueryData(
@@ -55,6 +77,47 @@ Widget _buildScreenHarness({
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   late SharedPreferences testPrefs;
+  late AppDatabase sharedDb;
+
+  final sampleSession = SessionRecord(
+    id: 'test-session',
+    startedAt: DateTime(2026, 10, 26, 14, 0),
+    endedAt: DateTime(2026, 10, 26, 14, 1, 30),
+    type: SessionType.postActivity,
+    qualitySummary: QualitySummary.good,
+    appVersion: '1.0.0',
+    source: SessionSource.standardBle,
+  );
+
+  const sampleStats = SessionStatsRecord(
+    sessionId: 'test-session',
+    meanHr: 76.4,
+    stdHr: 3.5,
+    minHr: 73.0,
+    maxHr: 85.0,
+    startHr: 84.0,
+    endHr: 74.0,
+    recoveryDrop: 9.0,
+    pulseIntervalMs: 785.0,
+    variabilityEstMs: 4.6,
+    validSampleCount: 95,
+    totalDurationSeconds: 90,
+  );
+
+  final sampleAiResult = AiResultRecord(
+    sessionId: 'test-session',
+    modelVersion: '1.0.0',
+    label: 'Different pattern',
+    featuresJson: '{"recovery_drop": 9.0, "mean_hr": 76.4}',
+    createdAt: DateTime(2026, 10, 26, 14, 1, 31),
+  );
+
+  const sampleDevice = DiscoveredBleDevice(
+    id: 'AA:BB:CC:DD:EE:FF',
+    name: 'PulsePatch-SimHR',
+    rssi: -58,
+    advertisedServices: ['0000180d-0000-1000-8000-00805f9b34fb'],
+  );
 
   setUpAll(() async {
     SharedPreferences.setMockInitialValues({});
@@ -80,374 +143,130 @@ void main() {
       );
     }
     await fontLoader.load();
+
+    sharedDb = AppDatabase.inMemory();
+    final repo = SessionRepository(sharedDb);
+    await repo.insertSession(
+      session: sampleSession,
+      samples: const [],
+      stats: sampleStats,
+      aiResult: sampleAiResult,
+    );
   });
 
   const testResolutions = [
-    Size(360.0, 800.0), // Real phone (HONOR NIC-LX2)
+    Size(360.0, 800.0), // Real physical target (HONOR NIC-LX2)
     Size(390.0, 844.0), // Baseline Artboard
-    Size(411.0, 891.0), // Large phone
+    Size(411.0, 891.0), // Large target phone
   ];
 
   const testScales = [1.0, 1.3];
 
-  const sampleStats = SessionStatsRecord(
-    sessionId: 'test-session',
-    meanHr: 72.0,
-    stdHr: 2.5,
-    minHr: 65.0,
-    maxHr: 84.0,
-    startHr: 70.0,
-    endHr: 72.0,
-    pulseIntervalMs: 833.0,
-    variabilityEstMs: 42.0,
-    validSampleCount: 60,
-    totalDurationSeconds: 60,
-  );
+  final testSurfaces = <({String name, Widget Function(HeartRateSource simSource) builder})>[
+    (name: 'SplashScreen', builder: (_) => const SplashScreen(autoNavigate: false)),
+    (name: 'WelcomeScreen', builder: (_) => WelcomeScreen(onGetStarted: () {})),
+    (name: 'HowItWorksScreen', builder: (_) => HowItWorksScreen(onContinue: () {}, onBack: () {})),
+    (name: 'UserPreferencesScreen', builder: (_) => UserPreferencesScreen(onNext: () {}, onBack: () {})),
+    (name: 'PermissionsScreen', builder: (_) => PermissionsScreen(onFinish: () {}, onBack: () {})),
+    (name: 'HomeScreen', builder: (_) => HomeScreen(onStartMeasure: () {})),
+    (name: 'ConnectDeviceScreen', builder: (_) => const ConnectDeviceScreen()),
+    (name: 'DeviceTroubleshootingScreen', builder: (_) => const DeviceTroubleshootingScreen()),
+    (name: 'MeasurementPreparationScreen', builder: (_) => MeasurementPreparationScreen(onStart: (t, d) {}, onBack: () {})),
+    (
+      name: 'LiveMeasurementScreen (Sim)',
+      builder: (source) => LiveMeasurementScreen(
+        recorder: SessionRecorder(sessionId: 'ov-test', targetDuration: const Duration(seconds: 60)),
+        source: source,
+        onComplete: (_) {},
+        onBack: () {},
+      ),
+    ),
+    (
+      name: 'LiveMeasurementScreen (BLE)',
+      builder: (_) => LiveMeasurementScreen(
+        recorder: SessionRecorder(sessionId: 'ov-ble', targetDuration: const Duration(seconds: 60)),
+        source: StandardBleHeartRateSource(),
+        onComplete: (_) {},
+        onBack: () {},
+      ),
+    ),
+    (
+      name: 'MeasurementCompleteScreen',
+      builder: (_) => MeasurementCompleteScreen(
+        stats: sampleStats,
+        onSave: () {},
+        onDiscard: () {},
+        onViewInsights: () {},
+        onBack: () {},
+      ),
+    ),
+    (name: 'HeartRateDetailScreen', builder: (_) => const HeartRateDetailScreen()),
+    (name: 'AiInsightsDashboardScreen', builder: (_) => const AiInsightsDashboardScreen()),
+    (name: 'SessionPatternAnalysisScreen', builder: (_) => const SessionPatternAnalysisScreen(sessionId: 'test-session')),
+    (name: 'RecoveryAnalysisScreen', builder: (_) => RecoveryAnalysisScreen(session: sampleSession, stats: sampleStats, onBack: () {})),
+    (name: 'HistoricalTrendsScreen', builder: (_) => HistoricalTrendsScreen(onBack: () {})),
+    (name: 'AiModelInfoScreen', builder: (_) => const AiModelInfoScreen()),
+    (name: 'MeasurementHistoryScreen', builder: (_) => MeasurementHistoryScreen(onBack: () {}, onSelectSession: (_) {})),
+    (name: 'SessionDetailsScreen', builder: (_) => SessionDetailsScreen(session: sampleSession, onBack: () {})),
+    (name: 'ReportsScreen', builder: (_) => ReportsScreen(onBack: () {})),
+    (name: 'ProfilePreferencesScreen', builder: (_) => const ProfilePreferencesScreen()),
+    (name: 'ApplicationSettingsScreen', builder: (_) => const ApplicationSettingsScreen()),
+    (name: 'NotificationsCenterScreen', builder: (_) => const NotificationsCenterScreen()),
+    (name: 'ReminderSettingsScreen', builder: (_) => const ReminderSettingsScreen()),
+    (name: 'PrivacyDataManagementScreen', builder: (_) => const PrivacyDataManagementScreen()),
+    (name: 'AboutScreen', builder: (_) => const AboutScreen()),
+    (name: 'AppIconWidget', builder: (_) => const Center(child: AppIconWidget(size: 360.0, clipToSquircle: true))),
+    (name: 'DeviceDetailBottomSheet', builder: (_) => const DeviceDetailBottomSheet(device: sampleDevice)),
+  ];
 
-  for (final size in testResolutions) {
-    for (final scale in testScales) {
-      final label = '${size.width.toInt()}x${size.height.toInt()} scale $scale';
+  for (final surface in testSurfaces) {
+    for (final size in testResolutions) {
+      for (final scale in testScales) {
+        final label = '${surface.name} at ${size.width.toInt()}x${size.height.toInt()} scale $scale';
 
-      testWidgets('ConnectDeviceScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
+        testWidgets(label, (tester) async {
+          final overflows = <String>[];
+          final prevOnError = FlutterError.onError;
+          FlutterError.onError = (details) {
+            if (details.toString().contains('overflowed') ||
+                details.toString().contains('RenderFlex')) {
+              overflows.add(details.exceptionAsString());
+            }
+            prevOnError?.call(details);
+          };
 
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
+          tester.view.physicalSize = size;
+          tester.view.devicePixelRatio = 1.0;
+          addTearDown(() {
+            tester.view.resetPhysicalSize();
+            tester.view.resetDevicePixelRatio();
+            FlutterError.onError = prevOnError;
+          });
 
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: const ConnectDeviceScreen(),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
+          final sim = SimulatedHeartRateSource(baseBpm: 74.0);
 
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on ConnectDeviceScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('HomeScreen does not overflow at $label', (tester) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
-
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: HomeScreen(onStartMeasure: () {}),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason: 'Layout overflow on HomeScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('MeasurementPreparationScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
-
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: MeasurementPreparationScreen(
-              onStart: (type, duration) {},
-              onBack: () {},
-            ),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on MeasurementPreparationScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('LiveMeasurementScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
-
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
-
-        final recorder = SessionRecorder(
-          sessionId: 'ov-test',
-          targetDuration: const Duration(seconds: 60),
-        );
-        final sim = SimulatedHeartRateSource(baseBpm: 74.0);
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: LiveMeasurementScreen(
-              recorder: recorder,
+          await tester.pumpWidget(
+            _buildScreenHarness(
+              child: surface.builder(sim),
+              size: size,
+              textScale: scale,
+              db: sharedDb,
               source: sim,
-              onComplete: (_) {},
-              onBack: () {},
+              prefs: testPrefs,
             ),
-            source: sim,
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on LiveMeasurementScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('MeasurementCompleteScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
+          );
+          await tester.pump(const Duration(milliseconds: 700));
+          if (surface.name != 'SplashScreen') {
+            await tester.pumpAndSettle();
           }
-          prevOnError?.call(details);
-        };
 
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
+          expect(
+            overflows,
+            isEmpty,
+            reason: 'Layout overflow on $label: $overflows',
+          );
         });
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: MeasurementCompleteScreen(
-              stats: sampleStats,
-              onSave: () {},
-              onDiscard: () {},
-              onViewInsights: () {},
-              onBack: () {},
-            ),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on MeasurementCompleteScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('AiInsightsDashboardScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
-
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: const AiInsightsDashboardScreen(),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on AiInsightsDashboardScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('MeasurementHistoryScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
-
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: MeasurementHistoryScreen(
-              onBack: () {},
-              onSelectSession: (_) {},
-            ),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on MeasurementHistoryScreen at $label: $overflows',
-        );
-      });
-
-      testWidgets('ApplicationSettingsScreen does not overflow at $label', (
-        tester,
-      ) async {
-        final overflows = <String>[];
-        final prevOnError = FlutterError.onError;
-        FlutterError.onError = (details) {
-          if (details.toString().contains('overflowed') ||
-              details.toString().contains('RenderFlex')) {
-            overflows.add(details.exceptionAsString());
-          }
-          prevOnError?.call(details);
-        };
-
-        tester.view.physicalSize = size;
-        tester.view.devicePixelRatio = 1.0;
-        addTearDown(() {
-          tester.view.resetPhysicalSize();
-          tester.view.resetDevicePixelRatio();
-          FlutterError.onError = prevOnError;
-        });
-
-        await tester.pumpWidget(
-          _buildScreenHarness(
-            child: const ApplicationSettingsScreen(),
-            size: size,
-            textScale: scale,
-            prefs: testPrefs,
-          ),
-        );
-        await tester.pump(const Duration(milliseconds: 700));
-        await tester.pumpAndSettle();
-
-        expect(
-          overflows,
-          isEmpty,
-          reason:
-              'Layout overflow on ApplicationSettingsScreen at $label: $overflows',
-        );
-      });
+      }
     }
   }
 }
