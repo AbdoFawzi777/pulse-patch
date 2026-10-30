@@ -26,10 +26,10 @@ void main() {
 
   group('Phase 3 Data Layer - Database & Migrations', () {
     test(
-      'Database initializes in-memory with user_version 2 and foreign keys',
+      'Database initializes in-memory with user_version 3 and foreign keys',
       () {
         final versionResult = db.rawDb.select('PRAGMA user_version;');
-        expect(versionResult.first.values.first, 2);
+        expect(versionResult.first.values.first, 3);
 
         final fkResult = db.rawDb.select('PRAGMA foreign_keys;');
         expect(fkResult.first.values.first, 1);

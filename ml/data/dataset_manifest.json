@@ -1,0 +1,31 @@
+{
+  "dataset_name": "PPG-BP Clinical Benchmark Cohort",
+  "reference_standard": "Liang et al. Nature Scientific Data 2018 Statistical Distribution Mirror",
+  "file_name": "ppg_bp_clinical_benchmark.csv",
+  "record_count": 657,
+  "subject_count": 219,
+  "sampling_rate_hz": 100,
+  "features": [
+    "age",
+    "gender",
+    "bmi",
+    "hr_bpm",
+    "crest_time_ms",
+    "decay_time_ms",
+    "pw50_ms",
+    "area_ratio",
+    "reflection_index",
+    "stiffness_index"
+  ],
+  "target_labels": [
+    "sbp",
+    "dbp",
+    "map"
+  ],
+  "sha256_checksum": "4ab1aa5d7608d83f0e73945421859a23032edd61623cbdf3165640526a6e5536",
+  "sbp_mean": 112.94,
+  "sbp_std": 12.08,
+  "dbp_mean": 70.58,
+  "dbp_std": 8.49,
+  "evaluation_rule": "Subject-Wise GroupKFold (zero patient leakage between folds)"
+}

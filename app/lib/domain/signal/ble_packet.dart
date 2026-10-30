@@ -58,6 +58,8 @@ class BlePacket {
     final quality = data.getUint8(4).clamp(0, 100);
     final timestampMs = data.getUint32(5, Endian.little);
     final sequence = data.getUint16(9, Endian.little);
+    final rawSpo2 = data.getUint8(11);
+    final double? spo2 = (rawSpo2 >= 70 && rawSpo2 <= 100) ? rawSpo2.toDouble() : null;
 
     return BlePacket(
       protocolVersion: version,
@@ -68,6 +70,7 @@ class BlePacket {
       deviceTimestampMs: timestampMs,
       sequenceNumber: sequence,
       receivedAt: receivedAt ?? DateTime.now(),
+      spo2: spo2,
     );
   }
 
@@ -92,7 +95,11 @@ class BlePacket {
     data.setUint8(4, quality.clamp(0, 100));
     data.setUint32(5, deviceTimestampMs, Endian.little);
     data.setUint16(9, sequenceNumber & 0xFFFF, Endian.little);
-    data.setUint8(11, 0); // reserved padding
+    if (spo2 != null && spo2! >= 70 && spo2! <= 100) {
+      data.setUint8(11, spo2!.round().clamp(70, 100));
+    } else {
+      data.setUint8(11, 0); // calculating / uncalibrated
+    }
 
     return buffer;
   }

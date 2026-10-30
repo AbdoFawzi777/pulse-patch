@@ -129,6 +129,78 @@ class AppDatabase {
       } catch (_) {}
       _db.execute('PRAGMA user_version = 2;');
     }
+
+    if (currentVersion < 3) {
+      _db.execute('''
+        CREATE TABLE IF NOT EXISTS user_profiles (
+          id TEXT PRIMARY KEY,
+          full_name TEXT NOT NULL,
+          age INTEGER NOT NULL,
+          gender TEXT NOT NULL,
+          height_cm REAL NOT NULL,
+          weight_kg REAL NOT NULL,
+          baseline_sbp REAL,
+          baseline_dbp REAL,
+          created_at INTEGER NOT NULL,
+          updated_at INTEGER NOT NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS bp_calibrations (
+          id TEXT PRIMARY KEY,
+          user_id TEXT NOT NULL,
+          cuff_sbp REAL NOT NULL,
+          cuff_dbp REAL NOT NULL,
+          estimated_sbp REAL NOT NULL,
+          estimated_dbp REAL NOT NULL,
+          offset_sbp REAL NOT NULL,
+          offset_dbp REAL NOT NULL,
+          calibrated_at INTEGER NOT NULL,
+          device_identifier TEXT,
+          FOREIGN KEY (user_id) REFERENCES user_profiles (id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS bp_estimates (
+          id TEXT PRIMARY KEY,
+          session_id TEXT NOT NULL,
+          sbp REAL NOT NULL,
+          dbp REAL NOT NULL,
+          map REAL NOT NULL,
+          category TEXT NOT NULL,
+          category_ar TEXT NOT NULL,
+          is_calibrated INTEGER NOT NULL,
+          confidence_score REAL NOT NULL,
+          created_at INTEGER NOT NULL,
+          FOREIGN KEY (session_id) REFERENCES sessions (id) ON DELETE CASCADE
+        );
+
+        CREATE TABLE IF NOT EXISTS health_alerts (
+          id TEXT PRIMARY KEY,
+          session_id TEXT,
+          severity TEXT NOT NULL,
+          title TEXT NOT NULL,
+          title_ar TEXT NOT NULL,
+          message TEXT NOT NULL,
+          message_ar TEXT NOT NULL,
+          created_at INTEGER NOT NULL,
+          is_dismissed INTEGER NOT NULL DEFAULT 0,
+          FOREIGN KEY (session_id) REFERENCES sessions (id) ON DELETE SET NULL
+        );
+
+        CREATE TABLE IF NOT EXISTS doctor_cache (
+          id TEXT PRIMARY KEY,
+          name TEXT NOT NULL,
+          specialty TEXT NOT NULL,
+          address TEXT NOT NULL,
+          phone TEXT,
+          latitude REAL NOT NULL,
+          longitude REAL NOT NULL,
+          city TEXT NOT NULL,
+          cached_at INTEGER NOT NULL
+        );
+
+        PRAGMA user_version = 3;
+      ''');
+    }
   }
 
   void close() {
