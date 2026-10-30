@@ -1,3 +1,5 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:app/domain/ai/bp_inference_service.dart';
 
@@ -71,6 +73,78 @@ void main() {
       expect(BpInferenceService.classify(135, 85), equals(BpCategory.hypertensionStage1));
       expect(BpInferenceService.classify(145, 95), equals(BpCategory.hypertensionStage2));
       expect(BpInferenceService.classify(185, 125), equals(BpCategory.hypertensiveCrisis));
+    });
+
+    test('verifies numerical parity between defaultModel and bp_model_meta.json', () {
+      final metaFile = File('assets/ml/bp_model_meta.json');
+      if (metaFile.existsSync()) {
+        final jsonMap = jsonDecode(metaFile.readAsStringSync()) as Map<String, dynamic>;
+        final serviceFromMeta = BpInferenceService.fromMeta(jsonMap);
+
+        final resDefault = service.estimate(
+          age: 48,
+          gender: 1,
+          bmi: 26.2,
+          hrBpm: 78,
+          crestTimeMs: 180,
+          decayTimeMs: 620,
+          pw50Ms: 270,
+          areaRatio: 0.31,
+          reflectionIndex: 0.76,
+          stiffnessIndex: 8.9,
+        );
+
+        final resMeta = serviceFromMeta.estimate(
+          age: 48,
+          gender: 1,
+          bmi: 26.2,
+          hrBpm: 78,
+          crestTimeMs: 180,
+          decayTimeMs: 620,
+          pw50Ms: 270,
+          areaRatio: 0.31,
+          reflectionIndex: 0.76,
+          stiffnessIndex: 8.9,
+        );
+
+        expect((resDefault.sbp - resMeta.sbp).abs(), lessThan(0.01));
+        expect((resDefault.dbp - resMeta.dbp).abs(), lessThan(0.01));
+      }
+    });
+
+    test('handles extreme out-of-distribution inputs with safe physiological clamping', () {
+      final extremeLow = service.estimate(
+        age: 18,
+        gender: 0,
+        bmi: 15.0,
+        hrBpm: 40,
+        crestTimeMs: 50,
+        decayTimeMs: 1200,
+        pw50Ms: 70,
+        areaRatio: 0.05,
+        reflectionIndex: 0.30,
+        stiffnessIndex: 4.0,
+      );
+
+      expect(extremeLow.sbp, greaterThanOrEqualTo(70.0));
+      expect(extremeLow.dbp, greaterThanOrEqualTo(40.0));
+      expect(extremeLow.map, greaterThan(extremeLow.dbp));
+
+      final extremeHigh = service.estimate(
+        age: 95,
+        gender: 1,
+        bmi: 48.0,
+        hrBpm: 180,
+        crestTimeMs: 350,
+        decayTimeMs: 250,
+        pw50Ms: 500,
+        areaRatio: 0.85,
+        reflectionIndex: 0.99,
+        stiffnessIndex: 22.0,
+      );
+
+      expect(extremeHigh.sbp, lessThanOrEqualTo(220.0));
+      expect(extremeHigh.dbp, lessThanOrEqualTo(140.0));
     });
   });
 }

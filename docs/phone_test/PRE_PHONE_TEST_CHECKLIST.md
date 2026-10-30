@@ -33,8 +33,9 @@ adb install -r "app/build/app/outputs/flutter-apk/app-release.apk"
 
 **Binary Verification:**
 - **File Name:** `app-release.apk`
-- **File Size:** `63,779,872 bytes` (60.8 MB)
-- **SHA-256 Hash:** `F2202EB47237621EAAA5318E19BDC4ECDFF51BFDE74259AC226F6CEEFAC20ADB`
+- **File Size:** `63,779,504 bytes` (60.8 MB)
+- **SHA-256 Hash:** `f0d88db7e68e8a7c3983e21aff8ee1f2fef877010475b711df4376ed601fd0eb`
+- **Embedded Model Asset SHA-256:** `e67c631dfa6a6f1d7364d6fcf35d2964c66d4f513d9dca6b4bb6ce53eeefb129`
 
 ### 2.2 Grant Permissions via ADB (Optional / Fast Setup)
 Alternatively, accept prompts on first launch:

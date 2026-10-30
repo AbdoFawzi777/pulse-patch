@@ -5,143 +5,143 @@
   "dataset_provenance": {
     "source": "Liang et al. Nature Scientific Data 2018 (Figshare CC0)",
     "file_path": "ppg_bp_real_cohort.csv",
-    "sha256": "f809cb5cad13cd31e439d1b30704b1eb3d08dc6a39deeab5bd7f385d7f788817",
+    "sha256": "41e2de54a1fac65b39c851e290899523416743a6cae3845a1d468a72340c7929",
     "subject_count": 219,
     "record_count": 657,
     "splitting_strategy": "Subject-Wise 5-Fold GroupKFold (zero participant leakage)"
   },
   "weights_artifact": {
     "file_path": "app/assets/ml/bp_model_meta.json",
-    "sha256": "c41a9a4054adb8ded65b82ced84ae877124eef0cac2c58b57b3508bf7825c3a4"
+    "sha256": "e67c631dfa6a6f1d7364d6fcf35d2964c66d4f513d9dca6b4bb6ce53eeefb129"
   },
   "models_evaluated": {
     "Ridge_Baseline": {
       "sbp": {
-        "mae": 14.030154322888775,
-        "rmse": 18.308177837212604,
-        "bias": -0.06821917243227424,
-        "sde": 18.308050739046895,
-        "r": 0.43685282224094496,
+        "mae": 13.855914635331647,
+        "rmse": 17.990145035987965,
+        "bias": -0.1652567550893413,
+        "sde": 17.9893859989934,
+        "r": 0.4712135459293494,
         "bhs_grade": "D",
-        "pct_le_5": 28.00608828006088,
-        "pct_le_10": 48.24961948249619,
-        "pct_le_15": 62.10045662100456,
+        "pct_le_5": 24.3531202435312,
+        "pct_le_10": 48.401826484018265,
+        "pct_le_15": 63.62252663622526,
         "aami_compliant": false
       },
       "dbp": {
-        "mae": 8.62294504780342,
-        "rmse": 10.855571694650031,
-        "bias": -0.030894665830007512,
-        "sde": 10.855527731865928,
-        "r": 0.21804088009460987,
+        "mae": 8.466896752706624,
+        "rmse": 10.693864725369865,
+        "bias": -0.09011321382863474,
+        "sde": 10.693485043389895,
+        "r": 0.28386353440858897,
         "bhs_grade": "D",
         "pct_le_5": 35.46423135464231,
-        "pct_le_10": 66.9710806697108,
-        "pct_le_15": 83.10502283105022,
+        "pct_le_10": 64.23135464231355,
+        "pct_le_15": 85.08371385083714,
         "aami_compliant": false
       }
     },
     "ElasticNet": {
       "sbp": {
-        "mae": 14.01777737950591,
-        "rmse": 18.294569829268635,
-        "bias": -0.06357470336710334,
-        "sde": 18.294459366023307,
-        "r": 0.43687075117237323,
+        "mae": 13.682538791484559,
+        "rmse": 17.836116034481467,
+        "bias": -0.05440030080565348,
+        "sde": 17.836033073605776,
+        "r": 0.4805662711502507,
         "bhs_grade": "D",
-        "pct_le_5": 28.61491628614916,
-        "pct_le_10": 47.792998477929984,
-        "pct_le_15": 61.64383561643836,
+        "pct_le_5": 26.17960426179604,
+        "pct_le_10": 47.64079147640791,
+        "pct_le_15": 62.86149162861492,
         "aami_compliant": false
       },
       "dbp": {
-        "mae": 8.599588104383235,
-        "rmse": 10.843258675817395,
-        "bias": -0.03060310089775106,
-        "sde": 10.843215489922935,
-        "r": 0.21743006535482795,
+        "mae": 8.349303367311746,
+        "rmse": 10.602745904651435,
+        "bias": -0.01883765739062916,
+        "sde": 10.602729170419604,
+        "r": 0.29571132134261485,
         "bhs_grade": "D",
-        "pct_le_5": 36.07305936073059,
-        "pct_le_10": 65.90563165905633,
-        "pct_le_15": 83.10502283105022,
+        "pct_le_5": 36.68188736681887,
+        "pct_le_10": 65.44901065449011,
+        "pct_le_15": 86.14916286149162,
         "aami_compliant": false
       }
     },
     "Random_Forest": {
       "sbp": {
-        "mae": 14.974013872215629,
-        "rmse": 18.72377130848523,
-        "bias": -0.3281616839206329,
-        "sde": 18.720895329061083,
-        "r": 0.44224833487132253,
+        "mae": 14.278260850752186,
+        "rmse": 18.041346582817656,
+        "bias": -0.5702020376693909,
+        "sde": 18.032333630386944,
+        "r": 0.47588457760811076,
         "bhs_grade": "D",
-        "pct_le_5": 19.025875190258752,
-        "pct_le_10": 41.0958904109589,
-        "pct_le_15": 56.62100456621004,
+        "pct_le_5": 23.43987823439878,
+        "pct_le_10": 44.596651445966515,
+        "pct_le_15": 59.208523592085236,
         "aami_compliant": false
       },
       "dbp": {
-        "mae": 9.141148363236132,
-        "rmse": 11.546206326578524,
-        "bias": -0.4146419054915249,
-        "sde": 11.538758712536298,
-        "r": 0.16219573756943897,
+        "mae": 8.59708709912519,
+        "rmse": 10.890221568610936,
+        "bias": -0.23135858244746088,
+        "sde": 10.88776372905689,
+        "r": 0.2529072627359037,
         "bhs_grade": "D",
-        "pct_le_5": 35.920852359208524,
-        "pct_le_10": 62.55707762557078,
-        "pct_le_15": 80.82191780821918,
+        "pct_le_5": 37.595129375951295,
+        "pct_le_10": 63.62252663622526,
+        "pct_le_15": 84.93150684931507,
         "aami_compliant": false
       }
     },
     "GBDT": {
       "sbp": {
-        "mae": 14.947312835544615,
-        "rmse": 18.579537255930664,
-        "bias": -0.13753196889983357,
-        "sde": 18.579028220067002,
-        "r": 0.44747367790744536,
+        "mae": 13.779996859528916,
+        "rmse": 17.490981756798977,
+        "bias": -0.771331453557328,
+        "sde": 17.47396608115707,
+        "r": 0.5214571888208965,
         "bhs_grade": "D",
-        "pct_le_5": 16.43835616438356,
-        "pct_le_10": 39.726027397260275,
-        "pct_le_15": 58.9041095890411,
+        "pct_le_5": 25.570776255707763,
+        "pct_le_10": 46.57534246575342,
+        "pct_le_15": 62.10045662100456,
         "aami_compliant": false
       },
       "dbp": {
-        "mae": 8.942402048185567,
-        "rmse": 11.518132640491153,
-        "bias": -0.15355292423812908,
-        "sde": 11.517109056677619,
-        "r": 0.17644848031010957,
+        "mae": 8.893003776714098,
+        "rmse": 11.22979764230731,
+        "bias": -0.3732583559873819,
+        "sde": 11.22359270852504,
+        "r": 0.2336494586698904,
         "bhs_grade": "D",
-        "pct_le_5": 36.37747336377473,
-        "pct_le_10": 62.55707762557078,
-        "pct_le_15": 82.1917808219178,
+        "pct_le_5": 35.76864535768645,
+        "pct_le_10": 61.948249619482496,
+        "pct_le_15": 82.64840182648402,
         "aami_compliant": false
       }
     },
     "MLP_DartCompatible": {
       "sbp": {
-        "mae": 14.094391406913369,
-        "rmse": 18.135368929379368,
-        "bias": -0.1300344339012867,
-        "sde": 18.134902736179715,
-        "r": 0.45381640598406436,
+        "mae": 14.931749070538464,
+        "rmse": 19.365565327611986,
+        "bias": -0.48936397322292446,
+        "sde": 19.35938127522982,
+        "r": 0.3926902537179073,
         "bhs_grade": "D",
-        "pct_le_5": 23.13546423135464,
-        "pct_le_10": 44.1400304414003,
-        "pct_le_15": 60.57838660578386,
+        "pct_le_5": 22.98325722983257,
+        "pct_le_10": 44.596651445966515,
+        "pct_le_15": 61.796042617960424,
         "aami_compliant": false
       },
       "dbp": {
-        "mae": 8.855175241779417,
-        "rmse": 10.999965853863415,
-        "bias": 0.06282519705147985,
-        "sde": 10.999786442507716,
-        "r": 0.19571165943609248,
+        "mae": 8.887881007721901,
+        "rmse": 11.376034949935297,
+        "bias": -0.14642702922814754,
+        "sde": 11.375092540602067,
+        "r": 0.21725133505433464,
         "bhs_grade": "D",
-        "pct_le_5": 32.87671232876712,
-        "pct_le_10": 63.62252663622526,
-        "pct_le_15": 83.56164383561644,
+        "pct_le_5": 35.920852359208524,
+        "pct_le_10": 62.55707762557078,
+        "pct_le_15": 80.97412480974124,
         "aami_compliant": false
       }
     }
@@ -155,5 +155,26 @@
     "clinical_claims": "Non-diagnostic; does NOT substitute clinical sphygmomanometer",
     "emergency_safety_rule": "Experimental estimates strictly prohibited from triggering clinical emergency alerts",
     "calibration_protocol": "Requires physical cuff reference measurement within 30 days"
+  },
+  "calibration_evaluation_audit": {
+    "classification": "SAME-SESSION SHORT-TERM CALIBRATION CONSISTENCY (MODEL INVARIANCE TO SHORT-TERM PPG NOISE), NOT INDEPENDENT LONGITUDINAL BP PREDICTION ACCURACY",
+    "uncalibrated_error_heldout_subjects": {
+      "sbp_mae_mmHg": 13.86,
+      "dbp_mae_mmHg": 8.47
+    },
+    "same_session_calibrated_consistency_R2_R3": {
+      "sbp_mae_mmHg": 2.92,
+      "dbp_mae_mmHg": 1.65,
+      "audit_note": "Evaluated using segment R1 as reference offset on segments R2 and R3. Because Liang et al. collected 1 cuff reference per patient visit, R1, R2, and R3 share identical ground-truth labels. This measures short-term model stability to minor PPG waveform variation, NOT independent future BP tracking."
+    },
+    "dataset_limitations": "Liang et al. PPG-BP contains only a single clinical visit per patient. It does not support multi-session or time-separated cuff tracking across days or physiological challenges.",
+    "standards_notice": "IEEE 1708-2025 requires multi-session testing with physiological BP perturbations. No claim of IEEE 1708-2025, AAMI SP10, or BHS compliance is made."
+  },
+  "deployed_release_apk": {
+    "file_path": "app/build/app/outputs/flutter-apk/app-release.apk",
+    "sha256": "f0d88db7e68e8a7c3983e21aff8ee1f2fef877010475b711df4376ed601fd0eb",
+    "size_bytes": 63779504,
+    "build_date": "2026-10-30",
+    "embedded_model_sha256": "e67c631dfa6a6f1d7364d6fcf35d2964c66d4f513d9dca6b4bb6ce53eeefb129"
   }
 }

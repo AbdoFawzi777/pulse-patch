@@ -69,25 +69,84 @@ class BpInferenceService {
   double calibratedSbpOffset;
   double calibratedDbpOffset;
 
-  /// Default model factory with calibrated clinical weights
+  /// Factory to construct service directly from bp_model_meta.json
+  factory BpInferenceService.fromMeta(
+    Map<String, dynamic> json, {
+    double sbpOffset = 0.0,
+    double dbpOffset = 0.0,
+  }) {
+    final scaler = json['scaler'] as Map<String, dynamic>;
+    final ridge = json['ridge_model'] as Map<String, dynamic>;
+    final sbp = ridge['sbp'] as Map<String, dynamic>;
+    final dbp = ridge['dbp'] as Map<String, dynamic>;
+
+    return BpInferenceService(
+      featureMeans: (scaler['mean'] as List).map((e) => (e as num).toDouble()).toList(),
+      featureScales: (scaler['scale'] as List).map((e) => (e as num).toDouble()).toList(),
+      sbpIntercept: (sbp['intercept'] as num).toDouble(),
+      sbpCoefficients: (sbp['coefficients'] as List).map((e) => (e as num).toDouble()).toList(),
+      dbpIntercept: (dbp['intercept'] as num).toDouble(),
+      dbpCoefficients: (dbp['coefficients'] as List).map((e) => (e as num).toDouble()).toList(),
+      calibratedSbpOffset: sbpOffset,
+      calibratedDbpOffset: dbpOffset,
+    );
+  }
+
+  /// Default model factory with verified clinical weights matching bp_model_meta.json
   factory BpInferenceService.defaultModel({
     double sbpOffset = 0.0,
     double dbpOffset = 0.0,
   }) {
     return BpInferenceService(
       featureMeans: const [
-        54.56, 0.47, 24.47, 71.59, 151.13, 698.12, 245.56, 0.27, 0.75, 10.60
+        57.1689497716895,
+        0.4748858447488584,
+        23.107407063956927,
+        76.11887366818874,
+        195.6910197869102,
+        612.2238964992389,
+        293.5365296803653,
+        0.3290668188736682,
+        0.602241095890411,
+        10.197031963470321,
       ],
       featureScales: const [
-        15.48, 0.50, 3.70, 8.10, 14.53, 100.39, 23.89, 0.04, 0.09, 1.41
+        15.838042874464241,
+        0.4993688808946965,
+        3.9953056981689894,
+        11.967671188585697,
+        42.50811144756103,
+        115.5030067464293,
+        63.762167171341545,
+        0.0881050503863375,
+        0.02393566880437166,
+        1.611728093217625,
       ],
-      sbpIntercept: 112.94,
+      sbpIntercept: 127.94520547945207,
       sbpCoefficients: const [
-        -2.33, -0.38, 1.49, -11.14, -1.99, 1.95, -0.12, 0.88, 1.34, 1.82
+        8.28560801963985,
+        0.06051867182825249,
+        4.550231432645372,
+        -2.4916762661826235,
+        3.075992656795144,
+        0.6224588629906059,
+        3.0759926567967666,
+        -1.2062553487762215,
+        -0.874161109621597,
+        10.212282994196922,
       ],
-      dbpIntercept: 70.58,
+      dbpIntercept: 71.84931506849315,
       dbpCoefficients: const [
-        -1.58, -0.22, 0.95, -7.56, -1.21, 1.32, -0.08, 0.56, 0.91, 1.18
+        0.09825476727997949,
+        -0.20001051009975312,
+        2.634044367420034,
+        -1.6071259122024872,
+        0.33181385073037795,
+        2.4693559503112588,
+        0.33181385073026703,
+        2.664311881046758,
+        -1.470180967386132,
+        7.0142878884626105,
       ],
       calibratedSbpOffset: sbpOffset,
       calibratedDbpOffset: dbpOffset,

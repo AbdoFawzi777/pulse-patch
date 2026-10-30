@@ -11,11 +11,11 @@ PulsePatch Lite uses photoplethysmography (PPG) morphological features combined 
 
 | Model Architecture | SBP MAE (mmHg) | SBP SDE | SBP r | SBP BHS | SBP AAMI | DBP MAE (mmHg) | DBP SDE | DBP r | DBP BHS | DBP AAMI |
 |:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
-| **Ridge_Baseline** | 14.03 | 18.31 | 0.44 | Grade D (28.0% ≤5) | FAIL | 8.62 | 10.86 | 0.22 | Grade D (35.5% ≤5) | FAIL |
-| **ElasticNet** | 14.02 | 18.29 | 0.44 | Grade D (28.6% ≤5) | FAIL | 8.60 | 10.84 | 0.22 | Grade D (36.1% ≤5) | FAIL |
-| **Random_Forest** | 14.97 | 18.72 | 0.44 | Grade D (19.0% ≤5) | FAIL | 9.14 | 11.54 | 0.16 | Grade D (35.9% ≤5) | FAIL |
-| **GBDT** | 14.95 | 18.58 | 0.45 | Grade D (16.4% ≤5) | FAIL | 8.94 | 11.52 | 0.18 | Grade D (36.4% ≤5) | FAIL |
-| **MLP_DartCompatible** | 14.09 | 18.13 | 0.45 | Grade D (23.1% ≤5) | FAIL | 8.86 | 11.00 | 0.20 | Grade D (32.9% ≤5) | FAIL |
+| **Ridge_Baseline** | 13.86 | 17.99 | 0.47 | Grade D (24.4% ≤5) | FAIL | 8.47 | 10.69 | 0.28 | Grade D (35.5% ≤5) | FAIL |
+| **ElasticNet** | 13.68 | 17.84 | 0.48 | Grade D (26.2% ≤5) | FAIL | 8.35 | 10.60 | 0.30 | Grade D (36.7% ≤5) | FAIL |
+| **Random_Forest** | 14.28 | 18.03 | 0.48 | Grade D (23.4% ≤5) | FAIL | 8.60 | 10.89 | 0.25 | Grade D (37.6% ≤5) | FAIL |
+| **GBDT** | 13.78 | 17.47 | 0.52 | Grade D (25.6% ≤5) | FAIL | 8.89 | 11.22 | 0.23 | Grade D (35.8% ≤5) | FAIL |
+| **MLP_DartCompatible** | 14.93 | 19.36 | 0.39 | Grade D (23.0% ≤5) | FAIL | 8.89 | 11.38 | 0.22 | Grade D (35.9% ≤5) | FAIL |
 
 ## 4. Pure Dart Inference Architecture
 To guarantee maximum portability, battery efficiency, and zero binary size bloat:

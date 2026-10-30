@@ -10,7 +10,7 @@
       "archive_file": "PPG-BP_Database.zip",
       "archive_sha256": "52f6b576d9dd2769fdee5a9bb804ba74d973b49e81958c4a64ae6782f476c43e",
       "processed_file": "ppg_bp_real_cohort.csv",
-      "processed_sha256": "f809cb5cad13cd31e439d1b30704b1eb3d08dc6a39deeab5bd7f385d7f788817",
+      "processed_sha256": "41e2de54a1fac65b39c851e290899523416743a6cae3845a1d468a72340c7929",
       "record_count": 657,
       "subject_count": 219,
       "sampling_rate_hz": 100,

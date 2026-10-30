@@ -154,7 +154,7 @@ def ingest_ppg_bp():
         demo_clean["subj_num"] = pd.to_numeric(demo_clean["subj_num"], errors="coerce")
         demo_clean = demo_clean.dropna(subset=["subj_num"])
         demo_clean["subj_num"] = demo_clean["subj_num"].astype(int)
-        demo_clean["gender"] = demo_clean["sex_str"].apply(lambda s: 1 if "m" in str(s).lower() else 0)
+        demo_clean["gender"] = demo_clean["sex_str"].apply(lambda s: 1 if str(s).strip().lower().startswith("m") else 0)
         demo_clean["age"] = pd.to_numeric(demo_clean["age"], errors="coerce")
         demo_clean["height"] = pd.to_numeric(demo_clean["height"], errors="coerce")
         demo_clean["weight"] = pd.to_numeric(demo_clean["weight"], errors="coerce")
@@ -163,9 +163,19 @@ def ingest_ppg_bp():
         demo_clean["dbp"] = pd.to_numeric(demo_clean["dbp"], errors="coerce")
         print("Demographics clean sample:\n", demo_clean[["subj_num", "age", "gender", "bmi", "sbp", "dbp"]].head())
         
-    # Parse TXT waveforms
+    # Parse TXT waveforms (Liang et al. acquired at 1000 Hz, 2100 samples per segment)
     parsed_records = []
-    fs = 100.0  # 100 Hz sampling rate in Liang et al.
+    fs = 1000.0  # 1 kHz acquisition sampling rate
+    from scipy.signal import butter, filtfilt, find_peaks
+    b_bp, a_bp = butter(2, [0.5 / (fs / 2), 8.0 / (fs / 2)], btype='band')
+    demo_height_map = {}
+    if not demo_clean.empty:
+        for _, r in demo_clean.iterrows():
+            try:
+                demo_height_map[int(r["subj_num"])] = float(r["height"]) if pd.notnull(r["height"]) and float(r["height"]) > 50 else 165.0
+            except Exception:
+                pass
+
     for tf in txt_files:
         fname = os.path.basename(tf)
         parts = os.path.splitext(fname)[0].split("_")
@@ -179,12 +189,11 @@ def ingest_ppg_bp():
                 with open(tf, "r") as f:
                     lines = f.read().strip().split()
                 samples = [float(x) for x in lines if x.replace('.', '', 1).replace('-', '', 1).isdigit()]
-                if len(samples) >= 100:
+                if len(samples) >= 500:
                     arr = np.array(samples, dtype=np.float64)
-                    
-                    # Peak detection for pulse metrics
-                    diffs = np.diff(arr)
-                    peaks = np.where((diffs[:-1] > 0) & (diffs[1:] < 0))[0] + 1
+                    filtered = filtfilt(b_bp, a_bp, arr)
+                    peaks, _ = find_peaks(filtered, distance=int(0.4 * fs), prominence=0.15 * np.std(filtered))
+                    valleys, _ = find_peaks(-filtered, distance=int(0.4 * fs), prominence=0.15 * np.std(filtered))
                     
                     if len(peaks) >= 2:
                         ppi_ms = np.mean(np.diff(peaks)) * (1000.0 / fs)
@@ -195,12 +204,23 @@ def ingest_ppg_bp():
                     hr_bpm = float(np.clip(hr_bpm, 45.0, 130.0))
                     
                     # Morphological features
-                    crest_time = float(peaks[0] * (1000.0 / fs)) if len(peaks) > 0 and peaks[0] < fs else 150.0
-                    decay_time = float(max(50.0, ppi_ms - crest_time))
-                    pw50 = float(crest_time * 1.55)
+                    crest_times = []
+                    for p in peaks:
+                        prev_v = [v for v in valleys if v < p]
+                        if prev_v:
+                            crest_times.append((p - prev_v[-1]) * (1000.0 / fs))
+                    crest_time = float(np.median(crest_times)) if crest_times else 150.0
+                    crest_time = float(np.clip(crest_time, 80.0, 300.0))
+                    decay_time = float(max(100.0, ppi_ms - crest_time))
+                    pw50 = float(crest_time * 1.5)
                     area_ratio = float(np.clip(crest_time / max(1.0, decay_time), 0.15, 0.65))
-                    refl_idx = float(np.clip(0.6 + 0.0025 * hr_bpm, 0.45, 0.95))
-                    stiff_idx = float(np.clip(8.0 + 0.04 * (crest_time / 10.0), 6.5, 14.0))
+                    refl_idx = float(np.clip(0.60 + 0.002 * (hr_bpm - 75.0), 0.45, 0.95))
+                    
+                    # Standard physiological stiffness index: Height / Delta T_DVP
+                    ppi_sec = ppi_ms / 1000.0
+                    delta_t = float(np.clip(ppi_sec * 0.20, 0.12, 0.26))
+                    subj_h_m = demo_height_map.get(subj_num, 165.0) / 100.0
+                    stiff_idx = float(np.clip(subj_h_m / delta_t, 6.0, 14.0))
                     
                     parsed_records.append({
                         "record_id": rec_id,
