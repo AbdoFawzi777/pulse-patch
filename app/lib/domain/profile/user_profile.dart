@@ -31,8 +31,13 @@ class UserProfile {
     return double.parse(val.toStringAsFixed(1));
   }
 
-  /// Clinical WHO Adult BMI Category
+  /// Clinical WHO Adult BMI Category.
+  /// Adult (≥18) categories per WHO 2000 guidelines.
+  /// Under 18: not classified — pediatric BMI-for-age requires validated
+  /// WHO LMS method which is not implemented in this app.
   String get bmiCategory {
+    if (age < 5) return 'BMI classification not applicable (under 5)';
+    if (age < 18) return 'BMI classification not available for under-18';
     final b = bmi;
     if (b < 18.5) return 'Underweight';
     if (b < 25.0) return 'Normal weight';
@@ -42,6 +47,8 @@ class UserProfile {
 
   /// Arabic translation of BMI category
   String get bmiCategoryArabic {
+    if (age < 5) return 'تصنيف BMI غير متاح (دون 5 سنوات)';
+    if (age < 18) return 'تصنيف BMI غير متاح لمن هم دون 18 عامًا';
     final b = bmi;
     if (b < 18.5) return 'نقص في الوزن';
     if (b < 25.0) return 'وزن طبيعي';

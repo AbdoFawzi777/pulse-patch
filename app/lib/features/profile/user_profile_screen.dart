@@ -76,24 +76,46 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
   void _recalculateBmi() {
     final height = double.tryParse(_heightController.text.trim()) ?? 0.0;
     final weight = double.tryParse(_weightController.text.trim()) ?? 0.0;
+    final age = int.tryParse(_ageController.text.trim()) ?? 0;
+
     if (height > 0 && weight > 0) {
       final hMeters = height / 100.0;
       final bmi = weight / (hMeters * hMeters);
+
+      // Determine BMI category based on age.
+      // Adult WHO thresholds (BMI 18.5/25/30) are only valid for age ≥ 18.
+      // Pediatric BMI-for-age (WHO LMS method) is NOT implemented; show
+      // informational message instead of an incorrect adult classification.
+      String category;
+      String categoryAr;
+      if (age > 0 && age < 5) {
+        category = 'BMI classification not applicable (under 5)';
+        categoryAr = 'تصنيف BMI غير متاح (دون 5 سنوات)';
+      } else if (age >= 5 && age < 18) {
+        category = 'BMI classification unavailable for under-18';
+        categoryAr = 'تصنيف BMI غير متاح لمن هم دون 18 عامًا';
+      } else {
+        // Adult (age ≥ 18 or age not entered yet — default to adult display)
+        final b = double.parse(bmi.toStringAsFixed(1));
+        if (b < 18.5) {
+          category = 'Underweight';
+          categoryAr = 'نقص في الوزن';
+        } else if (b < 25.0) {
+          category = 'Normal weight';
+          categoryAr = 'وزن طبيعي';
+        } else if (b < 30.0) {
+          category = 'Overweight';
+          categoryAr = 'زيادة في الوزن';
+        } else {
+          category = 'Obesity';
+          categoryAr = 'سمنة';
+        }
+      }
+
       setState(() {
         _calculatedBmi = double.parse(bmi.toStringAsFixed(1));
-        if (_calculatedBmi < 18.5) {
-          _bmiCategory = 'Underweight';
-          _bmiCategoryAr = 'نقص في الوزن';
-        } else if (_calculatedBmi < 25.0) {
-          _bmiCategory = 'Normal weight';
-          _bmiCategoryAr = 'وزن طبيعي';
-        } else if (_calculatedBmi < 30.0) {
-          _bmiCategory = 'Overweight';
-          _bmiCategoryAr = 'زيادة في الوزن';
-        } else {
-          _bmiCategory = 'Obesity';
-          _bmiCategoryAr = 'سمنة';
-        }
+        _bmiCategory = category;
+        _bmiCategoryAr = categoryAr;
       });
     } else {
       setState(() {
@@ -252,6 +274,7 @@ class _UserProfileScreenState extends ConsumerState<UserProfileScreen> {
                                 labelText: isRtl ? 'العمر (سنة)' : 'Age (Years)',
                                 prefixIcon: const Icon(Icons.cake_outlined, color: AppColors.textMuted),
                               ),
+                              onChanged: (_) => _recalculateBmi(),
                               validator: (v) {
                                 final n = int.tryParse(v ?? '');
                                 if (n == null || n < 1 || n > 120) return 'Invalid age';

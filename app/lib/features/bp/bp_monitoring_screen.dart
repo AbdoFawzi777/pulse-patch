@@ -114,6 +114,60 @@ class _BpMonitoringScreenState extends ConsumerState<BpMonitoringScreen> {
       return;
     }
 
+    // BP Safety Gate: ESC/ISH 2023 Hypertension Guidelines.
+    // Only cuff (real) readings trigger safety guidance — NEVER model estimates.
+    if (cuffS >= 180 || cuffD >= 120) {
+      final shouldContinue = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: AppColors.cardBgNavy,
+          title: const Text(
+            'High Blood Pressure Reading',
+            style: TextStyle(color: Color(0xFFFF6B6B), fontFamily: 'Outfit', fontWeight: FontWeight.w700),
+          ),
+          content: const SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'Your cuff reading is very high (≥ 180/120 mmHg). This may indicate hypertensive crisis.',
+                  style: TextStyle(color: AppColors.textPrimary, fontFamily: 'Outfit', fontSize: 14),
+                ),
+                SizedBox(height: 12),
+                Text('Recommended steps:', style: TextStyle(color: AppColors.accentCyan, fontFamily: 'Outfit', fontWeight: FontWeight.w600)),
+                SizedBox(height: 6),
+                Text('• Sit quietly and rest for 5 minutes, then re-measure with a validated cuff sphygmomanometer.', style: TextStyle(color: AppColors.textSecondary, fontFamily: 'Outfit', fontSize: 13)),
+                Text('• Ensure you are seated, arm at heart level, and have not consumed caffeine or exercised in the past 30 min.', style: TextStyle(color: AppColors.textSecondary, fontFamily: 'Outfit', fontSize: 13)),
+                SizedBox(height: 10),
+                Text('Warning signs requiring immediate emergency care:', style: TextStyle(color: Color(0xFFFF6B6B), fontFamily: 'Outfit', fontWeight: FontWeight.w600)),
+                SizedBox(height: 6),
+                Text('• Severe headache  • Visual disturbances  • Chest pain or pressure  • Shortness of breath  • Sudden neurological symptoms', style: TextStyle(color: AppColors.textSecondary, fontFamily: 'Outfit', fontSize: 13)),
+                SizedBox(height: 10),
+                Text('🚨 Egyptian Emergency: Call 123 (ambulance / Isʿaaf)', style: TextStyle(color: Color(0xFFFF6B6B), fontFamily: 'Outfit', fontWeight: FontWeight.w700, fontSize: 14)),
+                SizedBox(height: 10),
+                Text('Source: ESC/ISH 2023 Hypertension Guidelines', style: TextStyle(color: AppColors.textMuted, fontFamily: 'Outfit', fontSize: 11, fontStyle: FontStyle.italic)),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: const Text('Cancel', style: TextStyle(color: AppColors.textMuted)),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: const Text('I understand — continue calibration', style: TextStyle(color: AppColors.accentCyan)),
+            ),
+          ],
+        ),
+      );
+      if (shouldContinue != true) return;
+    }
+
+    if (!mounted) return;
+
     if (_latestEstimate == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Perform a live reading before calibrating')),
