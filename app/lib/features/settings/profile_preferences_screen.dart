@@ -6,6 +6,9 @@ import '../../data/repositories/preferences_repository.dart';
 import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/pill_button.dart';
+import '../bp/bp_monitoring_screen.dart';
+import '../doctors/doctor_discovery_screen.dart';
+import '../profile/user_profile_screen.dart';
 import 'application_settings_screen.dart';
 
 /// Screen managing user profile and UI display preferences.
@@ -333,6 +336,55 @@ class _ProfilePreferencesScreenState
 
                   const SizedBox(height: 12.0),
 
+                  // Health & Biometrics Demographic Profile
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const UserProfileScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14.0,
+                        horizontal: 16.0,
+                      ),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF0F2160), Color(0xFF1B2A66)],
+                        ),
+                        borderRadius: BorderRadius.circular(14.0),
+                        border: Border.all(color: AppColors.accentCyan.withValues(alpha: 0.4)),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.health_and_safety_outlined,
+                            color: AppColors.accentCyan,
+                            size: 20.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          Flexible(
+                            child: Text(
+                              'Health Profile (BMI, Age, BP)',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12.0),
+
                   // Open Application Settings
                   GestureDetector(
                     onTap: () {
@@ -373,6 +425,85 @@ class _ProfilePreferencesScreenState
                         ],
                       ),
                     ),
+                  ),
+
+                  const SizedBox(height: 12.0),
+
+                  // Health Services (Blood Pressure & Clinic Discovery)
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const BpMonitoringScreen()),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0B1840),
+                              borderRadius: BorderRadius.circular(14.0),
+                              border: Border.all(color: const Color(0xFF1B2A66)),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.monitor_heart_outlined, color: AppColors.accentCyan, size: 18.0),
+                                SizedBox(width: 6.0),
+                                Flexible(
+                                  child: Text(
+                                    'Blood Pressure',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 13.0,
+                                      color: Color(0xFFC9D0F5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const DoctorDiscoveryScreen()),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0B1840),
+                              borderRadius: BorderRadius.circular(14.0),
+                              border: Border.all(color: const Color(0xFF1B2A66)),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.local_hospital_outlined, color: AppColors.accentBlue, size: 18.0),
+                                SizedBox(width: 6.0),
+                                Flexible(
+                                  child: Text(
+                                    'Find Clinics',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 13.0,
+                                      color: Color(0xFFC9D0F5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 24.0),
