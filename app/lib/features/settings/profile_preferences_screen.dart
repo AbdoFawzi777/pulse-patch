@@ -8,6 +8,7 @@ import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/pill_button.dart';
 import '../bp/bp_monitoring_screen.dart';
 import '../doctors/doctor_discovery_screen.dart';
+import '../knowledge/medical_knowledge_assistant_screen.dart';
 import '../profile/user_profile_screen.dart';
 import '../reports/health_analytics_screen.dart';
 import '../reports/reports_screen.dart';
@@ -371,6 +372,53 @@ class _ProfilePreferencesScreenState
                           Flexible(
                             child: Text(
                               'Health Profile (BMI, Age, BP)',
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontFamily: 'Outfit',
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(height: 12.0),
+
+                  // Open Medical Knowledge Assistant
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const MedicalKnowledgeAssistantScreen(),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 14.0,
+                        horizontal: 16.0,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF0F2160),
+                        borderRadius: BorderRadius.circular(14.0),
+                        border: Border.all(color: AppColors.accentCyan.withValues(alpha: 0.5)),
+                      ),
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.menu_book_outlined,
+                            color: AppColors.accentCyan,
+                            size: 19.0,
+                          ),
+                          SizedBox(width: 8.0),
+                          Flexible(
+                            child: Text(
+                              'Medical Knowledge Assistant (RAG)',
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(
                                 fontFamily: 'Outfit',

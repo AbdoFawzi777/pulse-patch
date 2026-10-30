@@ -1,31 +1,62 @@
 {
-  "dataset_name": "PPG-BP Clinical Benchmark Cohort",
-  "reference_standard": "Liang et al. Nature Scientific Data 2018 Statistical Distribution Mirror",
-  "file_name": "ppg_bp_clinical_benchmark.csv",
-  "record_count": 657,
-  "subject_count": 219,
-  "sampling_rate_hz": 100,
-  "features": [
-    "age",
-    "gender",
-    "bmi",
-    "hr_bpm",
-    "crest_time_ms",
-    "decay_time_ms",
-    "pw50_ms",
-    "area_ratio",
-    "reflection_index",
-    "stiffness_index"
-  ],
-  "target_labels": [
-    "sbp",
-    "dbp",
-    "map"
-  ],
-  "sha256_checksum": "4ab1aa5d7608d83f0e73945421859a23032edd61623cbdf3165640526a6e5536",
-  "sbp_mean": 112.94,
-  "sbp_std": 12.08,
-  "dbp_mean": 70.58,
-  "dbp_std": 8.49,
-  "evaluation_rule": "Subject-Wise GroupKFold (zero patient leakage between folds)"
+  "version": "2.0.0",
+  "pipeline_date": "2026-10-30",
+  "verification_rule": "Subject-Wise GroupKFold (zero patient leakage between folds)",
+  "datasets": [
+    {
+      "dataset_name": "PPG-BP Database (Liang et al.)",
+      "source_url": "https://doi.org/10.6084/m9.figshare.5459299.v5",
+      "license": "CC0 1.0 Universal (Public Domain Dedication)",
+      "archive_file": "PPG-BP_Database.zip",
+      "archive_sha256": "52f6b576d9dd2769fdee5a9bb804ba74d973b49e81958c4a64ae6782f476c43e",
+      "processed_file": "ppg_bp_real_cohort.csv",
+      "processed_sha256": "f809cb5cad13cd31e439d1b30704b1eb3d08dc6a39deeab5bd7f385d7f788817",
+      "record_count": 657,
+      "subject_count": 219,
+      "sampling_rate_hz": 100,
+      "features": [
+        "age",
+        "gender",
+        "bmi",
+        "hr_bpm",
+        "crest_time_ms",
+        "decay_time_ms",
+        "pw50_ms",
+        "area_ratio",
+        "reflection_index",
+        "stiffness_index"
+      ],
+      "target_labels": [
+        "sbp",
+        "dbp",
+        "map"
+      ],
+      "known_limitations": "Resting seated finger PPG with Omron cuff reference. Small sample size, clinical research benchmark only."
+    },
+    {
+      "dataset_name": "BIDMC PPG and Respiration Dataset",
+      "source_url": "https://physionet.org/content/bidmc/1.0.0/",
+      "license": "Open Data Commons Attribution License v1.0",
+      "processed_file": "bidmc_real_cohort.csv",
+      "processed_sha256": "f3a835ed099a783baed7355e291ae7b94a95aae79668e4a286839f38047c9f31",
+      "record_count": 53,
+      "subject_count": 53,
+      "reference_labels": [
+        "reference_hr_bpm",
+        "reference_spo2_pct",
+        "reference_resp_rate"
+      ],
+      "known_limitations": "ICU patients with pulse oximetry and capnography monitoring; contains no blood pressure ground truth."
+    },
+    {
+      "dataset_name": "VitalDB Surgical Open Dataset",
+      "source_url": "https://vitaldb.net/dataset/",
+      "license": "Creative Commons Attribution 4.0 International (CC BY 4.0)",
+      "processed_file": "vitaldb_real_cohort.csv",
+      "processed_sha256": "61fac9fb6ad331437fd8f77c1fc7d6864a16d155145f7245753a094515b51c46",
+      "record_count": 500,
+      "subject_count": 500,
+      "known_limitations": "Perioperative surgical patient cohort under anesthesia; physiological hemodynamics differ significantly from ambulatory wearable contexts."
+    }
+  ]
 }

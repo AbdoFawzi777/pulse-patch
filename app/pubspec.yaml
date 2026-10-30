@@ -53,6 +53,7 @@ flutter:
     - assets/ml/
     - assets/fonts/
     - assets/icon/
+    - assets/knowledge/
 
   fonts:
     - family: Outfit

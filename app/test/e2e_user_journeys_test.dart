@@ -9,6 +9,7 @@ import 'package:app/domain/entities/pulse_sample.dart';
 import 'package:app/domain/entities/session_record.dart';
 import 'package:app/domain/entities/session_stats_record.dart';
 import 'package:app/domain/insights/personalized_insights_service.dart';
+import 'package:app/domain/knowledge/medical_knowledge_engine.dart';
 import 'package:app/domain/profile/user_profile.dart';
 import 'package:app/domain/signal/ble_packet.dart';
 import 'package:app/features/reports/pdf_report_generator.dart';
@@ -278,6 +279,23 @@ void main() {
       expect(reloaded?.fullName, equals('Persistence User'));
       expect(reloaded?.baselineSbp, equals(120.0));
       expect(reloaded?.baselineDbp, equals(80.0));
+    });
+
+    test('Journey K — Medical Knowledge Assistant query & authoritative citation audit', () async {
+      final engine = MedicalKnowledgeEngine();
+      await engine.initialize();
+
+      // Query WHO blood pressure guidelines
+      final bpAnswer = await engine.query('WHO blood pressure classification');
+      expect(bpAnswer.citations, isNotEmpty);
+      expect(bpAnswer.citations.first.organization, contains('World Health Organization'));
+      expect(bpAnswer.citations.first.sourceUrl, isNotEmpty);
+      expect(bpAnswer.isEmergency, isFalse);
+
+      // Query emergency red flag symptoms
+      final emergencyAnswer = await engine.query('crushing chest pain and difficulty breathing');
+      expect(emergencyAnswer.isEmergency, isTrue);
+      expect(emergencyAnswer.emergencyNoticeEn, contains('123'));
     });
   });
 }

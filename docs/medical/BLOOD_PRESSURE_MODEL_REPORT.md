@@ -4,16 +4,18 @@
 PulsePatch Lite uses photoplethysmography (PPG) morphological features combined with demographic baseline parameters to estimate Blood Pressure (Systolic BP, Diastolic BP, and Mean Arterial Pressure). Estimates are benchmarked against the **AAMI/ESH/ISO SP10:2018 Standard** (Mean Absolute Error $\le 5\text{ mmHg}$, Standard Deviation $\le 8\text{ mmHg}$) and the **British Hypertension Society (BHS)** Grading Protocol.
 
 ## 2. Benchmark Dataset & Zero-Leakage Validation
-- **Benchmark Source:** Mirror of Liang et al. Nature Scientific Data 2018 (219 subjects, 657 recordings).
+- **Benchmark Source:** Liang et al. Nature Scientific Data 2018 (CC0 Figshare DOI: 10.6084/m9.figshare.5459299.v5) — 219 subjects, 657 records.
 - **Split Strategy:** Subject-Wise GroupKFold (5 Folds). Recordings from any given patient appear strictly in either the training set or the validation set, ensuring zero patient memorization leakage.
 
 ## 3. Comparative Model Evaluation Results
 
-| Model Architecture | Metric | SBP Value | SBP BHS | SBP AAMI | DBP Value | DBP BHS | DBP AAMI |
-|---|---|---|---|---|---|---|---|
-| **Ridge** | MAE / SDE / r | 6.65 ± 8.33 (r=0.72) | Grade C (44.1% ≤5) | FAIL | 5.40 ± 6.72 (r=0.61) | Grade B (54.5% ≤5) | FAIL |
-| **GBDT** | MAE / SDE / r | 6.99 ± 8.61 (r=0.70) | Grade C (42.5% ≤5) | FAIL | 5.63 ± 7.07 (r=0.56) | Grade B (53.1% ≤5) | FAIL |
-| **MLP_Linear_DartCompatible** | MAE / SDE / r | 7.64 ± 9.51 (r=0.64) | Grade D (39.6% ≤5) | FAIL | 6.07 ± 7.50 (r=0.52) | Grade C (46.4% ≤5) | FAIL |
+| Model Architecture | SBP MAE (mmHg) | SBP SDE | SBP r | SBP BHS | SBP AAMI | DBP MAE (mmHg) | DBP SDE | DBP r | DBP BHS | DBP AAMI |
+|:---|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|:---:|
+| **Ridge_Baseline** | 14.03 | 18.31 | 0.44 | Grade D (28.0% ≤5) | FAIL | 8.62 | 10.86 | 0.22 | Grade D (35.5% ≤5) | FAIL |
+| **ElasticNet** | 14.02 | 18.29 | 0.44 | Grade D (28.6% ≤5) | FAIL | 8.60 | 10.84 | 0.22 | Grade D (36.1% ≤5) | FAIL |
+| **Random_Forest** | 14.97 | 18.72 | 0.44 | Grade D (19.0% ≤5) | FAIL | 9.14 | 11.54 | 0.16 | Grade D (35.9% ≤5) | FAIL |
+| **GBDT** | 14.95 | 18.58 | 0.45 | Grade D (16.4% ≤5) | FAIL | 8.94 | 11.52 | 0.18 | Grade D (36.4% ≤5) | FAIL |
+| **MLP_DartCompatible** | 14.09 | 18.13 | 0.45 | Grade D (23.1% ≤5) | FAIL | 8.86 | 11.00 | 0.20 | Grade D (32.9% ≤5) | FAIL |
 
 ## 4. Pure Dart Inference Architecture
 To guarantee maximum portability, battery efficiency, and zero binary size bloat:

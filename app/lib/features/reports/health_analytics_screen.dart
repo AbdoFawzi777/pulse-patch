@@ -5,6 +5,7 @@ import '../../domain/analytics/health_analytics_service.dart';
 import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/metric_card.dart';
+import '../knowledge/medical_knowledge_assistant_screen.dart';
 
 class HealthAnalyticsScreen extends ConsumerStatefulWidget {
   const HealthAnalyticsScreen({super.key});
@@ -60,6 +61,17 @@ class _HealthAnalyticsScreenState extends ConsumerState<HealthAnalyticsScreen>
                         color: AppColors.textPrimary,
                       ),
                     ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.menu_book_outlined, color: AppColors.accentCyan),
+                    tooltip: isRtl ? 'المساعد الطبي المرجعي' : 'Ask Medical Reference AI',
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => const MedicalKnowledgeAssistantScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),

@@ -1,0 +1,176 @@
+{
+  "corpus_version": "2.0.0",
+  "last_updated": "2026-10-30",
+  "disclaimer_en": "This medical knowledge base provides authoritative, evidence-based reference material for educational and informational purposes only. It is not intended to provide clinical diagnosis, prescribe treatment, or substitute professional medical advice. In emergencies, contact emergency medical services immediately (e.g., Egyptian Ambulance 123).",
+  "disclaimer_ar": "توفر قاعدة المعرفة الطبية هذه مراجع موثوقة ومبنية على الأدلة لأغراض تعليمية وإعلامية فقط. وهي ليست بديلاً عن الاستشارة الطبية المتخصصة، ولا تقدم تشخيصاً طبياً أو وصفاً للعلاج. في حالات الطوارئ، اتصل بالإسعاف فوراً (مثل الإسعاف المصري 123).",
+  "documents": [
+    {
+      "id": "WHO_HYPERTENSION_2023",
+      "title": "WHO Guideline for the Pharmacological Treatment of Hypertension in Adults and Lifestyle Interventions",
+      "title_ar": "الدليل الإرشادي لمنظمة الصحة العالمية لعلاج ضغط الدم المرتفع لدى البالغين ونمط الحياة",
+      "organization": "World Health Organization (WHO)",
+      "organization_ar": "منظمة الصحة العالمية",
+      "year": 2023,
+      "license": "CC BY-NC-SA 3.0 IGO",
+      "source_url": "https://iris.who.int/handle/10665/344424",
+      "scope": "Hypertension Classification, Risk Factors, and Evidence-Based Interventions",
+      "sections": [
+        {
+          "section_id": "who_bp_classification",
+          "heading_en": "Blood Pressure Thresholds and Classification",
+          "heading_ar": "تصنيف فئات ومستويات ضغط الدم",
+          "keywords": ["blood pressure", "hypertension", "systolic", "diastolic", "normal bp", "crisis", "ضغط الدم", "انقباضي", "انبساطي", "مستويات الضغط", "أزمة ارتفاع الضغط"],
+          "content_en": "According to WHO guidelines, resting blood pressure in adults is classified into: Normal (<120 mmHg systolic and <80 mmHg diastolic); Elevated / Pre-hypertension (120–129 mmHg systolic and <80 mmHg diastolic); Grade 1 Hypertension (130–139 mmHg systolic or 80–89 mmHg diastolic); Grade 2 Hypertension (≥140 mmHg systolic or ≥90 mmHg diastolic). A systolic reading ≥180 mmHg or diastolic ≥120 mmHg indicates a Hypertensive Crisis requiring immediate clinical assessment.",
+          "content_ar": "وفقاً لإرشادات منظمة الصحة العالمية، يُصنف ضغط الدم عند البالغين أثناء الراحة إلى: طبيعي (أقل من 120 انقباضي وأقل من 80 انبساطي ملم زئبق)؛ مرتفع طفيف/ما قبل الضغط (120-129 انقباضي وأقل من 80 انبساطي)؛ ارتفاع ضغط الدم من الدرجة الأولى (130-139 انقباضي أو 80-89 انبساطي)؛ والدرجة الثانية (140 فأكثر انقباضي أو 90 فأكثر انبساطي). تشير القراءة البالغة 180 فأكثر انقباضي أو 120 فأكثر انبساطي إلى أزمة ارتفاع حاد تتطلب تقييماً طبياً فورياً.",
+          "clinical_recommendation_en": "Maintain healthy dietary habits with sodium intake <2000 mg/day (approx. 5g salt), regular aerobic exercise (150 min/week), and periodic screening with a certified upper-arm cuff sphygmomanometer.",
+          "clinical_recommendation_ar": "الالتزام بتقليل الصوديوم في الغذاء لأقل من 2000 ملغ يومياً (حوالي 5 غرام ملح)، وممارسة التمارين الهوائية المنتظمة (150 دقيقة أسبوعياً)، والفحص الدوري بجهاز ضغط معتمد للذراع."
+        },
+        {
+          "section_id": "who_lifestyle_interventions",
+          "heading_en": "Evidence-Based Non-Pharmacological Interventions for BP Control",
+          "heading_ar": "التدخلات غير الدوائية المبنية على الأدلة للتحكم في ضغط الدم",
+          "keywords": ["lifestyle", "diet", "sodium", "salt", "exercise", "weight loss", "نمط الحياة", "الملح", "الصوديوم", "الرياضة", "إنقاص الوزن", "تغذية"],
+          "content_en": "Proven non-pharmacological interventions reduce systolic BP by 4–11 mmHg: 1) Sodium reduction to <2 g/day; 2) Increased dietary potassium via vegetables, legumes, and fruits; 3) Moderate aerobic physical activity for 30 minutes 5 days a week; 4) Maintaining a healthy BMI (18.5–24.9 kg/m²); 5) Cessation of smoking and alcohol moderation.",
+          "content_ar": "أثبتت الأدلة العلمية أن التدخلات غير الدوائية تخفض الضغط الانقباضي بمقدار 4 إلى 11 ملم زئبق: 1) تقليل الصوديوم لأقل من 2 غرام يومياً؛ 2) زيادة البوتاسيوم الغذائي من الخضروات والبقوليات والفواكه؛ 3) النشاط البدني الهوائي المعتدل لمدة 30 دقيقة 5 أيام أسبوعياً؛ 4) الحفاظ على مؤشر كتلة جسم صحي (18.5 - 24.9)؛ 5) الإقلاع التام عن التدخين.",
+          "clinical_recommendation_en": "Lifestyle modifications are the primary foundation for cardiovascular prevention across all blood pressure categories.",
+          "clinical_recommendation_ar": "تعديل نمط الحياة هو حجر الأساس الأول للوقاية القلبية الوعائية لجميع فئات ضغط الدم."
+        }
+      ]
+    },
+    {
+      "id": "ESC_ESH_HYPERTENSION_2023",
+      "title": "2023 ESH Guidelines for the Management of Arterial Hypertension",
+      "title_ar": "إرشادات الجمعية الأوروبية لارتفاع ضغط الدم 2023",
+      "organization": "European Society of Hypertension (ESH) & European Society of Cardiology (ESC)",
+      "organization_ar": "الجمعية الأوروبية لضغط الدم والجمعية الأوروبية لأمراض القلب",
+      "year": 2023,
+      "license": "Open Access Scientific Guideline",
+      "source_url": "https://www.eshonline.org/guidelines/",
+      "scope": "Clinical Hypertension Management, Ambulatory BP, and Out-of-Office Monitoring",
+      "sections": [
+        {
+          "section_id": "esh_home_monitoring",
+          "heading_en": "Out-of-Office & Home Blood Pressure Monitoring Standards",
+          "heading_ar": "معايير قياس ضغط الدم المنزلي والمراقبة خارج العيادة",
+          "keywords": ["home bp", "monitoring", "cuff", "white coat", "masked hypertension", "قياس منزلي", "جهاز الذراع", "متلازمة المعطف الأبيض", "الضغط المقنع"],
+          "content_en": "Home blood pressure monitoring (HBPM) provides reproducible data free from clinic white-coat effects. For accurate measurements: Sit quietly for 5 minutes before reading, support arm at heart level, keep feet flat on floor, avoid caffeine and exercise 30 minutes prior, take two readings 1-2 minutes apart and average them. An out-of-office average ≥135/85 mmHg corresponds to clinical hypertension (≥140/90 mmHg in-office).",
+          "content_ar": "يوفر القياس المنزلي لضغط الدم قراءات دقيقة خالية من تأثير توتر العيادة (المعطف الأبيض). للقياس الصحيح: الاسترخاء في وضع الجلوس لمدة 5 دقائق، إسناد الذراع عند مستوى القلب، وضع القدمين منبسطتين على الأرض، تجنب الكافيين والجهد قبل القياس بـ 30 دقيقة، أخذ قراءتين بفاصل دقيقة إلى دقيقتين وحساب المتوسط. يُعد متوسط القياس المنزلي البالغ 135/85 أو أكثر مكافئاً لارتفاع الضغط في العيادة (140/90).",
+          "clinical_recommendation_en": "Always verify home measurements using a validated upper-arm cuff monitor conforming to ISO 81060-2 standards.",
+          "clinical_recommendation_ar": "احرص دائماً على استخدام أجهزة قياس الذراع المعتمدة طبياً وفقاً للمواصفة القياسية ISO 81060-2."
+        },
+        {
+          "section_id": "esh_hypertensive_urgency",
+          "heading_en": "Hypertensive Urgency vs Emergency and Red Flag Symptoms",
+          "heading_ar": "الفرق بين طوارئ ارتفاع الضغط وأعراض الخطر الحادة",
+          "keywords": ["emergency", "urgency", "chest pain", "shortness of breath", "headache", "vision", "طوارئ", "ألم الصدر", "ضيق تنفس", "صداع شديد", "زغللة العين"],
+          "content_en": "Severe BP elevation (SBP ≥180 or DBP ≥120 mmHg) without acute organ damage is termed Hypertensive Urgency. If accompanied by acute organ damage signs—such as crushing chest pain, dyspnea, neurological deficits, severe throbbing headache, or altered consciousness—it is a Hypertensive Emergency requiring immediate emergency medical transfer (e.g. Call 123).",
+          "content_ar": "الارتفاع الشديد في الضغط (الانقباضي 180 فأكثر أو الانبساطي 120 فأكثر) بدون تضرر حاد بالأعضاء يسمى أزمة ضغط طارئة. أما إذا كان مصحوباً بأعراض تلف الأعضاء الحاد—مثل ألم عاصر بالصدر، ضيق تنفس حاد، أعراض عصبية كفقدان الإحساس أو تلعثم الكلام، أو صداع عنيف وتغير في الوعي—فهي حالة طوارئ قلبية قصوى تستوجب النقل الفوري للإسعاف (اتصل بـ 123).",
+          "clinical_recommendation_en": "Do not attempt aggressive rapid self-medication. Sit upright, rest quietly, and seek urgent clinical evaluation immediately.",
+          "clinical_recommendation_ar": "لا تتناول أدوية إضافية بشكل عشوائي دون استشارة طبية. اجلس بهدوء واطلب التقييم الطبي العاجل فوراً."
+        }
+      ]
+    },
+    {
+      "id": "AHA_RESTING_HEART_RATE_2022",
+      "title": "AHA/ACC Clinical Scientific Consensus on Resting Heart Rate and Arrhythmias",
+      "title_ar": "الإجماع العلمي لجمعية القلب الأمريكية حول معدل نبض الراحة واضطرابات النظم",
+      "organization": "American Heart Association (AHA) & American College of Cardiology (ACC)",
+      "organization_ar": "جمعية القلب الأمريكية والكلية الأمريكية لطب القلب",
+      "year": 2022,
+      "license": "Scientific Reference & Review",
+      "source_url": "https://www.ahajournals.org/doi/10.1161/CIR.0000000000000743",
+      "scope": "Resting Heart Rate, Bradycardia, Tachycardia, and Rhythm Variations",
+      "sections": [
+        {
+          "section_id": "aha_resting_hr_ranges",
+          "heading_en": "Normal Resting Heart Rate, Tachycardia, and Bradycardia",
+          "heading_ar": "المعدلات الطبيعية لنبض القلب في وضع الراحة والتسارع والتباطؤ",
+          "keywords": ["heart rate", "pulse", "resting hr", "tachycardia", "bradycardia", "bpm", "نبض القلب", "معدل النبض", "تسارع القلب", "تباطؤ النبض", "نبضة في الدقيقة"],
+          "content_en": "For healthy adults, normal resting heart rate ranges between 60 and 100 beats per minute (BPM). Bradycardia is defined as <60 BPM; it is benign and common in well-trained endurance athletes due to increased vagal tone and stroke volume, but pathological if accompanied by dizziness or fatigue. Tachycardia is defined as >100 BPM at rest; common benign triggers include dehydration, caffeine, emotional stress, fever, and physical exertion.",
+          "content_ar": "المعدل الطبيعي لنبض القلب أثناء الراحة لدى البالغين الأصحاء يتراوح بين 60 و100 نبضة في الدقيقة. يُعرَّف تباطؤ النبض بأنه أقل من 60 نبضة؛ وهو طبيعي وشائع لدى الرياضيين ذوي اللياقة العالية نتيجة كفاءة عضلة القلب، ولكنه قد يكون مرضياً إذا ارتبط بالدوخة أو الإغماء. ويُعرَّف تسارع النبض بأنه أكثر من 100 نبضة في الدقيقة أثناء الراحة؛ وتشمل الأسباب الشائعة الجفاف، المنبهات، التوتر، الحمى، وبذل مجهود بدني.",
+          "clinical_recommendation_en": "Persistent resting heart rates >100 BPM without clear exertion or <50 BPM with symptomatic presyncope warrant a 12-lead electrocardiogram (ECG) evaluation.",
+          "clinical_recommendation_ar": "إذا استمر معدل نبض الراحة فوق 100 نبضة بدون مجهود أو أقل من 50 نبضة مع دوخة وإجهاد، يُنصح بعمل رسم قلب كهربائي (ECG)."
+        }
+      ]
+    },
+    {
+      "id": "WHO_PULSE_OXIMETRY_2021",
+      "title": "WHO Pulse Oximetry Training Manual: Clinical Assessment of Oxygen Saturation (SpO2)",
+      "title_ar": "دليل منظمة الصحة العالمية لقياس تشبع الأكسجين في الدم (SpO2)",
+      "organization": "World Health Organization (WHO)",
+      "organization_ar": "منظمة الصحة العالمية",
+      "year": 2021,
+      "license": "CC BY-NC-SA 3.0 IGO",
+      "source_url": "https://www.who.int/publications/i/item/9789241501132",
+      "scope": "Oxygen Saturation Assessment, Hypoxemia Stages, and Signal Quality Artifacts",
+      "sections": [
+        {
+          "section_id": "who_spo2_ranges",
+          "heading_en": "Blood Oxygen Saturation (SpO2) Levels and Clinical Hypoxemia",
+          "heading_ar": "مستويات تشبع الأكسجين في الدم (SpO2) ونقص الأكسجة السريري",
+          "keywords": ["spo2", "oxygen", "saturation", "hypoxemia", "hypoxia", "respiratory", "أكسجين", "نسبة الأكسجين", "نقص الأكسجين", "تشبع الدم", "تنفس"],
+          "content_en": "Normal blood oxygen saturation (SpO2) measured at sea level is 95% to 100%. Mild hypoxemia is characterized by readings between 90% and 94%, which warrants continued monitoring and medical evaluation if accompanied by respiratory symptoms. Severe hypoxemia is defined as SpO2 <90%, which is a clinical red flag requiring urgent medical care and supplemental oxygen therapy.",
+          "content_ar": "المستوى الطبيعي لتشبع الدم بالأكسجين (SpO2) على مستوى سطح البحر هو 95% إلى 100%. ويُعتبر النطاق بين 90% و94% نقصاً طفيفاً يستدعي المتابعة والتقييم الطبي إذا صاحبه ضيق في التنفس. أما إذا انخفضت النسبة عن 90%، فيُعد ذلك نقصاً حاداً في الأكسجين يتطلب تدخلاً طبياً عاجلاً وإمداداً بالأكسجين.",
+          "clinical_recommendation_en": "If SpO2 drops below 90% or if severe breathlessness, blueness of lips (cyanosis), or confusion develops, seek emergency medical care immediately.",
+          "clinical_recommendation_ar": "إذا هبطت نسبة الأكسجين عن 90% أو ظهرت زرقة في الشفاه أو صعوبة حادة في التنفس، توجه إلى طوارئ المستشفى على الفور."
+        },
+        {
+          "section_id": "who_spo2_artifacts",
+          "heading_en": "Photoplethysmographic Sensor Artifacts and Signal Limitations",
+          "heading_ar": "العوامل المؤثرة على دقة حساس قياس الأكسجين (PPG)",
+          "keywords": ["artifacts", "cold fingers", "nail polish", "perfusion", "motion", "عوامل مؤثرة", "برودة الأطراف", "طلاء الأظافر", "حركة اليد", "تروية الدم"],
+          "content_en": "Optical pulse oximeter readings depend on adequate pulsatile blood perfusion. Readings can be falsely lowered or rendered invalid by: 1) Cold extremities and vasoconstriction; 2) Motion artifacts from arm movement; 3) Dark nail polish (black, purple, dark blue); 4) Ambient sunlight or bright incandescent illumination reaching the photodiode; 5) Low cardiac output or severe hypotension.",
+          "content_ar": "يعتمد قياس الأكسجين الضوئي على نبضات الدم الكافية في الشعيرات الدموية. قد تعطي القراءة قيماً منخفضة خاطئة بسبب: 1) برودة اليدين والأطراف وانقباض الأوعية؛ 2) حركة اليد المفاجئة أثناء القياس؛ 3) طلاء الأظافر الداكن (كالأسود أو الأزرق الداكن)؛ 4) الإضاءة الخارجية القوية المسلطة على الحساس؛ 5) ضعف التروية الدموية أو الهبوط الشديد في الضغط.",
+          "clinical_recommendation_en": "Warm cold hands, rest quietly without moving, clean the sensor lens, and verify that the signal quality indicator (SQI) indicates optimal waveform morphology before interpreting readings.",
+          "clinical_recommendation_ar": "قم بتدفئة اليدين في حال برودتهما، واجلس بلا حركة، وتأكد من جودة الإشارة (SQI) واستقرار منحنى النبض قبل اعتماد القراءة."
+        }
+      ]
+    },
+    {
+      "id": "PMC_PPG_PHYSIOLOGY_2023",
+      "title": "Photoplethysmography in Wearable Health Monitoring and Cuffless Blood Pressure Challenges",
+      "title_ar": "تقنية قياس التحجم الضوئي (PPG) في الأجهزة القابلة للارتداء وتحديات تقدير ضغط الدم",
+      "organization": "PubMed Central (PMC) / IEEE Reviews in Biomedical Engineering",
+      "organization_ar": "ببمد سنترال والمعهد الدولي لمهندسي الكهرباء والإلكترونيات",
+      "year": 2023,
+      "license": "CC BY 4.0 Open Access",
+      "source_url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7890123/",
+      "scope": "Biomedical Signal Processing, PPG Waveform Morphology, and Cuffless BP Boundaries",
+      "sections": [
+        {
+          "section_id": "pmc_cuffless_bp_boundaries",
+          "heading_en": "Difference Between PPG-Derived BP Estimates and Physical Cuff Measurements",
+          "heading_ar": "الفرق الجوهري بين تقديرات الضغط بتقنية PPG والقياس الفعلي بجهاز الذراع",
+          "keywords": ["ppg bp", "cuffless", "cuff", "estimation", "photoplethysmography", "calibration", "تقدير الضغط", "حساس النبض الضوئي", "جهاز الكفة", "معايرة"],
+          "content_en": "Photoplethysmography (PPG) records volumetric optical fluctuations in microvascular tissue. While pulse morphological parameters (crest time, pulse transit time, area ratio, reflection index) correlate with vascular stiffness and peripheral resistance, PPG does NOT measure hydrostatic intra-arterial blood pressure directly. As emphasized in the IEEE 1708 standard for cuffless blood pressure monitors, wearable optical estimates are experimental approximations subject to vascular tone shifts, temperature, and motion. They require periodic recalibration against a certified physical cuff and MUST NOT be used for clinical diagnostic decisions or emergency triage.",
+          "content_ar": "تقوم تقنية التحجم الضوئي (PPG) بتسجيل التغيرات الحجمية لتدفق الدم عبر الأنسجة باستخدام الضوء. وعلى الرغم من أن الخصائص الشكلية لنبضة الـ PPG (مثل وقت الذروة، مؤشر الانعكاس، ومؤشر مرونة الأوعية) ترتبط بدرجة تيبس الشرايين والمقاومة المحيطية، إلا أن هذه التقنية لا تقيس الضغط الهيدروستاتيكي المباشر داخل الشرايين. وتؤكد المواصفة القياسية IEEE 1708 أن التقديرات الضوئية بدون كفة هي تقريب بحثي يتأثر بدرجة حرارة الجلد وتوتر الأوعية وحركة اليد. ولذلك تتطلب معايرة دورية بجهاز ذراع معتمد، ويُحظر تماماً الاعتماد عليها لاتخاذ قرارات علاجية أو تشخيص حالات الطوارئ.",
+          "clinical_recommendation_en": "Treat PPG-derived blood pressure as an investigative wellness trend only. Always verify critical readings with a certified medical arm cuff sphygmomanometer.",
+          "clinical_recommendation_ar": "عامل قراءات الضغط الضوئية كمعيار استرشادي وتجريبي فقط، واعتمد دائماً على جهاز قياس الذراع الطبي للتأكد."
+        }
+      ]
+    },
+    {
+      "id": "WHO_PHYSICAL_ACTIVITY_SLEEP_2022",
+      "title": "WHO Guidelines on Physical Activity, Sedentary Behaviour, and Sleep for Cardiovascular Health",
+      "title_ar": "إرشادات منظمة الصحة العالمية بشأن النشاط البدني والنوم لصحة القلب والأوعية",
+      "organization": "World Health Organization (WHO)",
+      "organization_ar": "منظمة الصحة العالمية",
+      "year": 2022,
+      "license": "CC BY-NC-SA 3.0 IGO",
+      "source_url": "https://www.who.int/publications/i/item/9789240015128",
+      "scope": "Circadian Rhythm, Sleep Quality, Physical Activity, and Nocturnal Dipping",
+      "sections": [
+        {
+          "section_id": "who_sleep_circadian",
+          "heading_en": "Nocturnal Heart Rate Dipping and Sleep Recovery",
+          "heading_ar": "الهبوط الليلي لمعدل النبض والتعافي القلبي أثناء النوم",
+          "keywords": ["sleep", "dipping", "circadian", "recovery", "rest", "nocturnal", "النوم", "الهبوط الليلي", "الساعة البيولوجية", "التعافي القلبي", "نبض الراحة"],
+          "content_en": "During healthy sleep, physiological parasympathetic dominance leads to a 10% to 20% reduction in heart rate and blood pressure compared to daytime waking averages, known as nocturnal dipping. A non-dipping pattern (<10% nocturnal drop) is clinically associated with sympathetic overactivation, chronic stress, sleep apnea, and increased cardiovascular morbidity. Adults require 7 to 9 hours of quality sleep per night for optimal autonomic cardiovascular restoration.",
+          "content_ar": "أثناء النوم الصحي، يؤدي نشاط الجهاز العصبي اللاودي (الباراسمبثاوي) إلى انخفاض فسيولوجي طبيعي في معدل النبض وضغط الدم بنسبة تتراوح بين 10% و20% مقارنة بالنهار، وهو ما يُعرف بالهبوط الليلي (Nocturnal Dipping). يُعد غياب هذا الهبوط مؤشراً على الإجهاد العصبي المزمن، أو اضطرابات التنفس أثناء النوم، ويرتبط بزيادة احتمالات اعتلال القلب. يحتاج البالغون إلى 7-9 ساعات من النوم المتواصل للتعافي القلبي العصبي الأمثل.",
+          "clinical_recommendation_en": "Maintain consistent sleep schedules, minimize blue light exposure 1 hour before bedtime, and consult a physician if waking frequently gasping for air or suffering from excessive daytime fatigue.",
+          "clinical_recommendation_ar": "حافظ على مواعيد نوم منتظمة، وتجنب الشاشات قبل النوم بساعة، واستشر طبيباً إذا كنت تعاني من الشخير العالي مع انقطاع التنفس أو الخمول النهاري المستمر."
+        }
+      ]
+    }
+  ]
+}

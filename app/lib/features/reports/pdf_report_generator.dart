@@ -296,6 +296,18 @@ class PdfReportGenerator {
                       'Model Output: On-device machine learning pattern classification (Typical / Different). Strictly educational, non-diagnostic.',
                   style: const pw.TextStyle(fontSize: 7.5),
                 ),
+                pw.SizedBox(height: 4.0),
+                pw.Text(
+                  'Authoritative Clinical Evidence Bases:',
+                  style: pw.TextStyle(
+                    fontSize: 8.0,
+                    fontWeight: pw.FontWeight.bold,
+                  ),
+                ),
+                pw.Text(
+                  '- WHO Guidelines on Hypertension (2023) & Pulse Oximetry (2021)\n- ESH/ESC Guidelines for Arterial Hypertension (2023)\n- AHA/ACC Scientific Consensus on Resting Heart Rate (2022)\n- IEEE 1708 Standard for Cuffless Blood Pressure Measurement Boundaries',
+                  style: const pw.TextStyle(fontSize: 7.0, color: PdfColors.grey700),
+                ),
               ],
             ),
           ),
