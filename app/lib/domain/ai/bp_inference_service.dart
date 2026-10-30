@@ -1,5 +1,3 @@
-import 'package:flutter/foundation.dart';
-
 /// Clinical Blood Pressure Estimation Result
 class BpEstimateResult {
   const BpEstimateResult({

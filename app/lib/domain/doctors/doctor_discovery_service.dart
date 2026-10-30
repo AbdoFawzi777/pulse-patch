@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 
 class DoctorClinic {
   const DoctorClinic({
@@ -40,11 +38,10 @@ class DoctorClinic {
   }
 }
 
-/// Real OpenStreetMap / Overpass Doctor Discovery Service
+/// Real Doctor and Clinic Discovery Service
 /// Strictly zero health data transmitted. Only geographic coordinates or city names queried.
 class DoctorDiscoveryService {
-  DoctorDiscoveryService({http.Client? client}) : _client = client ?? http.Client();
-  final http.Client _client;
+  const DoctorDiscoveryService();
 
   /// Curated fallback clinic directory for instant offline functionality in Egypt
   static final List<DoctorClinic> curatedClinics = [
