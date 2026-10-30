@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
+import '../../domain/alerts/health_alert_service.dart';
 import '../../domain/notifications/notification_event.dart';
 import '../../domain/notifications/notification_service.dart';
 import '../../shared/widgets/circle_icon_button.dart';
@@ -25,6 +26,10 @@ class _NotificationsCenterScreenState
   @override
   Widget build(BuildContext context) {
     final events = ref.watch(notificationServiceProvider);
+    final alertService = ref.watch(healthAlertServiceProvider);
+    final activeAlerts = alertService.getActiveAlerts();
+    final isRtl = Localizations.localeOf(context).languageCode == 'ar';
+
     final filteredEvents = _selectedCategory == null
         ? events
         : events.where((e) => e.category == _selectedCategory).toList();
@@ -65,6 +70,63 @@ class _NotificationsCenterScreenState
             ],
           ),
           const SizedBox(height: 12.0),
+
+          // Active Urgent/Moderate Health Alerts (from SQLite)
+          if (activeAlerts.isNotEmpty) ...[
+            ...activeAlerts.map((alert) {
+              final isUrgent = alert.severity == AlertSeverity.urgent;
+              final alertColor = isUrgent ? const Color(0xFFFF6B6B) : const Color(0xFFFFB74D);
+              return Container(
+                margin: const EdgeInsets.only(bottom: 10.0),
+                padding: const EdgeInsets.all(14.0),
+                decoration: BoxDecoration(
+                  color: alertColor.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(16.0),
+                  border: Border.all(color: alertColor.withValues(alpha: 0.5)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(isUrgent ? Icons.warning_rounded : Icons.info_outline, color: alertColor, size: 20.0),
+                        const SizedBox(width: 8.0),
+                        Expanded(
+                          child: Text(
+                            isRtl ? alert.titleAr : alert.title,
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              color: alertColor,
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            alertService.dismissAlert(alert.id);
+                            setState(() {});
+                          },
+                          child: const Icon(Icons.close, color: AppColors.textMuted, size: 18.0),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6.0),
+                    Text(
+                      isRtl ? alert.messageAr : alert.message,
+                      style: const TextStyle(
+                        fontFamily: 'Outfit',
+                        fontSize: 12.5,
+                        color: AppColors.textSecondary,
+                        height: 1.3,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }),
+            const SizedBox(height: 4.0),
+          ],
 
           // Category Filter Bar
           SingleChildScrollView(

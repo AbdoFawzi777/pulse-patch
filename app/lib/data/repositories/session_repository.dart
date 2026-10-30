@@ -300,6 +300,12 @@ class SessionRepository {
       db.execute('DELETE FROM samples;');
       db.execute('DELETE FROM session_stats;');
       db.execute('DELETE FROM ai_results;');
+      try {
+        db.execute('DELETE FROM bp_estimates;');
+        db.execute('DELETE FROM bp_calibrations;');
+        db.execute('DELETE FROM health_alerts;');
+        db.execute('DELETE FROM user_profiles;');
+      } catch (_) {}
       db.execute('DELETE FROM sessions;');
       db.execute('COMMIT;');
     } catch (e) {

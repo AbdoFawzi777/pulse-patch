@@ -7,6 +7,9 @@ import '../../shared/widgets/circle_icon_button.dart';
 import '../../shared/widgets/design_canvas_scaffold.dart';
 import '../../shared/widgets/metric_card.dart';
 import '../../shared/widgets/status_chip.dart';
+import '../../shared/widgets/pill_button.dart';
+import '../reports/health_analytics_screen.dart';
+import '../reports/reports_screen.dart';
 import 'ai_model_info_screen.dart';
 
 /// AI Insights screen matching Insights.dc.html and AI Insights.png exactly.
@@ -351,6 +354,42 @@ class AiInsightsDashboardScreen extends ConsumerWidget {
                 letterSpacing: -0.15,
               ),
             ),
+
+            const SizedBox(height: 20.0),
+
+            // Health Analytics & PDF Reports Actions
+            Row(
+              children: [
+                Expanded(
+                  child: PillButton(
+                    label: 'Trends & Baseline',
+                    icon: Icons.trending_up,
+                    style: PillButtonStyle.white,
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(builder: (_) => const HealthAnalyticsScreen()),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(width: 10.0),
+                Expanded(
+                  child: PillButton(
+                    label: 'Export PDF',
+                    icon: Icons.picture_as_pdf_outlined,
+                    style: PillButtonStyle.dark,
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ReportsScreen(onBack: () => Navigator.of(context).pop()),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16.0),
           ],
         ),
       ),

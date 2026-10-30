@@ -16,7 +16,7 @@ import '../../shared/widgets/status_chip.dart';
 import '../device/heart_rate_source.dart';
 import 'pdf_report_generator.dart';
 
-enum ReportDateRange { past7Days, past30Days, allTime }
+enum ReportDateRange { daily, past7Days, past30Days, yearly, allTime }
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key, required this.onBack});
@@ -41,11 +41,17 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
     final now = DateTime.now();
     final DateTime startDate;
     switch (_selectedRange) {
+      case ReportDateRange.daily:
+        startDate = now.subtract(const Duration(hours: 24));
+        break;
       case ReportDateRange.past7Days:
         startDate = now.subtract(const Duration(days: 7));
         break;
       case ReportDateRange.past30Days:
         startDate = now.subtract(const Duration(days: 30));
+        break;
+      case ReportDateRange.yearly:
+        startDate = now.subtract(const Duration(days: 365));
         break;
       case ReportDateRange.allTime:
         startDate = DateTime(2020);
@@ -130,6 +136,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
             child: Row(
               children: [
                 _RangeButton(
+                  label: 'Daily',
+                  isSelected: _selectedRange == ReportDateRange.daily,
+                  onTap: () => setState(
+                    () => _selectedRange = ReportDateRange.daily,
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                _RangeButton(
                   label: '7 Days',
                   isSelected: _selectedRange == ReportDateRange.past7Days,
                   onTap: () => setState(
@@ -142,6 +156,14 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                   isSelected: _selectedRange == ReportDateRange.past30Days,
                   onTap: () => setState(
                     () => _selectedRange = ReportDateRange.past30Days,
+                  ),
+                ),
+                const SizedBox(width: 8.0),
+                _RangeButton(
+                  label: 'Yearly',
+                  isSelected: _selectedRange == ReportDateRange.yearly,
+                  onTap: () => setState(
+                    () => _selectedRange = ReportDateRange.yearly,
                   ),
                 ),
                 const SizedBox(width: 8.0),

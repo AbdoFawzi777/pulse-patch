@@ -223,7 +223,7 @@ class PdfReportGenerator {
                 'Protocol',
                 'Duration',
                 'Mean HR',
-                'Min / Max',
+                'SpO2',
                 'Quality',
                 'AI Pattern',
                 'Source',
@@ -239,9 +239,7 @@ class PdfReportGenerator {
                   s.type == SessionType.rest ? 'Rest' : 'Post-Activity',
                   '${durationSec}s',
                   st != null ? '${st.meanHr.round()} BPM' : 'N/A',
-                  st != null
-                      ? '${st.minHr.round()} / ${st.maxHr.round()}'
-                      : 'N/A',
+                  st?.avgSpo2 != null ? '${st!.avgSpo2!.toStringAsFixed(0)}%' : 'N/A',
                   s.qualitySummary.name,
                   item.aiPattern ?? 'None',
                   s.source == SessionSource.simulator

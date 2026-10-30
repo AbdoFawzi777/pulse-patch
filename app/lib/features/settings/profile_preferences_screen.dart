@@ -9,6 +9,8 @@ import '../../shared/widgets/pill_button.dart';
 import '../bp/bp_monitoring_screen.dart';
 import '../doctors/doctor_discovery_screen.dart';
 import '../profile/user_profile_screen.dart';
+import '../reports/health_analytics_screen.dart';
+import '../reports/reports_screen.dart';
 import 'application_settings_screen.dart';
 
 /// Screen managing user profile and UI display preferences.
@@ -490,6 +492,85 @@ class _ProfilePreferencesScreenState
                                 Flexible(
                                   child: Text(
                                     'Find Clinics',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 13.0,
+                                      color: Color(0xFFC9D0F5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  const SizedBox(height: 10.0),
+
+                  // Health Analytics & Reports
+                  Row(
+                    children: [
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => const HealthAnalyticsScreen()),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0B1840),
+                              borderRadius: BorderRadius.circular(14.0),
+                              border: Border.all(color: const Color(0xFF1B2A66)),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.analytics_outlined, color: AppColors.accentCyan, size: 18.0),
+                                SizedBox(width: 6.0),
+                                Flexible(
+                                  child: Text(
+                                    'Health Analytics',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontFamily: 'Outfit',
+                                      fontSize: 13.0,
+                                      color: Color(0xFFC9D0F5),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(builder: (_) => ReportsScreen(onBack: () => Navigator.of(context).pop())),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF0B1840),
+                              borderRadius: BorderRadius.circular(14.0),
+                              border: Border.all(color: const Color(0xFF1B2A66)),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.picture_as_pdf_outlined, color: AppColors.accentBlue, size: 18.0),
+                                SizedBox(width: 6.0),
+                                Flexible(
+                                  child: Text(
+                                    'Clinical Reports',
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontFamily: 'Outfit',
