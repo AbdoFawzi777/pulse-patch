@@ -28,6 +28,13 @@ dependencies:
   sqlite3: ^2.4.6
   sqlite3_flutter_libs: ^0.5.24
   file_picker: ^13.2.0
+  http: ^1.6.0
+  google_maps_flutter: ^2.18.1
+  firebase_core: ^5.1.0
+  firebase_auth: ^7.0.1
+  firebase_app_check: ^0.5.1
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
 
 dev_dependencies:
   flutter_test:

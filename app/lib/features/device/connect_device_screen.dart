@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../core/theme/app_colors.dart';
@@ -40,22 +42,46 @@ class ConnectDeviceScreen extends ConsumerStatefulWidget {
 class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
   String? _connectingDeviceId;
   String? _checkingDeviceId;
-  bool _filterOnlyHeartRate = true;
+  bool _filterOnlyHeartRate = false;
   bool _permissionDenied = false;
   final Map<String, DiscoveredBleDevice> _compatibilityResults = {};
+  BluetoothAdapterState _adapterState = BluetoothAdapterState.unknown;
+  StreamSubscription<BluetoothAdapterState>? _adapterSub;
 
   @override
   void initState() {
     super.initState();
+    _initAdapterListener();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _checkPermissionsAndScan();
     });
+  }
+
+  Future<void> _initAdapterListener() async {
+    try {
+      if (await FlutterBluePlus.isSupported) {
+        _adapterSub = FlutterBluePlus.adapterState.listen((state) {
+          if (mounted) setState(() => _adapterState = state);
+        });
+      }
+    } catch (_) {
+      // In tests or environments without Bluetooth hardware
+    }
+  }
+
+  @override
+  void dispose() {
+    _adapterSub?.cancel();
+    super.dispose();
   }
 
   Future<void> _checkPermissionsAndScan() async {
     try {
       final scanStatus = await Permission.bluetoothScan.request();
       final connectStatus = await Permission.bluetoothConnect.request();
+      if (!scanStatus.isGranted) {
+        await Permission.locationWhenInUse.request();
+      }
 
       if (scanStatus.isPermanentlyDenied || connectStatus.isPermanentlyDenied) {
         if (mounted) setState(() => _permissionDenied = true);
@@ -399,27 +425,34 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
     final rememberedId = unifiedSource.getRememberedDeviceId();
     final rememberedName = unifiedSource.getRememberedDeviceName();
 
-    return DesignCanvasScaffold(
-      bottomNavigationBar: widget.showBottomNav
-          ? BottomCircleNav(
-              currentIndex: widget.currentNavIndex,
-              onTap: widget.onSelectTab ?? (_) {},
-            )
-          : null,
-      child: RefreshIndicator(
-        onRefresh: () async {
-          await unifiedSource.startScan();
-        },
-        color: AppColors.accentCyan,
-        backgroundColor: AppColors.cardBgNavy,
-        child: CustomScrollView(
-          physics: const BouncingScrollPhysics(
-            parent: AlwaysScrollableScrollPhysics(),
-          ),
-          slivers: [
-            // Header Row (.r)
-            SliverToBoxAdapter(
-              child: Padding(
+    return PopScope(
+      canPop: true,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && widget.onBack != null) {
+          widget.onBack!();
+        }
+      },
+      child: DesignCanvasScaffold(
+        bottomNavigationBar: widget.showBottomNav
+            ? BottomCircleNav(
+                currentIndex: widget.currentNavIndex,
+                onTap: widget.onSelectTab ?? (_) {},
+              )
+            : null,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            await unifiedSource.startScan();
+          },
+          color: AppColors.accentCyan,
+          backgroundColor: AppColors.cardBgNavy,
+          child: CustomScrollView(
+            physics: const BouncingScrollPhysics(
+              parent: AlwaysScrollableScrollPhysics(),
+            ),
+            slivers: [
+              // Header Row (.r)
+              SliverToBoxAdapter(
+                child: Padding(
                 padding: const EdgeInsets.only(bottom: 8.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -546,6 +579,104 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
                   },
                 ),
               ),
+            ),
+
+            // Prominent Scan Control Button
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: StreamBuilder<BleConnectionState>(
+                  stream: unifiedSource.connectionStateStream,
+                  initialData: unifiedSource.currentState,
+                  builder: (context, snapshot) {
+                    final isScanning =
+                        snapshot.data == BleConnectionState.scanning;
+                    return Center(
+                      child: PillButton(
+                        key: const Key('ble_scan_toggle_button'),
+                        label: isScanning ? 'Stop Scan' : 'Start BLE Scan',
+                        style: isScanning
+                            ? PillButtonStyle.dark
+                            : PillButtonStyle.white,
+                        height: 38.0,
+                        onPressed: () {
+                          if (isScanning) {
+                            unifiedSource.stopScan();
+                          } else {
+                            unifiedSource.startScan();
+                          }
+                        },
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+
+            // Bluetooth Disabled Warning Banner
+            StreamBuilder<BleConnectionState>(
+              stream: unifiedSource.connectionStateStream,
+              initialData: unifiedSource.currentState,
+              builder: (context, snapshot) {
+                final isOff = _adapterState == BluetoothAdapterState.off ||
+                    snapshot.data == BleConnectionState.bluetoothOff;
+                if (!isOff) return const SliverToBoxAdapter(child: SizedBox.shrink());
+                return SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12.0),
+                    child: MetricCard(
+                      key: const Key('ble_bluetooth_off_banner'),
+                      borderColor: const Color(0xFFEF4444),
+                      padding: const EdgeInsets.all(14.0),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.bluetooth_disabled_rounded,
+                            color: Color(0xFFEF4444),
+                            size: 24,
+                          ),
+                          const SizedBox(width: 10),
+                          const Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Bluetooth is Turned Off',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                                SizedBox(height: 2),
+                                Text(
+                                  'Turn on Bluetooth to discover PulsePatch hardware.',
+                                  style: TextStyle(
+                                    fontFamily: 'Outfit',
+                                    fontSize: 12,
+                                    color: AppColors.textSubtitle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          PillButton(
+                            label: 'Turn On',
+                            style: PillButtonStyle.white,
+                            height: 32,
+                            onPressed: () async {
+                              try {
+                                await FlutterBluePlus.turnOn();
+                              } catch (_) {}
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
             ),
 
             // Permission Denied Warning Banner
@@ -961,30 +1092,35 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
                                 spacing: 6.0,
                                 runSpacing: 4.0,
                                 children: [
-                                  if (updatedDev.hasHeartRate)
+                                  if (updatedDev.hasPulsePatch)
                                     _buildBadge(
-                                      'Heart rate (0x180D)',
+                                      'PulsePatch Custom Protocol',
+                                      const Color(0xFF06B6D4),
+                                    )
+                                  else if (updatedDev.hasHeartRate)
+                                    _buildBadge(
+                                      'Standard HR (0x180D)',
                                       const Color(0xFF10B981),
+                                    )
+                                  else if (updatedDev.hasNordicUart)
+                                    _buildBadge(
+                                      'Nordic UART',
+                                      const Color(0xFFF59E0B),
+                                    )
+                                  else if (updatedDev.isMiBand)
+                                    _buildBadge(
+                                      'Mi Band',
+                                      const Color(0xFFF59E0B),
+                                    )
+                                  else
+                                    _buildBadge(
+                                      'BLE Peripheral',
+                                      const Color(0xFF64748B),
                                     ),
                                   if (updatedDev.hasSpO2)
                                     _buildBadge(
                                       'SpO2 (0x1822)',
                                       const Color(0xFF8B5CF6),
-                                    ),
-                                  if (updatedDev.hasPulsePatch)
-                                    _buildBadge(
-                                      'PulsePatch',
-                                      const Color(0xFF06B6D4),
-                                    ),
-                                  if (updatedDev.hasNordicUart)
-                                    _buildBadge(
-                                      'Nordic UART',
-                                      const Color(0xFFF59E0B),
-                                    ),
-                                  if (updatedDev.isMiBand)
-                                    _buildBadge(
-                                      'Mi Band',
-                                      const Color(0xFFF59E0B),
                                     ),
                                 ],
                               ),
@@ -1119,8 +1255,9 @@ class _ConnectDeviceScreenState extends ConsumerState<ConnectDeviceScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   static Widget _buildBadge(String label, Color color) {
     return Container(

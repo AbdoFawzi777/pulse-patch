@@ -1,3 +1,6 @@
+import 'package:firebase_app_check/firebase_app_check.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,9 +15,24 @@ import 'data/repositories/preferences_repository.dart';
 import 'data/repositories/session_repository.dart';
 import 'features/home/app_shell.dart';
 import 'features/onboarding/onboarding_coordinator.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // Activate Firebase App Check.
+    // Uses Play Integrity in production and Debug Provider in debug/testing.
+    await FirebaseAppCheck.instance.activate(
+      providerAndroid: kDebugMode
+          ? const AndroidDebugProvider()
+          : const AndroidPlayIntegrityProvider(),
+    );
+  } catch (e) {
+    debugPrint('Firebase initialization note: $e');
+  }
   final prefs = await SharedPreferences.getInstance();
   final appDb = await AppDatabase.onDisk();
 

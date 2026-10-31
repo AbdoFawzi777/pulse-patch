@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
@@ -32,6 +33,7 @@ class PulsePatchSource implements HeartRateSource {
   StreamSubscription? _adapterSubscription;
   StreamSubscription? _deviceStateSubscription;
   StreamSubscription? _charSubscription;
+  StreamSubscription? _opticalSubscription;
 
   BluetoothDevice? _connectedDevice;
   Timer? _timeoutTimer;
@@ -189,6 +191,14 @@ class PulsePatchSource implements HeartRateSource {
               _charSubscription = char.onValueReceived.listen(
                 _handlePacketData,
               );
+            } else if (char.uuid == Guid(opticalCharUuid)) {
+              try {
+                await char.setNotifyValue(true);
+                _opticalSubscription?.cancel();
+                _opticalSubscription = char.onValueReceived.listen(
+                  _handleOpticalData,
+                );
+              } catch (_) {}
             }
           }
         }
@@ -197,6 +207,14 @@ class PulsePatchSource implements HeartRateSource {
       _resetTimeoutWatchdog();
     } catch (_) {
       _handleDisconnect();
+    }
+  }
+
+  void _handleOpticalData(List<int> rawBytes) {
+    if (rawBytes.length >= 2) {
+      final bd = ByteData.sublistView(Uint8List.fromList(rawBytes));
+      final sample = bd.getInt16(0, Endian.little).toDouble();
+      _waveformController.add(sample);
     }
   }
 
@@ -252,6 +270,8 @@ class PulsePatchSource implements HeartRateSource {
     _timeoutTimer?.cancel();
     _charSubscription?.cancel();
     _charSubscription = null;
+    _opticalSubscription?.cancel();
+    _opticalSubscription = null;
     _deviceStateSubscription?.cancel();
     _deviceStateSubscription = null;
     _connectedDevice = null;
@@ -265,6 +285,8 @@ class PulsePatchSource implements HeartRateSource {
     try {
       await _charSubscription?.cancel();
       _charSubscription = null;
+      await _opticalSubscription?.cancel();
+      _opticalSubscription = null;
       await _connectedDevice?.disconnect();
     } catch (_) {}
     _handleDisconnect();

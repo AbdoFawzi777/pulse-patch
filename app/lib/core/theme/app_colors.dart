@@ -29,6 +29,10 @@ class AppColors {
   static const Color accentMagentaAlt = Color(0xFFC026D3);
   static const Color accentBlue = Color(0xFF2563EB);
   static const Color accentCyan = Color(0xFF22D3EE);
+  static const Color accentGreen = Color(0xFF10B981);
+  static const Color statusAmber = Color(0xFFF59E0B);
+  static const Color statusRed = Color(0xFFEF4444);
+  static const Color canvasDarkNavy = Color(0xFF04030C);
   static const Color radarRing = Color(0xFF3A2A8F);
 
   // Text tokens

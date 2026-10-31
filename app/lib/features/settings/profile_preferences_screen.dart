@@ -17,7 +17,9 @@ import 'application_settings_screen.dart';
 /// Screen managing user profile and UI display preferences.
 /// Derived screen #18 adhering strictly to design tokens.
 class ProfilePreferencesScreen extends ConsumerStatefulWidget {
-  const ProfilePreferencesScreen({super.key});
+  const ProfilePreferencesScreen({super.key, this.onBack});
+
+  final VoidCallback? onBack;
 
   @override
   ConsumerState<ProfilePreferencesScreen> createState() =>
@@ -79,7 +81,7 @@ class _ProfilePreferencesScreenState
               CircleIconButton(
                 type: CircleIconType.back,
                 semanticLabel: 'Back',
-                onPressed: () => Navigator.of(context).maybePop(),
+                onPressed: widget.onBack ?? () => Navigator.of(context).maybePop(),
               ),
               const Expanded(
                 child: Center(

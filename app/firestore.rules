@@ -1,0 +1,36 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // PulsePatch User-Scoped Health Record Rules
+    // Strict authenticated ownership: User A cannot read or write User B's data
+    match /users/{userId} {
+      // Profile access: only owner can read and write
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // Biometric Session measurements
+      match /sessions/{sessionId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Blood Pressure calibrations
+      match /bp_calibrations/{calibrationId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Health alerts and emergency incidents
+      match /health_alerts/{alertId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+
+      // Clinical PDF Report references
+      match /reports/{reportId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Default deny for all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

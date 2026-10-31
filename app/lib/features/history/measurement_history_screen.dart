@@ -18,6 +18,8 @@ class MeasurementHistoryScreen extends ConsumerStatefulWidget {
   const MeasurementHistoryScreen({
     super.key,
     required this.onBack,
+    this.onStartMeasure,
+    this.onOpenDevice,
     this.onSelectSession,
     this.onSelectTab,
     this.currentNavIndex = 1,
@@ -25,6 +27,8 @@ class MeasurementHistoryScreen extends ConsumerStatefulWidget {
   });
 
   final VoidCallback onBack;
+  final VoidCallback? onStartMeasure;
+  final VoidCallback? onOpenDevice;
   final void Function(SessionRecord session)? onSelectSession;
   final ValueChanged<int>? onSelectTab;
   final int currentNavIndex;
@@ -72,9 +76,9 @@ class _MeasurementHistoryScreenState
                 semanticLabel: 'Back',
                 onPressed: widget.onBack,
               ),
-              const Text(
+              Text(
                 'History',
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: 'Outfit',
                   fontSize: 22.0,
                   fontWeight: FontWeight.w300,
@@ -82,7 +86,15 @@ class _MeasurementHistoryScreenState
                   height: 1.0,
                 ),
               ),
-              const SizedBox(width: 56.0),
+              if (widget.onStartMeasure != null)
+                PillButton(
+                  label: 'Record',
+                  style: PillButtonStyle.white,
+                  height: 38.0,
+                  onPressed: widget.onStartMeasure,
+                )
+              else
+                const SizedBox(width: 56.0),
             ],
           ),
 
@@ -113,6 +125,130 @@ class _MeasurementHistoryScreenState
               ],
             ),
           ),
+
+          if (widget.onOpenDevice != null &&
+              bleSource.currentState != BleConnectionState.connected &&
+              bleSource.currentState != BleConnectionState.streaming)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: MetricCard(
+                key: const Key('monitoring_connect_device_card'),
+                padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentCyan.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.bluetooth_searching_rounded,
+                        color: AppColors.accentCyan,
+                        size: 18.0,
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            Directionality.of(context) == TextDirection.rtl
+                                ? 'حساس PulsePatch غير متصل'
+                                : 'PulsePatch Sensor Not Connected',
+                            style: const TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          const SizedBox(height: 2.0),
+                          Text(
+                            Directionality.of(context) == TextDirection.rtl
+                                ? 'اقترن بالجهاز لبدء قياس النبض وضغط الدم الحقيقي'
+                                : 'Pair with hardware sensor for live PPG telemetry',
+                            style: const TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textSubtitle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    PillButton(
+                      label: Directionality.of(context) == TextDirection.rtl
+                          ? 'ربط الجهاز'
+                          : 'Connect',
+                      style: PillButtonStyle.white,
+                      height: 34.0,
+                      onPressed: widget.onOpenDevice,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+          if (widget.onStartMeasure != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12.0),
+              child: MetricCard(
+                padding: const EdgeInsets.symmetric(horizontal: 14.0, vertical: 12.0),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8.0),
+                      decoration: BoxDecoration(
+                        color: AppColors.accentCyan.withValues(alpha: 0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.fiber_manual_record_rounded,
+                        color: AppColors.accentCyan,
+                        size: 16.0,
+                      ),
+                    ),
+                    const SizedBox(width: 10.0),
+                    const Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Live Pulse Monitoring',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 14.0,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textPrimary,
+                            ),
+                          ),
+                          Text(
+                            'Start real-time optical PPG session',
+                            style: TextStyle(
+                              fontFamily: 'Outfit',
+                              fontSize: 11.0,
+                              fontWeight: FontWeight.w300,
+                              color: AppColors.textSubtitle,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8.0),
+                    PillButton(
+                      label: 'Start',
+                      style: PillButtonStyle.white,
+                      height: 36.0,
+                      onPressed: widget.onStartMeasure,
+                    ),
+                  ],
+                ),
+              ),
+            ),
 
           // 4 Session Cards
           Expanded(

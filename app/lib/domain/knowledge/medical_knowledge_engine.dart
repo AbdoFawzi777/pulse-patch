@@ -345,8 +345,68 @@ ${topSec.contentAr}
           ),
         ],
       ),
+      const MedicalDocument(
+        id: 'ESC_ESH_HYPERTENSION_2023',
+        title: '2023 ESH Guidelines for the Management of Arterial Hypertension',
+        titleAr: 'إرشادات الجمعية الأوروبية لارتفاع ضغط الدم 2023',
+        organization: 'European Society of Hypertension (ESH) & European Society of Cardiology (ESC)',
+        organizationAr: 'الجمعية الأوروبية لضغط الدم والجمعية الأوروبية لأمراض القلب',
+        year: 2023,
+        license: 'Open Access Scientific Guideline',
+        sourceUrl: 'https://www.eshonline.org/guidelines/',
+        scope: 'Clinical Hypertension Management, Ambulatory BP, and Out-of-Office Monitoring',
+        sections: [
+          MedicalSection(
+            sectionId: 'esh_home_monitoring',
+            headingEn: 'Home Blood Pressure Monitoring (HBPM) Protocol',
+            headingAr: 'بروتوكول القياس المنزلي لضغط الدم (HBPM)',
+            keywords: ['home blood pressure', 'hbpm', 'cuff', 'protocol', 'قياس منزلي', 'جهاز الضغط'],
+            contentEn: 'Home blood pressure monitoring (HBPM) requires 5 minutes quiet sitting, arm supported at heart level, two readings 1-2 minutes apart, averaged. Out-of-office average >= 135/85 mmHg corresponds to clinical hypertension.',
+            contentAr: 'القياس المنزلي يتطلب الجلوس 5 دقائق في هدوء مع دعم الذراع، وأخذ قراءتين بفاصل دقيقة إلى دقيقتين وحساب المتوسط. متوسط 135/85 فأكثر يكافئ ارتفاع الضغط السريري.',
+            clinicalRecommendationEn: 'Record morning and evening readings for 7 days before physician consultation.',
+            clinicalRecommendationAr: 'سجل قراءات صباحية ومسائية لمدة 7 أيام قبل مراجعة الطبيب.',
+          ),
+          MedicalSection(
+            sectionId: 'esh_hypertensive_urgency',
+            headingEn: 'Hypertensive Urgency vs. Crisis Escalation Thresholds',
+            headingAr: 'التمييز بين الارتفاع الحاد والطارئ وإجراءات التصعيد الطبي',
+            keywords: ['crisis', 'urgency', 'emergency', 'asymptomatic', '180/120', 'أزمة', 'طوارئ'],
+            contentEn: 'Severe BP elevation (>=180/120 mmHg) without acute target organ damage is severe asymptomatic hypertension, not an emergency. Rest 5 minutes and repeat measurement before escalating.',
+            contentAr: 'ارتفاع الضغط (>=180/120 مم زئبق) دون تلف حاد بالأعضاء الحيوية هو ارتفاع شديد غير مصحوب بأعراض وليس طوارئ. استرح 5 دقائق وأعد القياس.',
+            clinicalRecommendationEn: 'Only acute symptoms (chest pain, dyspnea, visual loss) warrant immediate emergency services (123).',
+            clinicalRecommendationAr: 'الأعراض الحادة فقط تستوجب طلب الإسعاف (123) فوراً.',
+          ),
+        ],
+      ),
+      const MedicalDocument(
+        id: 'WHO_PHYSICAL_ACTIVITY_SLEEP_2022',
+        title: 'WHO Guidelines on Physical Activity and Sedentary Behaviour',
+        titleAr: 'إرشادات منظمة الصحة العالمية للنشاط البدني والسلوك الخامل',
+        organization: 'World Health Organization (WHO)',
+        organizationAr: 'منظمة الصحة العالمية',
+        year: 2022,
+        license: 'CC BY-NC-SA 3.0 IGO',
+        sourceUrl: 'https://www.who.int/publications/i/item/9789240015128',
+        scope: 'Cardiovascular recovery and circadian health',
+        sections: [
+          MedicalSection(
+            sectionId: 'who_sleep_circadian',
+            headingEn: 'Cardiovascular Recovery, Sleep Architecture, and Circadian Health',
+            headingAr: 'التعافي القلبي والوعائي، بنية النوم، والصحة الإيقاعية الحيوية',
+            keywords: ['sleep', 'recovery', 'circadian', 'nocturnal dipping', 'نوم', 'تعافي'],
+            contentEn: 'Normal nocturnal blood pressure dipping (10-20% decrease during sleep) is critical for vascular health. High resting heart rate during rest indicates incomplete recovery.',
+            contentAr: 'الانخفاض الليلي الطبيعي لضغط الدم (10-20% أثناء النوم) ضروري لصحة الأوعية الدموية. ارتفاع معدل نبض الراحة يشير لعدم اكتمال التعافي.',
+            clinicalRecommendationEn: 'Aim for 7-9 hours of consistent sleep and 150 minutes of moderate activity per week.',
+            clinicalRecommendationAr: 'احرص على 7-9 ساعات نوم منتظم و150 دقيقة نشاط معتدل أسبوعياً.',
+          ),
+        ],
+      ),
     ];
   }
+
+  static List<MedicalDocument> get staticCorpus => buildFallbackCorpus();
+  List<MedicalDocument> get documents => _documents ?? buildFallbackCorpus();
+  static List<MedicalDocument> buildFallbackCorpus() => MedicalKnowledgeEngine()._buildFallbackCorpus();
 }
 class _ScoredSection {
   final MedicalDocument doc;

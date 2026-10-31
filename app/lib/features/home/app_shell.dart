@@ -14,6 +14,7 @@ import '../insights/ai_insights_dashboard_screen.dart';
 import '../measurement/live_measurement_screen.dart';
 import '../measurement/measurement_complete_screen.dart';
 import '../measurement/measurement_preparation_screen.dart';
+import '../services/health_services_hub_screen.dart';
 import '../settings/notifications_center_screen.dart';
 import '../settings/profile_preferences_screen.dart';
 import 'home_screen.dart';
@@ -22,6 +23,8 @@ enum AppView {
   home,
   history,
   insights,
+  services,
+  profile,
   device,
   measurePrep,
   measureLive,
@@ -54,7 +57,10 @@ class _AppShellState extends ConsumerState<AppShell> {
           _currentView = AppView.insights;
           break;
         case 3:
-          _currentView = AppView.device;
+          _currentView = AppView.services;
+          break;
+        case 4:
+          _currentView = AppView.profile;
           break;
       }
     });
@@ -154,15 +160,9 @@ class _AppShellState extends ConsumerState<AppShell> {
       case AppView.home:
         body = HomeScreen(
           onStartMeasure: _startMeasurementPrep,
-          onOpenDevice: () => _navigateToTab(3),
+          onOpenDevice: () => setState(() => _currentView = AppView.device),
           showBottomNav: false,
-          onOpenProfile: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (_) => const ProfilePreferencesScreen(),
-              ),
-            );
-          },
+          onOpenProfile: () => _navigateToTab(4),
           onOpenNotifications: () {
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -205,7 +205,9 @@ class _AppShellState extends ConsumerState<AppShell> {
 
       case AppView.history:
         body = MeasurementHistoryScreen(
-          onBack: () => setState(() => _currentView = AppView.home),
+          onBack: () => _navigateToTab(0),
+          onStartMeasure: _startMeasurementPrep,
+          onOpenDevice: () => setState(() => _currentView = AppView.device),
           showBottomNav: false,
           onSelectSession: (session) {
             Navigator.of(context).push(
@@ -223,8 +225,20 @@ class _AppShellState extends ConsumerState<AppShell> {
 
       case AppView.insights:
         body = AiInsightsDashboardScreen(
-          onBack: () => setState(() => _currentView = AppView.home),
+          onBack: () => _navigateToTab(0),
           showBottomNav: false,
+        );
+        break;
+
+      case AppView.services:
+        body = HealthServicesHubScreen(
+          onBack: () => _navigateToTab(0),
+        );
+        break;
+
+      case AppView.profile:
+        body = ProfilePreferencesScreen(
+          onBack: () => _navigateToTab(0),
         );
         break;
 
@@ -237,12 +251,28 @@ class _AppShellState extends ConsumerState<AppShell> {
         break;
     }
 
-    return Scaffold(
-      backgroundColor: AppColors.bgBase,
-      body: body,
-      bottomNavigationBar: showBottomNav
-          ? BottomCircleNav(currentIndex: _navIndex, onTap: _navigateToTab)
-          : null,
+    return PopScope(
+      canPop: _currentView == AppView.home,
+      onPopInvokedWithResult: (didPop, result) {
+        if (didPop) return;
+        if (_currentView != AppView.home) {
+          setState(() {
+            _currentView = AppView.home;
+            _navIndex = 0;
+          });
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.bgBase,
+        body: body,
+        bottomNavigationBar: showBottomNav
+            ? BottomCircleNav(
+                currentIndex: _navIndex,
+                items: BottomCircleNav.fiveDestinations,
+                onTap: _navigateToTab,
+              )
+            : null,
+      ),
     );
   }
 }

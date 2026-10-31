@@ -10,12 +10,14 @@ import 'package:app/shared/widgets/date_range_filter.dart';
 import 'package:app/shared/widgets/dot_variability_chart.dart';
 import 'package:app/shared/widgets/empty_state.dart';
 import 'package:app/shared/widgets/error_banner.dart';
+import 'package:app/shared/widgets/heart_pulse_indicator.dart';
 import 'package:app/shared/widgets/heart_rate_hero_number.dart';
 import 'package:app/shared/widgets/info_tooltip.dart';
 import 'package:app/shared/widgets/insight_card.dart';
 import 'package:app/shared/widgets/loading_state.dart';
 import 'package:app/shared/widgets/metric_card.dart';
 import 'package:app/shared/widgets/pill_button.dart';
+import 'package:app/shared/widgets/ppg_waveform_visualizer.dart';
 import 'package:app/shared/widgets/pulse_trace_chart.dart';
 import 'package:app/shared/widgets/session_tile.dart';
 import 'package:app/shared/widgets/status_chip.dart';
@@ -435,5 +437,67 @@ void main() {
       expect(find.text('74'), findsOneWidget);
       expect(find.text('BPM'), findsOneWidget);
     });
+
+    testWidgets('HeartPulseIndicator renders heart and status text', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          const HeartPulseIndicator(
+            bpm: 72,
+            sqi: 95,
+            isContactDetected: true,
+            isMeasuring: true,
+          ),
+        ),
+      );
+
+      expect(find.byType(HeartPulseIndicator), findsOneWidget);
+    });
+
+    testWidgets('PpgWaveformVisualizer mounts and renders RepaintBoundary', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _wrap(
+          const PpgWaveformVisualizer(
+            samples: [1000.0, 1020.0, 980.0, 1040.0],
+            isSampleData: true,
+            isContactDetected: true,
+          ),
+        ),
+      );
+
+      expect(find.byType(PpgWaveformVisualizer), findsOneWidget);
+      expect(find.text('Live PPG Waveform (Optical)'), findsOneWidget);
+      expect(find.text('Not ECG'), findsOneWidget);
+      expect(find.text('Simulated Data'), findsOneWidget);
+    });
+
+    testWidgets(
+      'BottomCircleNav renders five destinations with fiveDestinations parameter',
+      (tester) async {
+        int selected = 0;
+        await tester.pumpWidget(
+          _wrap(
+            BottomCircleNav(
+              currentIndex: selected,
+              items: BottomCircleNav.fiveDestinations,
+              onTap: (i) => selected = i,
+            ),
+          ),
+        );
+
+        expect(find.byType(BottomCircleNav), findsOneWidget);
+        expect(find.bySemanticsLabel('Home'), findsOneWidget);
+        expect(find.bySemanticsLabel('Monitoring'), findsOneWidget);
+        expect(find.bySemanticsLabel('Insights'), findsOneWidget);
+        expect(find.bySemanticsLabel('Services'), findsOneWidget);
+        expect(find.bySemanticsLabel('Profile'), findsOneWidget);
+
+        await tester.tap(find.bySemanticsLabel('Services'));
+        expect(selected, 3);
+      },
+    );
   });
 }

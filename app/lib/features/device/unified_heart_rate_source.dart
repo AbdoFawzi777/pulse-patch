@@ -11,8 +11,65 @@ import 'generic_ble_heart_rate_source.dart';
 import 'heart_rate_source.dart';
 import 'mi_band_5_source.dart';
 import 'pulse_patch_source.dart';
-import 'simulated_heart_rate_source.dart';
 import 'standard_ble_heart_rate_source.dart';
+
+/// Idle / no-op HeartRateSource used as the default production state.
+/// Emits no packets, no waveform, and never enters simulator mode.
+class IdleHeartRateSource implements HeartRateSource {
+  final _connectionStateController =
+      StreamController<BleConnectionState>.broadcast();
+  final _discoveredDevicesController =
+      StreamController<List<DiscoveredBleDevice>>.broadcast();
+  final _packetController = StreamController<BlePacket>.broadcast();
+  final _diagnosticsController = StreamController<PacketDiagnostics>.broadcast();
+  final _waveformController = StreamController<double>.broadcast();
+
+  @override
+  Stream<BleConnectionState> get connectionStateStream =>
+      _connectionStateController.stream;
+  @override
+  Stream<List<DiscoveredBleDevice>> get discoveredDevicesStream =>
+      _discoveredDevicesController.stream;
+  @override
+  Stream<BlePacket> get packetStream => _packetController.stream;
+  @override
+  Stream<PacketDiagnostics> get diagnosticsStream =>
+      _diagnosticsController.stream;
+  @override
+  Stream<double> get opticalWaveformStream => _waveformController.stream;
+
+  @override
+  BleConnectionState get currentState => BleConnectionState.idle;
+  @override
+  PacketDiagnostics get currentDiagnostics => const PacketDiagnostics();
+
+  @override
+  bool get isSimulator => false;
+  @override
+  String get sourceLabel => 'No device';
+  @override
+  SessionSource get source => SessionSource.pulsepatch;
+
+  @override
+  Future<void> startScan() async {}
+  @override
+  Future<void> stopScan() async {}
+  @override
+  Future<void> connect(String deviceId) async {}
+  @override
+  Future<void> disconnect() async {}
+  @override
+  Future<DiscoveredBleDevice?> checkCompatibility(String deviceId) async => null;
+
+  @override
+  void dispose() {
+    _connectionStateController.close();
+    _discoveredDevicesController.close();
+    _packetController.close();
+    _diagnosticsController.close();
+    _waveformController.close();
+  }
+}
 
 /// Unified Heart Rate Source managing multi-protocol routing:
 /// - PulsePatch-C3 (Custom 12-byte protocol)
@@ -22,7 +79,7 @@ import 'standard_ble_heart_rate_source.dart';
 /// - Simulator (Offline testing)
 class UnifiedHeartRateSource implements HeartRateSource {
   UnifiedHeartRateSource({required this.prefs}) {
-    _activeSource = SimulatedHeartRateSource();
+    _activeSource = IdleHeartRateSource();
     _forwardActiveSourceStreams();
   }
 
@@ -402,13 +459,8 @@ class UnifiedHeartRateSource implements HeartRateSource {
     final device = _discoveredMap[upperId] ?? _discoveredMap[deviceId];
 
     if (deviceId.startsWith('sim-') || device == null) {
-      // Connecting to simulator
-      if (_activeSource is! SimulatedHeartRateSource) {
-        _activeSource.dispose();
-        _activeSource = SimulatedHeartRateSource();
-        _forwardActiveSourceStreams();
-      }
-      await _activeSource.connect(deviceId);
+      // Simulator connections are disabled in production.
+      // Only allow if actively testing; do nothing and stay idle.
       return;
     }
 

@@ -1,7 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/session_record.dart';
 import '../../domain/signal/ble_packet.dart';
-import 'simulated_heart_rate_source.dart';
 import 'unified_heart_rate_source.dart';
 
 enum BleConnectionState {
@@ -198,8 +197,8 @@ final heartRateSourceProvider = Provider<HeartRateSource>((ref) {
   try {
     return ref.watch(unifiedHeartRateSourceProvider);
   } catch (_) {
-    final source = SimulatedHeartRateSource();
-    ref.onDispose(source.dispose);
-    return source;
+    final idle = IdleHeartRateSource();
+    ref.onDispose(idle.dispose);
+    return idle;
   }
 });

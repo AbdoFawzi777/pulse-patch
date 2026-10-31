@@ -47,4 +47,6 @@ firmware/.vscode/
 # Field Test Raw Logs & Temporary Traces
 docs/field_test/raw/
 ml/data/raw/
+test/failures/
+**/test/failures/
 
